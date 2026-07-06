@@ -1,4 +1,13 @@
-import type { Business, Category, City, DayHours, Review } from './types'
+import type {
+  Business,
+  Category,
+  City,
+  DayHours,
+  MenuSection,
+  OwnerPost,
+  Review,
+  WeeklySpecial,
+} from './types'
 
 export const categories: Category[] = [
   { id: 'restaurants', name: 'Restaurants', icon: 'UtensilsCrossed' },
@@ -409,6 +418,259 @@ export const businesses: Business[] = [
     hours: weekday(h(7), h(21), { open: h(8), close: h(19) }),
   },
 ]
+
+// Owner-authored posts: promotions, offers, and announcements shown publicly.
+const ownerPostsById: Record<string, OwnerPost[]> = {
+  'the-copper-fork': [
+    {
+      id: 'cf-p1',
+      date: '2025-06-05',
+      type: 'offer',
+      badge: '3 courses',
+      title: 'Summer Prix Fixe is here',
+      body: 'Tuesday–Thursday enjoy a three-course seasonal tasting for $48 per person. Wine pairings available for $22.',
+    },
+    {
+      id: 'cf-p2',
+      date: '2025-05-20',
+      type: 'event',
+      title: 'Farm dinner on the patio',
+      body: 'Join us June 21 for a family-style dinner celebrating our partner farms. Limited seats — reserve by phone.',
+    },
+    {
+      id: 'cf-p3',
+      date: '2025-05-02',
+      type: 'update',
+      title: 'New pastry chef, new desserts',
+      body: 'We welcomed Chef Lina to the team. The brown-butter tart is already a house favorite.',
+    },
+  ],
+  'daybreak-coffee': [
+    {
+      id: 'db-p1',
+      date: '2025-06-04',
+      type: 'offer',
+      badge: 'Free',
+      title: 'Free drip with any pastry',
+      body: 'Every weekday before 9am, grab a free 12oz drip coffee when you buy any fresh-baked pastry.',
+    },
+    {
+      id: 'db-p2',
+      date: '2025-05-15',
+      type: 'update',
+      title: 'New single-origin: Ethiopia Guji',
+      body: 'Bright, floral, and juicy with notes of peach and jasmine. Available as pour-over or whole bean.',
+    },
+  ],
+  'flour-and-honey': [
+    {
+      id: 'fh-p1',
+      date: '2025-06-02',
+      type: 'offer',
+      badge: '20% off',
+      title: 'Pre-order celebration cakes',
+      body: 'Book a custom cake a week ahead this month and take 20% off. Perfect for graduations and summer parties.',
+    },
+    {
+      id: 'fh-p2',
+      date: '2025-05-10',
+      type: 'event',
+      title: 'Weekend sourdough workshop',
+      body: 'Learn to bake naturally-leavened bread at home. Saturdays 10am, includes a starter to take home.',
+    },
+  ],
+  'chapter-and-verse': [
+    {
+      id: 'cv-p1',
+      date: '2025-06-06',
+      type: 'event',
+      title: 'June book club: local voices',
+      body: "We're reading a debut novel from a Brookside author. Join us the last Thursday at 7pm — all welcome.",
+    },
+    {
+      id: 'cv-p2',
+      date: '2025-05-18',
+      type: 'offer',
+      badge: 'Buy 2 get 1',
+      title: 'Summer reading stack',
+      body: 'Mix and match any staff-pick paperbacks — buy two, get the third free through July.',
+    },
+  ],
+  'ironworks-fitness': [
+    {
+      id: 'iw-p1',
+      date: '2025-06-01',
+      type: 'offer',
+      badge: 'First month $0',
+      title: 'Summer strong challenge',
+      body: 'New members train free for the first month when you join a small-group coaching block.',
+    },
+  ],
+  'petals-and-stems': [
+    {
+      id: 'ps-p1',
+      date: '2025-06-03',
+      type: 'offer',
+      badge: 'Free delivery',
+      title: 'Free local delivery on bouquets',
+      body: 'Order any seasonal bouquet over $45 and we will deliver it across Oakdale at no charge this week.',
+    },
+  ],
+  'still-point-yoga': [
+    {
+      id: 'sp-p1',
+      date: '2025-06-05',
+      type: 'event',
+      title: 'Solstice sound bath',
+      body: 'A restorative candlelit sound bath to welcome summer. June 20, 7:30pm. Mats and bolsters provided.',
+    },
+  ],
+  'nonna-lucias': [
+    {
+      id: 'nl-p1',
+      date: '2025-05-28',
+      type: 'offer',
+      badge: 'Half-price',
+      title: 'Half-price bottles on Wednesdays',
+      body: 'Every Wednesday, all house wine bottles are half off with any two entrées.',
+    },
+  ],
+  'the-green-plate': [
+    {
+      id: 'gp-p1',
+      date: '2025-06-04',
+      type: 'event',
+      title: 'Bottomless weekend brunch',
+      body: 'Saturdays and Sundays 9am–1pm — add bottomless mimosas or cold brew for $16.',
+    },
+  ],
+}
+
+// Weekly rotating specials for food-focused businesses.
+const weeklySpecialsById: Record<string, WeeklySpecial[]> = {
+  'the-copper-fork': [
+    { day: 'Mon', name: 'Braised short rib', price: '$26', description: 'Red-wine jus, whipped potato' },
+    { day: 'Tue', name: 'Market fish', price: '$24', description: "Whatever's freshest, chef's preparation" },
+    { day: 'Wed', name: 'Mushroom risotto', price: '$21', description: 'Wild mushrooms, aged parmesan' },
+    { day: 'Thu', name: 'Roast half chicken', price: '$23', description: 'Lemon, herbs, seasonal greens' },
+    { day: 'Fri', name: 'Dry-aged ribeye', price: '$38', description: 'Bordelaise, hand-cut fries' },
+  ],
+  'nonna-lucias': [
+    { day: 'Mon', name: 'Cacio e pepe', price: '$16', description: 'Fresh tonnarelli, pecorino' },
+    { day: 'Tue', name: 'Osso buco', price: '$27', description: 'Saffron risotto' },
+    { day: 'Wed', name: 'Margherita night', price: '$12', description: 'Wood-fired, half price' },
+    { day: 'Thu', name: 'Lasagna della Nonna', price: '$19', description: 'Layered all afternoon' },
+    { day: 'Fri', name: "Seafood fra' diavolo", price: '$25', description: 'Spicy tomato, linguine' },
+  ],
+  'the-green-plate': [
+    { day: 'Mon', name: 'Harvest grain bowl', price: '$14', description: 'Roasted veg, tahini' },
+    { day: 'Wed', name: 'Smash veggie burger', price: '$15', description: 'Special sauce, pickles' },
+    { day: 'Fri', name: 'Crispy tofu banh mi', price: '$13', description: 'Pickled slaw, sriracha aioli' },
+  ],
+}
+
+// Full menus for food-focused businesses.
+const menuById: Record<string, MenuSection[]> = {
+  'the-copper-fork': [
+    {
+      name: 'To start',
+      items: [
+        { name: 'Whipped ricotta', price: '$12', description: 'Local honey, grilled sourdough', tag: 'Popular' },
+        { name: 'Little gem salad', price: '$11', description: 'Buttermilk, radish, herbs' },
+        { name: 'Charred carrots', price: '$13', description: 'Dukkah, yogurt' },
+      ],
+    },
+    {
+      name: 'Mains',
+      items: [
+        { name: 'Seasonal risotto', price: '$21', description: 'Ask your server for today', tag: 'Vegetarian' },
+        { name: 'Pan-roasted fish', price: '$29', description: 'Brown butter, capers' },
+        { name: 'Copper Fork burger', price: '$18', description: 'Aged cheddar, house pickles' },
+      ],
+    },
+    {
+      name: 'Sweet',
+      items: [
+        { name: 'Brown-butter tart', price: '$10', tag: 'New' },
+        { name: 'Olive oil cake', price: '$9', description: 'Citrus, crème fraîche' },
+      ],
+    },
+  ],
+  'nonna-lucias': [
+    {
+      name: 'Antipasti',
+      items: [
+        { name: 'Burrata', price: '$14', description: 'Heirloom tomato, basil', tag: 'Popular' },
+        { name: 'Arancini', price: '$11', description: 'Saffron risotto, pomodoro' },
+      ],
+    },
+    {
+      name: 'Pasta',
+      items: [
+        { name: 'Tagliatelle bolognese', price: '$19', description: 'Slow-cooked ragù' },
+        { name: 'Cacio e pepe', price: '$16', tag: 'Vegetarian' },
+        { name: 'Lobster ravioli', price: '$26', description: 'Saffron cream' },
+      ],
+    },
+    {
+      name: 'Wood-fired pizza',
+      items: [
+        { name: 'Margherita', price: '$16', description: 'San Marzano, fior di latte' },
+        { name: 'Diavola', price: '$18', description: 'Spicy salami, chili honey', tag: 'Popular' },
+      ],
+    },
+  ],
+  'daybreak-coffee': [
+    {
+      name: 'Coffee',
+      items: [
+        { name: 'Flat white', price: '$4.5', tag: 'Popular' },
+        { name: 'Pour-over', price: '$5', description: 'Rotating single origin' },
+        { name: 'Cold brew', price: '$4.75' },
+      ],
+    },
+    {
+      name: 'Bakery',
+      items: [
+        { name: 'Butter croissant', price: '$3.75' },
+        { name: 'Morning bun', price: '$4.25', tag: 'Popular' },
+        { name: 'Banana bread', price: '$3.5' },
+      ],
+    },
+  ],
+  'the-green-plate': [
+    {
+      name: 'Bowls',
+      items: [
+        { name: 'Harvest grain bowl', price: '$14', tag: 'Vegan' },
+        { name: 'Sesame noodle bowl', price: '$13' },
+      ],
+    },
+    {
+      name: 'Handhelds',
+      items: [
+        { name: 'Smash veggie burger', price: '$15', tag: 'Popular' },
+        { name: 'Crispy tofu banh mi', price: '$13', tag: 'Vegan' },
+      ],
+    },
+  ],
+  'morning-glory-cafe': [
+    {
+      name: 'Breakfast',
+      items: [
+        { name: 'Buttermilk pancakes', price: '$12', tag: 'Popular' },
+        { name: 'Loaded avocado toast', price: '$11', description: 'Two eggs, chili crisp' },
+        { name: 'Veggie scramble', price: '$13' },
+      ],
+    },
+  ],
+}
+
+for (const b of businesses) {
+  if (ownerPostsById[b.id]) b.ownerPosts = ownerPostsById[b.id]
+  if (weeklySpecialsById[b.id]) b.weeklySpecials = weeklySpecialsById[b.id]
+  if (menuById[b.id]) b.menu = menuById[b.id]
+}
 
 export const seedReviews: Review[] = [
   { id: 'r1', businessId: 'the-copper-fork', author: 'Maya R.', rating: 5, date: '2025-05-12', text: 'Absolutely stunning seasonal menu. The mushroom risotto changed my life.' },

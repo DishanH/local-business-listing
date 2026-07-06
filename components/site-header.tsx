@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { MapPin, Search, Heart, Compass } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { AccountMenu } from '@/components/account-menu'
 import { useStore } from '@/components/store-provider'
 import { cities } from '@/lib/data'
 import {
@@ -93,14 +94,7 @@ export function SiteHeader() {
             )}
           </Button>
 
-          <Button
-            render={<Link href="/search" />}
-            nativeButton={false}
-            size="sm"
-            className="hidden rounded-full sm:inline-flex"
-          >
-            Browse
-          </Button>
+          <AccountMenu />
         </div>
       </div>
     </header>

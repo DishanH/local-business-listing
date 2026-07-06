@@ -1,15 +1,22 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { Clock } from 'lucide-react'
-import type { Business } from '@/lib/types'
-import { dayLabels, dayOrder, formatTime, getOpenStatus } from '@/lib/format'
+import type { Business, DayKey } from '@/lib/types'
+import { dayLabels, dayOrder, formatTime } from '@/lib/format'
+import { useOpenStatus } from '@/hooks/use-open-status'
 import { cn } from '@/lib/utils'
 
 const jsDayToKey = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'] as const
 
 export function HoursPanel({ business }: { business: Business }) {
-  const status = getOpenStatus(business)
-  const todayKey = jsDayToKey[new Date().getDay()]
+  const status = useOpenStatus(business)
+  // Compute the current day on the client to avoid SSR/timezone hydration mismatches.
+  const [todayKey, setTodayKey] = useState<DayKey | null>(null)
+
+  useEffect(() => {
+    setTodayKey(jsDayToKey[new Date().getDay()])
+  }, [])
 
   return (
     <section className="rounded-2xl border border-border bg-card p-6">
@@ -21,10 +28,14 @@ export function HoursPanel({ business }: { business: Business }) {
       <p
         className={cn(
           'mb-4 inline-flex rounded-full px-3 py-1 text-sm font-medium',
-          status.open ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground',
+          status
+            ? status.open
+              ? 'bg-primary/10 text-primary'
+              : 'bg-muted text-muted-foreground'
+            : 'bg-muted text-muted-foreground',
         )}
       >
-        {status.label}
+        {status ? status.label : 'Checking hours…'}
       </p>
 
       <ul className="divide-y divide-border">
