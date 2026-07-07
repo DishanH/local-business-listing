@@ -6,6 +6,39 @@ export interface DayHours {
   close: number | null
 }
 
+export type OwnerPostType = 'offer' | 'event' | 'update'
+
+export interface OwnerPost {
+  id: string
+  /** ISO date string (YYYY-MM-DD) */
+  date: string
+  type: OwnerPostType
+  title: string
+  body: string
+  /** optional short highlight, e.g. "20% off" or "Free" */
+  badge?: string
+}
+
+export interface MenuItem {
+  name: string
+  price: string
+  description?: string
+  /** optional tag such as "Popular", "New", "Vegan" */
+  tag?: string
+}
+
+export interface MenuSection {
+  name: string
+  items: MenuItem[]
+}
+
+export interface WeeklySpecial {
+  day: string
+  name: string
+  price: string
+  description?: string
+}
+
 export interface Business {
   id: string
   name: string
@@ -25,6 +58,12 @@ export interface Business {
   /** search aliases / keywords that help fuzzy matching */
   keywords: string[]
   hours: Record<DayKey, DayHours>
+  /** promotions, offers, and announcements posted by the owner */
+  ownerPosts?: OwnerPost[]
+  /** weekly rotating specials (food businesses) */
+  weeklySpecials?: WeeklySpecial[]
+  /** full menu grouped into sections (food businesses) */
+  menu?: MenuSection[]
 }
 
 export interface Review {

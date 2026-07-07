@@ -16,7 +16,16 @@ interface Rating {
   count: number
 }
 
+interface User {
+  name: string
+}
+
 interface StoreValue {
+  // auth (simulated for this demo)
+  user: User | null
+  signIn: (name: string) => void
+  signOut: () => void
+
   // favorites
   favorites: string[]
   isFavorite: (id: string) => boolean
@@ -45,11 +54,19 @@ interface StoreValue {
 const StoreContext = createContext<StoreValue | null>(null)
 
 export function StoreProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null)
   const [favorites, setFavorites] = useState<string[]>(['daybreak-coffee', 'chapter-and-verse'])
   const [reviews, setReviews] = useState<Review[]>(seedReviews)
   const [notes, setNotes] = useState<Record<string, string>>({})
   const [threads, setThreads] = useState<Record<string, Message[]>>({})
   const [originCityId, setOriginCityId] = useState<string>(cities[0].id)
+
+  const signIn = useCallback((name: string) => {
+    const trimmed = name.trim()
+    setUser({ name: trimmed || 'Guest' })
+  }, [])
+
+  const signOut = useCallback(() => setUser(null), [])
 
   const isFavorite = useCallback((id: string) => favorites.includes(id), [favorites])
 
@@ -125,6 +142,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<StoreValue>(
     () => ({
+      user,
+      signIn,
+      signOut,
       favorites,
       isFavorite,
       toggleFavorite,
@@ -141,6 +161,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       setOriginCityId,
     }),
     [
+      user,
+      signIn,
+      signOut,
       favorites,
       isFavorite,
       toggleFavorite,

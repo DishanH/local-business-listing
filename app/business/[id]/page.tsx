@@ -8,6 +8,8 @@ import { ContactPanel } from '@/components/profile/contact-panel'
 import { NotesPanel } from '@/components/profile/notes-panel'
 import { ReviewsPanel } from '@/components/profile/reviews-panel'
 import { MessagePanel } from '@/components/profile/message-panel'
+import { OwnerUpdatesPanel } from '@/components/profile/owner-updates-panel'
+import { MenuPanel } from '@/components/profile/menu-panel'
 import { BusinessCard } from '@/components/business-card'
 
 export function generateStaticParams() {
@@ -45,10 +47,14 @@ export default async function BusinessPage({ params }: { params: Promise<{ id: s
 
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
         <div className="flex flex-col gap-6 lg:col-span-2">
-          <NotesPanel businessId={business.id} />
+          {business.ownerPosts?.length ? (
+            <OwnerUpdatesPanel posts={business.ownerPosts} businessName={business.name} />
+          ) : null}
+          <MenuPanel weeklySpecials={business.weeklySpecials} menu={business.menu} />
           <ReviewsPanel businessId={business.id} />
         </div>
         <div className="flex flex-col gap-6">
+          <NotesPanel businessId={business.id} />
           <MessagePanel business={business} />
           <ContactPanel business={business} />
           <HoursPanel business={business} />

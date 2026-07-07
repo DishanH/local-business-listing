@@ -7,8 +7,9 @@ import { StarRating } from '@/components/star-rating'
 import { FavoriteButton } from '@/components/favorite-button'
 import { CategoryIcon } from '@/components/category-icon'
 import { useStore } from '@/components/store-provider'
+import { useOpenStatus } from '@/hooks/use-open-status'
 import { categories, cities } from '@/lib/data'
-import { distanceMiles, formatDistance, getOpenStatus, priceLabel } from '@/lib/format'
+import { distanceMiles, formatDistance, priceLabel } from '@/lib/format'
 import type { Business } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
@@ -19,7 +20,7 @@ export function BusinessCard({ business }: { business: Business }) {
   const cityName = cities.find((c) => c.id === business.city)?.name ?? ''
   const origin = cities.find((c) => c.id === originCityId) ?? cities[0]
   const dist = formatDistance(distanceMiles(origin, business))
-  const status = getOpenStatus(business)
+  const status = useOpenStatus(business)
 
   return (
     <Link
@@ -62,9 +63,11 @@ export function BusinessCard({ business }: { business: Business }) {
             <MapPin size={13} />
             {cityName} · {dist}
           </span>
-          <span className={cn('font-medium', status.open ? 'text-primary' : 'text-muted-foreground')}>
-            {status.open ? 'Open now' : 'Closed'}
-          </span>
+          {status ? (
+            <span className={cn('font-medium', status.open ? 'text-primary' : 'text-muted-foreground')}>
+              {status.open ? 'Open now' : 'Closed'}
+            </span>
+          ) : null}
         </div>
       </div>
     </Link>

@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { MapPin, Search, Heart, Compass } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ThemeToggle } from '@/components/theme-toggle'
+import { AccountMenu } from '@/components/account-menu'
 import { useStore } from '@/components/store-provider'
 import { cities } from '@/lib/data'
 import {
@@ -48,7 +50,17 @@ export function SiteHeader() {
           </div>
         </form>
 
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-1 sm:gap-2">
+          <Button
+            render={<Link href="/search" aria-label="Search businesses" />}
+            nativeButton={false}
+            variant="ghost"
+            size="icon"
+            className="rounded-full md:hidden"
+          >
+            <Search size={18} />
+          </Button>
+
           <div className="hidden items-center gap-1.5 sm:flex">
             <MapPin size={16} className="text-primary" />
             <Select value={originCityId} onValueChange={setOriginCityId}>
@@ -65,8 +77,11 @@ export function SiteHeader() {
             </Select>
           </div>
 
+          <ThemeToggle />
+
           <Button
             render={<Link href="/favorites" aria-label={`Favorites (${favorites.length})`} />}
+            nativeButton={false}
             variant="ghost"
             size="icon"
             className="relative rounded-full"
@@ -79,9 +94,7 @@ export function SiteHeader() {
             )}
           </Button>
 
-          <Button render={<Link href="/search" />} size="sm" className="rounded-full">
-            Browse
-          </Button>
+          <AccountMenu />
         </div>
       </div>
     </header>
