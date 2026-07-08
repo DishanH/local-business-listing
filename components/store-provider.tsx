@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from 'react'
 import { businesses, cities, seedReviews } from '@/lib/data'
+import { originAreaLabel } from '@/lib/location'
 import type { Message, Review } from '@/lib/types'
 
 interface Rating {
@@ -16,14 +17,17 @@ interface Rating {
   count: number
 }
 
-interface User {
+export interface User {
   name: string
+  email?: string
+  provider: 'google' | 'guest'
 }
 
 interface StoreValue {
-  // auth (simulated for this demo)
+  // auth (simulated for this demo — no real backend is wired up)
   user: User | null
   signIn: (name: string) => void
+  signInWithGoogle: () => void
   signOut: () => void
 
   // favorites
@@ -46,10 +50,19 @@ interface StoreValue {
   sendMessage: (businessId: string, text: string) => void
   unreadCount: number
 
-  // location
-  originCityId: string
-  setOriginCityId: (id: string) => void
+  // location (map-picked coordinates)
+  origin: { lat: number; lng: number }
+  originLabel: string
+  setOrigin: (lat: number, lng: number) => void
 }
+
+// Stand-in identities for the simulated "Continue with Google" flow — this demo
+// has no OAuth backend, so we mint a realistic-looking profile client-side.
+const demoGoogleProfiles = [
+  { name: 'Jordan Avery', email: 'jordan.avery@gmail.com' },
+  { name: 'Priya Chandran', email: 'priya.chandran@gmail.com' },
+  { name: 'Marcus Bell', email: 'marcus.bell@gmail.com' },
+]
 
 const StoreContext = createContext<StoreValue | null>(null)
 
@@ -59,11 +72,22 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [reviews, setReviews] = useState<Review[]>(seedReviews)
   const [notes, setNotes] = useState<Record<string, string>>({})
   const [threads, setThreads] = useState<Record<string, Message[]>>({})
-  const [originCityId, setOriginCityId] = useState<string>(cities[0].id)
+  const [origin, setOriginState] = useState({ lat: cities[0].lat, lng: cities[0].lng })
+
+  const setOrigin = useCallback((lat: number, lng: number) => {
+    setOriginState({ lat, lng })
+  }, [])
+
+  const originLabel = useMemo(() => originAreaLabel(origin.lat, origin.lng), [origin])
 
   const signIn = useCallback((name: string) => {
     const trimmed = name.trim()
-    setUser({ name: trimmed || 'Guest' })
+    setUser({ name: trimmed || 'Guest', provider: 'guest' })
+  }, [])
+
+  const signInWithGoogle = useCallback(() => {
+    const profile = demoGoogleProfiles[Math.floor(Math.random() * demoGoogleProfiles.length)]
+    setUser({ name: profile.name, email: profile.email, provider: 'google' })
   }, [])
 
   const signOut = useCallback(() => setUser(null), [])
@@ -144,6 +168,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     () => ({
       user,
       signIn,
+      signInWithGoogle,
       signOut,
       favorites,
       isFavorite,
@@ -157,12 +182,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       getThread,
       sendMessage,
       unreadCount,
-      originCityId,
-      setOriginCityId,
+      origin,
+      originLabel,
+      setOrigin,
     }),
     [
       user,
       signIn,
+      signInWithGoogle,
       signOut,
       favorites,
       isFavorite,
@@ -176,7 +203,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       getThread,
       sendMessage,
       unreadCount,
-      originCityId,
+      origin,
+      originLabel,
+      setOrigin,
     ],
   )
 

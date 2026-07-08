@@ -14,11 +14,10 @@ import type { Business } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
 export function BusinessCard({ business }: { business: Business }) {
-  const { getRating, originCityId } = useStore()
+  const { getRating, origin } = useStore()
   const rating = getRating(business.id)
   const category = categories.find((c) => c.id === business.categoryId)
   const cityName = cities.find((c) => c.id === business.city)?.name ?? ''
-  const origin = cities.find((c) => c.id === originCityId) ?? cities[0]
   const dist = formatDistance(distanceMiles(origin, business))
   const status = useOpenStatus(business)
 

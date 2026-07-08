@@ -5,13 +5,11 @@ import { useMemo } from 'react'
 import { Navigation } from 'lucide-react'
 import { BusinessCard } from '@/components/business-card'
 import { useStore } from '@/components/store-provider'
-import { businesses, cities } from '@/lib/data'
+import { businesses } from '@/lib/data'
 import { distanceMiles } from '@/lib/format'
 
 export function NearestSection() {
-  const { originCityId } = useStore()
-  const cityName = cities.find((c) => c.id === originCityId)?.name ?? ''
-  const origin = cities.find((c) => c.id === originCityId) ?? cities[0]
+  const { origin, originLabel } = useStore()
 
   const nearest = useMemo(
     () =>
@@ -29,9 +27,9 @@ export function NearestSection() {
             <span className="inline-flex items-center gap-1.5 text-sm font-medium text-primary">
               <Navigation size={15} /> Closest to you
             </span>
-            <h2 className="mt-1 font-serif text-2xl tracking-tight sm:text-3xl">Nearest {cityName}</h2>
+            <h2 className="mt-1 font-serif text-2xl tracking-tight sm:text-3xl">Nearest {originLabel}</h2>
             <p className="mt-1 text-muted-foreground">
-              Change your location in the top bar to see what&apos;s around you.
+              Change your location on the map in the top bar to see what&apos;s around you.
             </p>
           </div>
           <Link

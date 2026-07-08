@@ -3,9 +3,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { LogOut, User } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { useStore } from '@/components/store-provider'
+import { SignInDialog } from '@/components/auth/sign-in-dialog'
+import { GoogleIcon } from '@/components/icons/google-icon'
 
 function initials(name: string) {
   return name
@@ -17,9 +18,9 @@ function initials(name: string) {
 }
 
 export function AccountMenu() {
-  const { user, signIn, signOut } = useStore()
+  const { user, signOut } = useStore()
   const [open, setOpen] = useState(false)
-  const [name, setName] = useState('')
+  const [dialogOpen, setDialogOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -30,83 +31,78 @@ export function AccountMenu() {
     return () => document.removeEventListener('mousedown', onClick)
   }, [])
 
-  function handleSignIn(e: React.FormEvent) {
-    e.preventDefault()
-    signIn(name)
-    setName('')
-    setOpen(false)
+  if (!user) {
+    return (
+      <>
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-1.5 rounded-full pl-3"
+          onClick={() => setDialogOpen(true)}
+        >
+          <User className="size-4" aria-hidden="true" />
+          Sign in
+        </Button>
+        <SignInDialog open={dialogOpen} onOpenChange={setDialogOpen} />
+      </>
+    )
   }
 
   return (
     <div ref={ref} className="relative">
       <Button
-        variant={user ? 'ghost' : 'outline'}
-        size={user ? 'icon' : 'sm'}
+        variant="ghost"
+        size="icon"
         onClick={() => setOpen((v) => !v)}
         className="rounded-full"
-        aria-label={user ? 'Account menu' : 'Sign in'}
+        aria-label="Account menu"
         aria-expanded={open}
       >
-        {user ? (
-          <Avatar className="size-7">
-            <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">
-              {initials(user.name)}
-            </AvatarFallback>
-          </Avatar>
-        ) : (
-          <>
-            <User className="size-4" aria-hidden="true" />
-            Sign in
-          </>
-        )}
+        <Avatar className="size-7">
+          <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">
+            {initials(user.name)}
+          </AvatarFallback>
+        </Avatar>
       </Button>
 
       {open ? (
-        <div className="absolute right-0 top-[calc(100%+0.5rem)] z-50 w-64 rounded-xl border border-border bg-popover p-4 shadow-lg">
-          {user ? (
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-3">
-                <Avatar className="size-9">
-                  <AvatarFallback className="bg-primary/10 text-sm font-semibold text-primary">
-                    {initials(user.name)}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-popover-foreground">{user.name}</p>
-                  <p className="text-xs text-muted-foreground">Signed in</p>
-                </div>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  signOut()
-                  setOpen(false)
-                }}
-              >
-                <LogOut className="size-4" aria-hidden="true" />
-                Sign out
-              </Button>
+        <div className="absolute right-0 top-[calc(100%+0.5rem)] z-50 w-64 rounded-2xl border border-border bg-popover p-4 shadow-lg">
+          <div className="flex items-center gap-3">
+            <Avatar className="size-10">
+              <AvatarFallback className="bg-primary/10 text-sm font-semibold text-primary">
+                {initials(user.name)}
+              </AvatarFallback>
+            </Avatar>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold text-popover-foreground">{user.name}</p>
+              {user.email ? (
+                <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+              ) : (
+                <p className="text-xs text-muted-foreground">Signed in</p>
+              )}
             </div>
-          ) : (
-            <form onSubmit={handleSignIn} className="flex flex-col gap-3">
-              <div>
-                <p className="text-sm font-semibold text-popover-foreground">Welcome back</p>
-                <p className="text-xs text-muted-foreground">Sign in to review, save notes, and message businesses.</p>
-              </div>
-              <Input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Your name"
-                className="bg-background"
-                aria-label="Your name"
-                autoFocus
-              />
-              <Button type="submit" size="sm">
-                Sign in
-              </Button>
-            </form>
-          )}
+          </div>
+
+          {user.provider === 'google' ? (
+            <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground">
+              <GoogleIcon className="size-3" /> Connected with Google
+            </span>
+          ) : null}
+
+          <div className="mt-3 h-px bg-border" />
+
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-3 w-full"
+            onClick={() => {
+              signOut()
+              setOpen(false)
+            }}
+          >
+            <LogOut className="size-4" aria-hidden="true" />
+            Sign out
+          </Button>
         </div>
       ) : null}
     </div>

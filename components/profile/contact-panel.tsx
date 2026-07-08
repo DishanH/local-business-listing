@@ -3,19 +3,17 @@
 import { Globe, Mail, MapPin, Navigation, Phone } from 'lucide-react'
 import type { Business } from '@/lib/types'
 import { useStore } from '@/components/store-provider'
-import { cities } from '@/lib/data'
 import { distanceMiles, formatDistance } from '@/lib/format'
 
 export function ContactPanel({ business }: { business: Business }) {
-  const { originCityId } = useStore()
-  const origin = cities.find((c) => c.id === originCityId) ?? cities[0]
+  const { origin, originLabel } = useStore()
   const miles = distanceMiles(origin, business)
 
   const rows = [
     {
       icon: MapPin,
       label: business.address,
-      sub: `${business.city} · ${formatDistance(miles)} from ${origin.name}`,
+      sub: `${business.city} · ${formatDistance(miles)} from ${originLabel}`,
     },
     { icon: Phone, label: business.phone, href: `tel:${business.phone}` },
     { icon: Mail, label: business.email, href: `mailto:${business.email}` },
