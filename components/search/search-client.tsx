@@ -6,7 +6,7 @@ import { ArrowUpDown, Search, X, ChevronDown } from 'lucide-react'
 import { BusinessCard } from '@/components/business-card'
 import { CategoryIcon } from '@/components/category-icon'
 import { useStore } from '@/components/store-provider'
-import { businesses, categories } from '@/lib/data'
+import { businesses } from '@/lib/data'
 import { fuzzySearch } from '@/lib/search'
 import { getSubcategories, matchesSubcategory } from '@/lib/subcategories'
 import { distanceMiles, getOpenStatus } from '@/lib/format'
@@ -34,7 +34,7 @@ const sortLabels: Record<Sort, string> = {
 export function SearchClient() {
   const router = useRouter()
   const params = useSearchParams()
-  const { getRating, origin } = useStore()
+  const { getRating, origin, categories } = useStore()
 
   const [query, setQuery] = useState(params.get('q') ?? '')
   const [category, setCategory] = useState(params.get('category') ?? 'all')

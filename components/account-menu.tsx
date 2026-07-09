@@ -1,12 +1,12 @@
 'use client'
 
+import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
-import { LogOut, User } from 'lucide-react'
+import { LogOut, ShieldCheck, Store, User } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { useStore } from '@/components/store-provider'
 import { SignInDialog } from '@/components/auth/sign-in-dialog'
-import { GoogleIcon } from '@/components/icons/google-icon'
 
 function initials(name: string) {
   return name
@@ -18,7 +18,7 @@ function initials(name: string) {
 }
 
 export function AccountMenu() {
-  const { user, signOut } = useStore()
+  const { user, authLoading, signOut } = useStore()
   const [open, setOpen] = useState(false)
   const [dialogOpen, setDialogOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -30,6 +30,10 @@ export function AccountMenu() {
     document.addEventListener('mousedown', onClick)
     return () => document.removeEventListener('mousedown', onClick)
   }, [])
+
+  if (authLoading) {
+    return <div className="size-8 shrink-0 rounded-full bg-muted/60" aria-hidden="true" />
+  }
 
   if (!user) {
     return (
@@ -83,13 +87,38 @@ export function AccountMenu() {
             </div>
           </div>
 
-          {user.provider === 'google' ? (
-            <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground">
-              <GoogleIcon className="size-3" /> Connected with Google
-            </span>
-          ) : null}
+          <div className="mt-3 flex flex-col gap-1">
+            <Link
+              href="/favorites"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-popover-foreground transition-colors hover:bg-muted"
+            >
+              <User className="size-4 text-muted-foreground" aria-hidden="true" />
+              My favorites
+            </Link>
 
-          <div className="mt-3 h-px bg-border" />
+            <Link
+              href="/dashboard"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-popover-foreground transition-colors hover:bg-muted"
+            >
+              <Store className="size-4 text-muted-foreground" aria-hidden="true" />
+              Business dashboard
+            </Link>
+
+            {user.role === 'admin' ? (
+              <Link
+                href="/admin"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-popover-foreground transition-colors hover:bg-muted"
+              >
+                <ShieldCheck className="size-4 text-muted-foreground" aria-hidden="true" />
+                Admin panel
+              </Link>
+            ) : null}
+          </div>
+
+          <div className="mt-2 h-px bg-border" />
 
           <Button
             variant="outline"

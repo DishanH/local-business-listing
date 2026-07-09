@@ -5,7 +5,6 @@ import { ChevronDown, MapPin, Navigation } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { useStore } from '@/components/store-provider'
-import { cities } from '@/lib/data'
 import {
   mapBusinessDots,
   nearestCity,
@@ -19,7 +18,7 @@ const MAP_W = 360
 const MAP_H = 220
 
 function LocationMapPanel({ onClose }: { onClose: () => void }) {
-  const { origin, setOrigin } = useStore()
+  const { origin, setOrigin, cities } = useStore()
   const svgRef = useRef<SVGSVGElement>(null)
   const [draft, setDraft] = useState(origin)
 

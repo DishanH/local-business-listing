@@ -1,8 +1,10 @@
 import Link from 'next/link'
 import { Compass } from 'lucide-react'
-import { categories } from '@/lib/data'
+import { getAppCategories } from '@/lib/supabase/queries/taxonomy'
 
-export function SiteFooter() {
+export async function SiteFooter() {
+  const categories = await getAppCategories()
+
   return (
     <footer className="mt-16 border-t bg-secondary/30">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">

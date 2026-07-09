@@ -8,13 +8,12 @@ import { FavoriteButton } from '@/components/favorite-button'
 import { CategoryIcon } from '@/components/category-icon'
 import { useStore } from '@/components/store-provider'
 import { useOpenStatus } from '@/hooks/use-open-status'
-import { categories, cities } from '@/lib/data'
 import { distanceMiles, formatDistance, priceLabel } from '@/lib/format'
 import type { Business } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
 export function BusinessCard({ business }: { business: Business }) {
-  const { getRating, origin } = useStore()
+  const { getRating, origin, categories, cities } = useStore()
   const rating = getRating(business.id)
   const category = categories.find((c) => c.id === business.categoryId)
   const cityName = cities.find((c) => c.id === business.city)?.name ?? ''

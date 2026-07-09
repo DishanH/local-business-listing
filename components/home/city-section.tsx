@@ -1,7 +1,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-import { businesses, cities } from '@/lib/data'
+import { businesses } from '@/lib/data'
+import { getAppCities } from '@/lib/supabase/queries/taxonomy'
 
 const cityImages: Record<string, string> = {
   riverton: '/businesses/restaurant.png',
@@ -9,7 +10,9 @@ const cityImages: Record<string, string> = {
   brookside: '/businesses/bookstore.png',
 }
 
-export function CitySection() {
+export async function CitySection() {
+  const cities = await getAppCities()
+
   return (
     <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
       <div>

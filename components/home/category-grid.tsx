@@ -1,8 +1,11 @@
 import Link from 'next/link'
 import { CategoryIcon } from '@/components/category-icon'
-import { businesses, categories } from '@/lib/data'
+import { businesses } from '@/lib/data'
+import { getAppCategories } from '@/lib/supabase/queries/taxonomy'
 
-export function CategoryGrid() {
+export async function CategoryGrid() {
+  const categories = await getAppCategories()
+
   return (
     <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
       <div className="flex items-end justify-between gap-4">

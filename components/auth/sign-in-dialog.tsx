@@ -1,7 +1,7 @@
 'use client'
 
 import { useId, useState } from 'react'
-import { Compass, ShieldCheck } from 'lucide-react'
+import { Compass, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -13,7 +13,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { GoogleIcon } from '@/components/icons/google-icon'
-import { useStore } from '@/components/store-provider'
+import { createClient } from '@/lib/supabase/client'
 
 interface SignInDialogProps {
   open: boolean
@@ -21,27 +21,81 @@ interface SignInDialogProps {
   description?: string
 }
 
-export function SignInDialog({ open, onOpenChange, description }: SignInDialogProps) {
-  const { signIn, signInWithGoogle } = useStore()
-  const [name, setName] = useState('')
-  const [loadingGoogle, setLoadingGoogle] = useState(false)
-  const nameId = useId()
+type Mode = 'sign-in' | 'sign-up'
 
-  function handleGoogle() {
-    setLoadingGoogle(true)
-    window.setTimeout(() => {
-      signInWithGoogle()
-      setLoadingGoogle(false)
-      onOpenChange(false)
-    }, 550)
+export function SignInDialog({ open, onOpenChange, description }: SignInDialogProps) {
+  const emailId = useId()
+  const passwordId = useId()
+  const [mode, setMode] = useState<Mode>('sign-in')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [loadingGoogle, setLoadingGoogle] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [notice, setNotice] = useState<string | null>(null)
+
+  function reset() {
+    setEmail('')
+    setPassword('')
+    setError(null)
+    setNotice(null)
+    setMode('sign-in')
   }
 
-  function handleNameSignIn(e: React.FormEvent) {
+  async function handleGoogle() {
+    setError(null)
+    setLoadingGoogle(true)
+    const supabase = createClient()
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
+    })
+    if (error) {
+      setError(error.message)
+      setLoadingGoogle(false)
+    }
+    // On success the browser navigates away to Google, so no further
+    // state updates are needed here.
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!name.trim()) return
-    signIn(name)
-    setName('')
-    onOpenChange(false)
+    setError(null)
+    setNotice(null)
+    setLoading(true)
+    const supabase = createClient()
+
+    if (mode === 'sign-in') {
+      const { error } = await supabase.auth.signInWithPassword({ email, password })
+      setLoading(false)
+      if (error) {
+        setError(error.message)
+        return
+      }
+      onOpenChange(false)
+      reset()
+      return
+    }
+
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+    })
+    setLoading(false)
+    if (error) {
+      setError(error.message)
+      return
+    }
+
+    if (data.session) {
+      onOpenChange(false)
+      reset()
+      return
+    }
+
+    setNotice('Check your inbox to confirm your email, then sign in.')
+    setMode('sign-in')
   }
 
   return (
@@ -49,7 +103,7 @@ export function SignInDialog({ open, onOpenChange, description }: SignInDialogPr
       open={open}
       onOpenChange={(next) => {
         onOpenChange(next)
-        if (!next) setName('')
+        if (!next) reset()
       }}
     >
       <DialogContent>
@@ -73,11 +127,11 @@ export function SignInDialog({ open, onOpenChange, description }: SignInDialogPr
             disabled={loadingGoogle}
           >
             {loadingGoogle ? (
-              <span className="size-4 animate-spin rounded-full border-2 border-muted-foreground/30 border-t-foreground" />
+              <Loader2 className="size-4 animate-spin" />
             ) : (
               <GoogleIcon className="size-4" />
             )}
-            {loadingGoogle ? 'Connecting…' : 'Continue with Google'}
+            {loadingGoogle ? 'Redirecting…' : 'Continue with Google'}
           </Button>
 
           <div className="flex items-center gap-3">
@@ -86,28 +140,55 @@ export function SignInDialog({ open, onOpenChange, description }: SignInDialogPr
             <span className="h-px flex-1 bg-border" />
           </div>
 
-          <form onSubmit={handleNameSignIn} className="flex flex-col gap-3">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
             <div className="flex flex-col gap-1.5 text-left">
-              <Label htmlFor={nameId}>Continue with your name</Label>
+              <Label htmlFor={emailId}>Email</Label>
               <Input
-                id={nameId}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Alex Rivera"
+                id={emailId}
+                type="email"
+                required
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
                 className="h-11 rounded-xl bg-background text-sm"
-                autoComplete="name"
               />
             </div>
-            <Button type="submit" size="lg" className="h-11 w-full rounded-xl" disabled={!name.trim()}>
-              Continue
+            <div className="flex flex-col gap-1.5 text-left">
+              <Label htmlFor={passwordId}>Password</Label>
+              <Input
+                id={passwordId}
+                type="password"
+                required
+                minLength={6}
+                autoComplete={mode === 'sign-in' ? 'current-password' : 'new-password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="h-11 rounded-xl bg-background text-sm"
+              />
+            </div>
+
+            {error && <p className="text-left text-sm text-destructive">{error}</p>}
+            {notice && <p className="text-left text-sm text-emerald-600 dark:text-emerald-400">{notice}</p>}
+
+            <Button type="submit" size="lg" className="h-11 w-full rounded-xl" disabled={loading}>
+              {loading && <Loader2 className="size-4 animate-spin" />}
+              {mode === 'sign-in' ? 'Sign in' : 'Create account'}
             </Button>
           </form>
 
-          <p className="flex items-start gap-1.5 text-pretty text-xs text-muted-foreground">
-            <ShieldCheck className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
-            This is a demo — sign-in is simulated locally and no real Google account or password
-            is required.
-          </p>
+          <button
+            type="button"
+            className="text-center text-sm text-muted-foreground hover:text-foreground"
+            onClick={() => {
+              setError(null)
+              setNotice(null)
+              setMode(mode === 'sign-in' ? 'sign-up' : 'sign-in')
+            }}
+          >
+            {mode === 'sign-in' ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
+          </button>
         </div>
       </DialogContent>
     </Dialog>

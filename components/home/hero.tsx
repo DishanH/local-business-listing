@@ -5,9 +5,10 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useMemo, useRef, useState } from 'react'
 import { Search, MapPin, ArrowRight, CornerDownLeft } from 'lucide-react'
-import { businesses, categories } from '@/lib/data'
+import { businesses } from '@/lib/data'
 import { suggest } from '@/lib/search'
 import { CategoryIcon } from '@/components/category-icon'
+import { useStore } from '@/components/store-provider'
 
 const heroImages = [
   { src: '/businesses/cafe.png', label: 'Cafés' },
@@ -20,6 +21,7 @@ const quickChips = ['restaurants', 'cafe', 'bakery', 'yoga', 'salon']
 
 export function Hero() {
   const router = useRouter()
+  const { categories } = useStore()
   const [q, setQ] = useState('')
   const [open, setOpen] = useState(false)
   const blurTimer = useRef<number | null>(null)
@@ -108,7 +110,8 @@ export function Hero() {
           <div className="mt-5 flex flex-wrap items-center gap-2">
             <span className="text-sm text-muted-foreground">Popular:</span>
             {quickChips.map((id) => {
-              const cat = categories.find((c) => c.id === id)!
+              const cat = categories.find((c) => c.id === id)
+              if (!cat) return null
               return (
                 <Link
                   key={id}

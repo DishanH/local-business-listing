@@ -10,6 +10,18 @@ import {
   PawPrint,
   Wrench,
   Store,
+  Beer,
+  ShoppingBag,
+  Hammer,
+  Briefcase,
+  Stethoscope,
+  GraduationCap,
+  Palette,
+  PartyPopper,
+  Hotel,
+  Building2,
+  Laptop,
+  HeartHandshake,
   type LucideProps,
 } from 'lucide-react'
 
@@ -24,6 +36,19 @@ const icons = {
   Sparkles,
   PawPrint,
   Wrench,
+  Store,
+  Beer,
+  ShoppingBag,
+  Hammer,
+  Briefcase,
+  Stethoscope,
+  GraduationCap,
+  Palette,
+  PartyPopper,
+  Hotel,
+  Building2,
+  Laptop,
+  HeartHandshake,
 } as const
 
 export function CategoryIcon({ name, ...props }: { name: string } & LucideProps) {

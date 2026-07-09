@@ -7,7 +7,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { ArrowRight, CornerDownLeft, Search } from 'lucide-react'
 import { CategoryIcon } from '@/components/category-icon'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
-import { businesses, categories } from '@/lib/data'
+import { useStore } from '@/components/store-provider'
+import { businesses } from '@/lib/data'
 import { suggest } from '@/lib/search'
 
 const quickChips = ['restaurants', 'cafe', 'bakery', 'yoga', 'salon']
@@ -19,6 +20,7 @@ interface SearchDialogProps {
 
 export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
   const router = useRouter()
+  const { categories } = useStore()
   const inputRef = useRef<HTMLInputElement>(null)
   const [q, setQ] = useState('')
 
@@ -122,7 +124,8 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
               <p className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">Popular</p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {quickChips.map((id) => {
-                  const cat = categories.find((c) => c.id === id)!
+                  const cat = categories.find((c) => c.id === id)
+                  if (!cat) return null
                   return (
                     <button
                       key={id}

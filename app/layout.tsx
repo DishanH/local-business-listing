@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/components/theme-provider'
 import { StoreProvider } from '@/components/store-provider'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
+import { getAppCategories, getAppCities } from '@/lib/supabase/queries/taxonomy'
 import './globals.css'
 
 const jakarta = Plus_Jakarta_Sans({
@@ -34,11 +35,13 @@ export const viewport: Viewport = {
   ],
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const [categories, cities] = await Promise.all([getAppCategories(), getAppCities()])
+
   return (
     <html
       lang="en"
@@ -47,7 +50,7 @@ export default function RootLayout({
     >
       <body className="font-sans antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <StoreProvider>
+          <StoreProvider initialCategories={categories} initialCities={cities}>
             <div className="flex min-h-dvh flex-col">
               <SiteHeader />
               <main className="flex-1">{children}</main>

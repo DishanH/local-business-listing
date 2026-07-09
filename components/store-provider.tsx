@@ -4,31 +4,39 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
 } from 'react'
-import { businesses, cities, seedReviews } from '@/lib/data'
+import { businesses, seedReviews } from '@/lib/data'
 import { originAreaLabel } from '@/lib/location'
-import type { Message, Review } from '@/lib/types'
+import { createClient } from '@/lib/supabase/client'
+import type { UserRole } from '@/lib/supabase/database.types'
+import type { Category, City, Message, Review } from '@/lib/types'
 
 interface Rating {
   avg: number
   count: number
 }
 
-export interface User {
+export interface AppUser {
+  id: string
   name: string
-  email?: string
-  provider: 'google' | 'guest'
+  email: string | null
+  avatarUrl: string | null
+  role: UserRole
 }
 
 interface StoreValue {
-  // auth (simulated for this demo — no real backend is wired up)
-  user: User | null
-  signIn: (name: string) => void
-  signInWithGoogle: () => void
-  signOut: () => void
+  // auth (backed by Supabase Auth — see components/auth/sign-in-dialog.tsx)
+  user: AppUser | null
+  authLoading: boolean
+  signOut: () => Promise<void>
+
+  // taxonomy (seeded via supabase/seed.sql, falls back to bundled mock data)
+  categories: Category[]
+  cities: City[]
 
   // favorites
   favorites: string[]
@@ -56,23 +64,67 @@ interface StoreValue {
   setOrigin: (lat: number, lng: number) => void
 }
 
-// Stand-in identities for the simulated "Continue with Google" flow — this demo
-// has no OAuth backend, so we mint a realistic-looking profile client-side.
-const demoGoogleProfiles = [
-  { name: 'Jordan Avery', email: 'jordan.avery@gmail.com' },
-  { name: 'Priya Chandran', email: 'priya.chandran@gmail.com' },
-  { name: 'Marcus Bell', email: 'marcus.bell@gmail.com' },
-]
-
 const StoreContext = createContext<StoreValue | null>(null)
 
-export function StoreProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
+export function StoreProvider({
+  children,
+  initialCategories,
+  initialCities,
+}: {
+  children: ReactNode
+  initialCategories: Category[]
+  initialCities: City[]
+}) {
+  const supabase = useMemo(() => createClient(), [])
+
+  const [user, setUser] = useState<AppUser | null>(null)
+  const [authLoading, setAuthLoading] = useState(true)
   const [favorites, setFavorites] = useState<string[]>(['daybreak-coffee', 'chapter-and-verse'])
   const [reviews, setReviews] = useState<Review[]>(seedReviews)
   const [notes, setNotes] = useState<Record<string, string>>({})
   const [threads, setThreads] = useState<Record<string, Message[]>>({})
-  const [origin, setOriginState] = useState({ lat: cities[0].lat, lng: cities[0].lng })
+  const [origin, setOriginState] = useState({
+    lat: initialCities[0]?.lat ?? 40.0,
+    lng: initialCities[0]?.lng ?? -74.0,
+  })
+
+  useEffect(() => {
+    let active = true
+
+    async function hydrateUser(authUser: { id: string; email?: string | null } | null) {
+      if (!authUser) {
+        if (active) setUser(null)
+        return
+      }
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name, avatar_url, role')
+        .eq('id', authUser.id)
+        .single()
+      if (!active) return
+      setUser({
+        id: authUser.id,
+        name: profile?.full_name || authUser.email?.split('@')[0] || 'Account',
+        email: authUser.email ?? null,
+        avatarUrl: profile?.avatar_url ?? null,
+        role: profile?.role ?? 'customer',
+      })
+    }
+
+    supabase.auth.getUser().then(({ data }) => {
+      hydrateUser(data.user)
+      if (active) setAuthLoading(false)
+    })
+
+    const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
+      hydrateUser(session?.user ?? null)
+    })
+
+    return () => {
+      active = false
+      subscription.subscription.unsubscribe()
+    }
+  }, [supabase])
 
   const setOrigin = useCallback((lat: number, lng: number) => {
     setOriginState({ lat, lng })
@@ -80,17 +132,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const originLabel = useMemo(() => originAreaLabel(origin.lat, origin.lng), [origin])
 
-  const signIn = useCallback((name: string) => {
-    const trimmed = name.trim()
-    setUser({ name: trimmed || 'Guest', provider: 'guest' })
-  }, [])
-
-  const signInWithGoogle = useCallback(() => {
-    const profile = demoGoogleProfiles[Math.floor(Math.random() * demoGoogleProfiles.length)]
-    setUser({ name: profile.name, email: profile.email, provider: 'google' })
-  }, [])
-
-  const signOut = useCallback(() => setUser(null), [])
+  const signOut = useCallback(async () => {
+    await supabase.auth.signOut()
+    setUser(null)
+  }, [supabase])
 
   const isFavorite = useCallback((id: string) => favorites.includes(id), [favorites])
 
@@ -167,9 +212,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const value = useMemo<StoreValue>(
     () => ({
       user,
-      signIn,
-      signInWithGoogle,
+      authLoading,
       signOut,
+      categories: initialCategories,
+      cities: initialCities,
       favorites,
       isFavorite,
       toggleFavorite,
@@ -188,9 +234,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     }),
     [
       user,
-      signIn,
-      signInWithGoogle,
+      authLoading,
       signOut,
+      initialCategories,
+      initialCities,
       favorites,
       isFavorite,
       toggleFavorite,

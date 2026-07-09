@@ -1,7 +1,8 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
-import { businesses, categories } from '@/lib/data'
+import { businesses } from '@/lib/data'
+import { getAppCategories } from '@/lib/supabase/queries/taxonomy'
 import { ProfileHeader } from '@/components/profile/profile-header'
 import { HoursPanel } from '@/components/profile/hours-panel'
 import { ContactPanel } from '@/components/profile/contact-panel'
@@ -21,6 +22,7 @@ export default async function BusinessPage({ params }: { params: Promise<{ id: s
   const business = businesses.find((b) => b.id === id)
   if (!business) notFound()
 
+  const categories = await getAppCategories()
   const category = categories.find((c) => c.id === business.categoryId)
   const similar = businesses
     .filter((b) => b.categoryId === business.categoryId && b.id !== business.id)
