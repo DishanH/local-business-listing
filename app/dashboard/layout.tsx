@@ -19,6 +19,11 @@ export default async function DashboardLayout({ children }: { children: ReactNod
 
   if (!user) redirect('/login?next=/dashboard')
 
+  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+  if (profile?.role !== 'business_owner' && profile?.role !== 'admin') {
+    redirect('/become-owner')
+  }
+
   return (
     <PortalShell title="Business" subtitle="Localry" navLinks={navLinks}>
       {children}

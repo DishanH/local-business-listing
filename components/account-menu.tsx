@@ -97,14 +97,25 @@ export function AccountMenu() {
               My favorites
             </Link>
 
-            <Link
-              href="/dashboard"
-              onClick={() => setOpen(false)}
-              className="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-popover-foreground transition-colors hover:bg-muted"
-            >
-              <Store className="size-4 text-muted-foreground" aria-hidden="true" />
-              Business dashboard
-            </Link>
+            {user.role === 'business_owner' || user.role === 'admin' ? (
+              <Link
+                href="/dashboard"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-popover-foreground transition-colors hover:bg-muted"
+              >
+                <Store className="size-4 text-muted-foreground" aria-hidden="true" />
+                Business dashboard
+              </Link>
+            ) : (
+              <Link
+                href="/become-owner"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-popover-foreground transition-colors hover:bg-muted"
+              >
+                <Store className="size-4 text-muted-foreground" aria-hidden="true" />
+                List your business
+              </Link>
+            )}
 
             {user.role === 'admin' ? (
               <Link

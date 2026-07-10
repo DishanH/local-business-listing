@@ -1,9 +1,9 @@
 import Link from 'next/link'
 import { CategoryIcon } from '@/components/category-icon'
-import { businesses } from '@/lib/data'
 import { getAppCategories } from '@/lib/supabase/queries/taxonomy'
+import type { Business } from '@/lib/types'
 
-export async function CategoryGrid() {
+export async function CategoryGrid({ businesses }: { businesses: Business[] }) {
   const categories = await getAppCategories()
 
   return (

@@ -5,18 +5,17 @@ import { useMemo } from 'react'
 import { Navigation } from 'lucide-react'
 import { BusinessCard } from '@/components/business-card'
 import { useStore } from '@/components/store-provider'
-import { businesses } from '@/lib/data'
 import { distanceMiles } from '@/lib/format'
 
 export function NearestSection() {
-  const { origin, originLabel } = useStore()
+  const { origin, originLabel, businesses } = useStore()
 
   const nearest = useMemo(
     () =>
       [...businesses]
         .sort((a, b) => distanceMiles(origin, a) - distanceMiles(origin, b))
         .slice(0, 4),
-    [origin],
+    [businesses, origin],
   )
 
   return (

@@ -1,28 +1,47 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 import { Check, Pencil } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { useStore } from '@/components/store-provider'
 import { SignInPrompt } from '@/components/profile/sign-in-prompt'
+import { saveNote } from '@/lib/supabase/actions/social'
 
-export function NotesPanel({ businessId }: { businessId: string }) {
-  const { user, getNote, setNote } = useStore()
-  const saved = getNote(businessId)
-  const [draft, setDraft] = useState(saved)
+export function NotesPanel({
+  businessId,
+  initialNote = '',
+}: {
+  /** Supabase businesses.id (UUID) */
+  businessId: string
+  initialNote?: string
+}) {
+  const { user } = useStore()
+  const [draft, setDraft] = useState(initialNote)
+  const [saved, setSaved] = useState(initialNote)
   const [justSaved, setJustSaved] = useState(false)
+  const [pending, startTransition] = useTransition()
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    setDraft(getNote(businessId))
-  }, [businessId, getNote])
+    setDraft(initialNote)
+    setSaved(initialNote)
+  }, [initialNote, businessId])
 
   const dirty = draft !== saved
 
   function handleSave() {
-    setNote(businessId, draft)
-    setJustSaved(true)
-    window.setTimeout(() => setJustSaved(false), 1600)
+    setError(null)
+    startTransition(async () => {
+      try {
+        await saveNote(businessId, draft)
+        setSaved(draft)
+        setJustSaved(true)
+        window.setTimeout(() => setJustSaved(false), 1600)
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'Failed to save note')
+      }
+    })
   }
 
   return (
@@ -43,8 +62,8 @@ export function NotesPanel({ businessId }: { businessId: string }) {
             className="resize-none bg-background text-sm"
           />
           <div className="mt-2 flex items-center gap-3">
-            <Button onClick={handleSave} disabled={!dirty} size="sm">
-              Save note
+            <Button onClick={handleSave} disabled={!dirty || pending} size="sm">
+              {pending ? 'Saving…' : 'Save note'}
             </Button>
             {justSaved ? (
               <span className="inline-flex items-center gap-1 text-sm text-primary">
@@ -52,6 +71,7 @@ export function NotesPanel({ businessId }: { businessId: string }) {
               </span>
             ) : null}
           </div>
+          {error ? <p className="mt-2 text-sm text-destructive">{error}</p> : null}
         </>
       ) : (
         <SignInPrompt message="Sign in to save private notes about this place." />

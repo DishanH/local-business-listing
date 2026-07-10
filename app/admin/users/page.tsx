@@ -22,7 +22,12 @@ async function getUsers() {
 }
 
 export default async function AdminUsersPage() {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
   const users = await getUsers()
+  const currentUserId = user?.id
 
   return (
     <div className="flex flex-col gap-5">
@@ -45,34 +50,43 @@ export default async function AdminUsersPage() {
             </tr>
           </thead>
           <tbody className="divide-y">
-            {users.map((profile) => (
-              <tr key={profile.id}>
-                <td className="px-4 py-3 font-medium">{profile.full_name ?? 'Unnamed user'}</td>
-                <td className="px-4 py-3">
-                  <Badge variant={ROLE_BADGE_VARIANT[profile.role]}>{profile.role.replace('_', ' ')}</Badge>
-                </td>
-                <td className="px-4 py-3 text-muted-foreground">{profile.is_active ? 'Active' : 'Suspended'}</td>
-                <td className="px-4 py-3 text-muted-foreground">
-                  {new Date(profile.created_at).toLocaleDateString()}
-                </td>
-                <td className="px-4 py-3">
-                  <div className="flex flex-wrap justify-end gap-1.5">
-                    {ROLE_OPTIONS.filter((role) => role !== profile.role).map((role) => (
-                      <form key={role} action={updateUserRole.bind(null, profile.id, role)}>
-                        <Button type="submit" size="sm" variant="outline">
-                          Make {role.replace('_', ' ')}
-                        </Button>
-                      </form>
-                    ))}
-                    <form action={toggleUserActive.bind(null, profile.id, !profile.is_active)}>
-                      <Button type="submit" size="sm" variant={profile.is_active ? 'destructive' : 'outline'}>
-                        {profile.is_active ? 'Suspend' : 'Reactivate'}
-                      </Button>
-                    </form>
-                  </div>
-                </td>
-              </tr>
-            ))}
+            {users.map((profile) => {
+              const isSelf = profile.id === currentUserId
+              return (
+                <tr key={profile.id}>
+                  <td className="px-4 py-3 font-medium">
+                    {profile.full_name ?? 'Unnamed user'}
+                    {isSelf ? <span className="ml-2 text-xs text-muted-foreground">(you)</span> : null}
+                  </td>
+                  <td className="px-4 py-3">
+                    <Badge variant={ROLE_BADGE_VARIANT[profile.role]}>{profile.role.replace('_', ' ')}</Badge>
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">{profile.is_active ? 'Active' : 'Suspended'}</td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    {new Date(profile.created_at).toLocaleDateString()}
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex flex-wrap justify-end gap-1.5">
+                      {!isSelf &&
+                        ROLE_OPTIONS.filter((role) => role !== profile.role).map((role) => (
+                          <form key={role} action={updateUserRole.bind(null, profile.id, role)}>
+                            <Button type="submit" size="sm" variant="outline">
+                              Make {role.replace('_', ' ')}
+                            </Button>
+                          </form>
+                        ))}
+                      {!isSelf && (
+                        <form action={toggleUserActive.bind(null, profile.id, !profile.is_active)}>
+                          <Button type="submit" size="sm" variant={profile.is_active ? 'destructive' : 'outline'}>
+                            {profile.is_active ? 'Suspend' : 'Reactivate'}
+                          </Button>
+                        </form>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              )
+            })}
             {users.length === 0 && (
               <tr>
                 <td colSpan={5} className="px-4 py-10 text-center text-muted-foreground">

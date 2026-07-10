@@ -1,7 +1,12 @@
 import 'server-only'
 
+import { cache } from 'react'
+
+import { businesses as mockBusinesses } from '@/lib/data'
 import { createClient } from '@/lib/supabase/server'
 import type { Database } from '@/lib/supabase/database.types'
+import { mapBusinessListRowToApp } from '@/lib/supabase/map-business'
+import type { Business as AppBusiness } from '@/lib/types'
 
 export type Business = Database['public']['Tables']['businesses']['Row']
 export type BusinessInsert = Database['public']['Tables']['businesses']['Insert']
@@ -49,7 +54,7 @@ export async function searchPublishedBusinesses(params: BusinessSearchParams) {
 export async function getBusinessBySlug(slug: string) {
   const supabase = await createClient()
 
-  const { data: business, error } = await supabase.from('businesses').select('*').eq('slug', slug).single()
+  const { data: business, error } = await supabase.from('businesses').select('*').eq('slug', slug).maybeSingle()
   if (error) throw error
   if (!business) return null
 
@@ -115,6 +120,65 @@ export async function getBusinessesForOwner(profileId: string) {
     business,
   }))
 }
+
+/**
+ * All published businesses mapped into the frontend `Business` shape, for
+ * use alongside the bundled mock data on the home/search pages while real
+ * listings are still being onboarded.
+ */
+async function getPublishedBusinessesForAppUncached(limit = 60): Promise<AppBusiness[]> {
+  const supabase = await createClient()
+  const { data: rows, error } = await supabase
+    .from('businesses')
+    .select('*')
+    .eq('status', 'published')
+    .order('is_featured', { ascending: false })
+    .order('avg_rating', { ascending: false })
+    .limit(limit)
+  if (error) throw error
+  if (!rows?.length) return []
+
+  const businessIds = rows.map((r) => r.id)
+  const categoryIds = [...new Set(rows.map((r) => r.category_id))]
+  const cityIds = [...new Set(rows.map((r) => r.city_id).filter((id): id is string => Boolean(id)))]
+
+  const [categoryRes, cityRes, hoursRes] = await Promise.all([
+    supabase.from('categories').select('*').in('id', categoryIds),
+    cityIds.length ? supabase.from('cities').select('*').in('id', cityIds) : Promise.resolve({ data: [] }),
+    supabase.from('business_hours').select('*').in('business_id', businessIds),
+  ])
+
+  const categoryById = new Map((categoryRes.data ?? []).map((c) => [c.id, c]))
+  const cityById = new Map((cityRes.data ?? []).map((c) => [c.id, c]))
+  const hoursByBusiness = new Map<string, Database['public']['Tables']['business_hours']['Row'][]>()
+  for (const h of hoursRes.data ?? []) {
+    const list = hoursByBusiness.get(h.business_id) ?? []
+    list.push(h)
+    hoursByBusiness.set(h.business_id, list)
+  }
+
+  return rows.map((row) =>
+    mapBusinessListRowToApp(
+      row,
+      categoryById.get(row.category_id) ?? null,
+      row.city_id ? cityById.get(row.city_id) ?? null : null,
+      hoursByBusiness.get(row.id) ?? [],
+    ),
+  )
+}
+
+/** Cached per-request so the root layout and page-level fetches don't double-query. */
+export const getPublishedBusinessesForApp = cache(getPublishedBusinessesForAppUncached)
+
+/**
+ * Real (live) businesses first, followed by the bundled demo listings.
+ * Temporary bridge while the catalog transitions away from mock data —
+ * remove the mock spread once every category has real listings.
+ */
+export const getMixedBusinessesForApp = cache(async (limit = 60): Promise<AppBusiness[]> => {
+  const real = await getPublishedBusinessesForApp(limit).catch(() => [])
+  return [...real, ...mockBusinesses]
+})
 
 /** All businesses (any status) — for the admin moderation queue. */
 export async function getBusinessesForAdmin(status?: Database['public']['Tables']['businesses']['Row']['status']) {

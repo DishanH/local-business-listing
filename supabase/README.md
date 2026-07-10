@@ -30,6 +30,7 @@ npx supabase db execute -f supabase/seed.sql
 | `migrations/0003_functions_triggers.sql` | `updated_at` maintenance, auto-create a `profiles` row on sign-up, RLS helper functions (`is_admin`, `owns_business`), rating aggregation, unread-count maintenance, auto-ownership on listing creation. |
 | `migrations/0004_rls_policies.sql` | Row Level Security for every table. |
 | `migrations/0005_rls_business_creator.sql` | Fix listing creation: creators can read/update own drafts; backfill missing profiles. |
+| `migrations/0006_storage_and_ops.sql` | `business-images` storage bucket + policies; `become_business_owner()` opt-in RPC. |
 | `seed.sql` | ~22 top-level categories with ~140 subcategories, ~25 filters/amenities, and 3 starter cities. |
 
 ## Schema overview

@@ -1,10 +1,16 @@
+'use client'
+
 import Link from 'next/link'
+import { useMemo } from 'react'
 import { ArrowRight } from 'lucide-react'
 import { BusinessCard } from '@/components/business-card'
-import { businesses } from '@/lib/data'
+import { useStore } from '@/components/store-provider'
 
 export function FeaturedSection() {
-  const featured = businesses.filter((b) => b.featured)
+  const { businesses } = useStore()
+  const featured = useMemo(() => businesses.filter((b) => b.featured).slice(0, 8), [businesses])
+
+  if (featured.length === 0) return null
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6">

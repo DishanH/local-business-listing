@@ -11,6 +11,9 @@ export async function updateUserRole(profileId: string, role: UserRole) {
     data: { user },
   } = await supabase.auth.getUser()
   if (!user) throw new Error('Not authenticated')
+  if (profileId === user.id && role !== 'admin') {
+    throw new Error('You cannot demote your own admin account')
+  }
 
   const { error } = await supabase.from('profiles').update({ role }).eq('id', profileId)
   if (error) throw new Error(error.message)
@@ -31,6 +34,7 @@ export async function toggleUserActive(profileId: string, isActive: boolean) {
     data: { user },
   } = await supabase.auth.getUser()
   if (!user) throw new Error('Not authenticated')
+  if (profileId === user.id) throw new Error('You cannot suspend your own account')
 
   const { error } = await supabase.from('profiles').update({ is_active: isActive }).eq('id', profileId)
   if (error) throw new Error(error.message)

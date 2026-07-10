@@ -9,11 +9,11 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { businesses, seedReviews } from '@/lib/data'
+import { seedReviews } from '@/lib/data'
 import { originAreaLabel } from '@/lib/location'
 import { createClient } from '@/lib/supabase/client'
 import type { UserRole } from '@/lib/supabase/database.types'
-import type { Category, City, Message, Review } from '@/lib/types'
+import type { Business, Category, City, Message, Review } from '@/lib/types'
 
 interface Rating {
   avg: number
@@ -37,6 +37,9 @@ interface StoreValue {
   // taxonomy (seeded via supabase/seed.sql, falls back to bundled mock data)
   categories: Category[]
   cities: City[]
+
+  // businesses: live Supabase listings mixed with bundled demo listings
+  businesses: Business[]
 
   // favorites
   favorites: string[]
@@ -70,10 +73,12 @@ export function StoreProvider({
   children,
   initialCategories,
   initialCities,
+  initialBusinesses,
 }: {
   children: ReactNode
   initialCategories: Category[]
   initialCities: City[]
+  initialBusinesses: Business[]
 }) {
   const supabase = useMemo(() => createClient(), [])
 
@@ -181,7 +186,7 @@ export function StoreProvider({
   const sendMessage = useCallback((businessId: string, text: string) => {
     const trimmed = text.trim()
     if (!trimmed) return
-    const business = businesses.find((b) => b.id === businessId)
+    const business = initialBusinesses.find((b) => b.id === businessId)
     const userMsg: Message = {
       id: `m-${Date.now()}`,
       businessId,
@@ -216,6 +221,7 @@ export function StoreProvider({
       signOut,
       categories: initialCategories,
       cities: initialCities,
+      businesses: initialBusinesses,
       favorites,
       isFavorite,
       toggleFavorite,
@@ -238,6 +244,7 @@ export function StoreProvider({
       signOut,
       initialCategories,
       initialCities,
+      initialBusinesses,
       favorites,
       isFavorite,
       toggleFavorite,

@@ -40,6 +40,7 @@ export async function SiteFooter() {
               <li><Link href="/" className="transition-colors hover:text-foreground">Home</Link></li>
               <li><Link href="/search" className="transition-colors hover:text-foreground">Browse all</Link></li>
               <li><Link href="/favorites" className="transition-colors hover:text-foreground">Favorites</Link></li>
+              <li><Link href="/become-owner" className="transition-colors hover:text-foreground">List your business</Link></li>
             </ul>
           </div>
         </div>

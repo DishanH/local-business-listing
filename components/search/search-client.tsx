@@ -6,7 +6,6 @@ import { ArrowUpDown, Search, X, ChevronDown } from 'lucide-react'
 import { BusinessCard } from '@/components/business-card'
 import { CategoryIcon } from '@/components/category-icon'
 import { useStore } from '@/components/store-provider'
-import { businesses } from '@/lib/data'
 import { fuzzySearch } from '@/lib/search'
 import { getSubcategories, matchesSubcategory } from '@/lib/subcategories'
 import { distanceMiles, getOpenStatus } from '@/lib/format'
@@ -34,7 +33,7 @@ const sortLabels: Record<Sort, string> = {
 export function SearchClient() {
   const router = useRouter()
   const params = useSearchParams()
-  const { getRating, origin, categories } = useStore()
+  const { getRating, origin, categories, businesses } = useStore()
 
   const [query, setQuery] = useState(params.get('q') ?? '')
   const [category, setCategory] = useState(params.get('category') ?? 'all')
@@ -74,7 +73,7 @@ export function SearchClient() {
       sorted.sort((a, b) => b.score - a.score)
     }
     return sorted.map((r) => r.business)
-  }, [query, category, subcategory, activeSub, openNow, priceLevels, sort, origin, getRating])
+  }, [businesses, query, category, subcategory, activeSub, openNow, priceLevels, sort, origin, getRating])
 
   useEffect(() => {
     setVisiblePages(1)

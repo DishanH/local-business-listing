@@ -4,10 +4,9 @@ import Link from 'next/link'
 import { Heart } from 'lucide-react'
 import { BusinessCard } from '@/components/business-card'
 import { useStore } from '@/components/store-provider'
-import { businesses } from '@/lib/data'
 
 export default function FavoritesPage() {
-  const { favorites } = useStore()
+  const { favorites, businesses } = useStore()
   const saved = businesses.filter((b) => favorites.includes(b.id))
 
   return (

@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils'
 
 export function BusinessCard({ business }: { business: Business }) {
   const { getRating, origin, categories, cities } = useStore()
-  const rating = getRating(business.id)
+  const rating = business.rating ?? getRating(business.id)
   const category = categories.find((c) => c.id === business.categoryId)
   const cityName = cities.find((c) => c.id === business.city)?.name ?? ''
   const dist = formatDistance(distanceMiles(origin, business))

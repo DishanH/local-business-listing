@@ -3,15 +3,18 @@ import { CategoryGrid } from '@/components/home/category-grid'
 import { NearestSection } from '@/components/home/nearest-section'
 import { FeaturedSection } from '@/components/home/featured-section'
 import { CitySection } from '@/components/home/city-section'
+import { getMixedBusinessesForApp } from '@/lib/supabase/queries/businesses'
 
-export default function HomePage() {
+export default async function HomePage() {
+  const businesses = await getMixedBusinessesForApp(200)
+
   return (
     <>
       <Hero />
-      <CategoryGrid />
+      <CategoryGrid businesses={businesses} />
       <NearestSection />
       <FeaturedSection />
-      <CitySection />
+      <CitySection businesses={businesses} />
     </>
   )
 }

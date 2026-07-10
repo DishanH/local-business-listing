@@ -64,6 +64,13 @@ export interface Business {
   weeklySpecials?: WeeklySpecial[]
   /** full menu grouped into sections (food businesses) */
   menu?: MenuSection[]
+  /**
+   * Precomputed rating for real (database-backed) listings. When present,
+   * this takes priority over the mock review store in `useStore().getRating`.
+   */
+  rating?: { avg: number; count: number }
+  /** True for businesses that come from Supabase rather than the bundled mock data. */
+  isLive?: boolean
 }
 
 export interface Review {

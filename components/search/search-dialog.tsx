@@ -8,7 +8,6 @@ import { ArrowRight, CornerDownLeft, Search } from 'lucide-react'
 import { CategoryIcon } from '@/components/category-icon'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { useStore } from '@/components/store-provider'
-import { businesses } from '@/lib/data'
 import { suggest } from '@/lib/search'
 
 const quickChips = ['restaurants', 'cafe', 'bakery', 'yoga', 'salon']
@@ -20,11 +19,11 @@ interface SearchDialogProps {
 
 export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
   const router = useRouter()
-  const { categories } = useStore()
+  const { categories, businesses } = useStore()
   const inputRef = useRef<HTMLInputElement>(null)
   const [q, setQ] = useState('')
 
-  const suggestions = useMemo(() => (q.trim() ? suggest(businesses, q, categories, 6) : []), [q])
+  const suggestions = useMemo(() => (q.trim() ? suggest(businesses, q, categories, 6) : []), [businesses, categories, q])
 
   useEffect(() => {
     if (!open) {

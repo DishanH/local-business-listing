@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useMemo, useRef, useState } from 'react'
 import { Search, MapPin, ArrowRight, CornerDownLeft } from 'lucide-react'
-import { businesses } from '@/lib/data'
 import { suggest } from '@/lib/search'
 import { CategoryIcon } from '@/components/category-icon'
 import { useStore } from '@/components/store-provider'
@@ -21,12 +20,12 @@ const quickChips = ['restaurants', 'cafe', 'bakery', 'yoga', 'salon']
 
 export function Hero() {
   const router = useRouter()
-  const { categories } = useStore()
+  const { categories, businesses } = useStore()
   const [q, setQ] = useState('')
   const [open, setOpen] = useState(false)
   const blurTimer = useRef<number | null>(null)
 
-  const suggestions = useMemo(() => (q.trim() ? suggest(businesses, q, categories, 5) : []), [q])
+  const suggestions = useMemo(() => (q.trim() ? suggest(businesses, q, categories, 5) : []), [businesses, categories, q])
 
   const go = (query: string) => {
     router.push(query.trim() ? `/search?q=${encodeURIComponent(query.trim())}` : '/search')

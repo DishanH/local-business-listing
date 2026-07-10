@@ -1,8 +1,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-import { businesses } from '@/lib/data'
 import { getAppCities } from '@/lib/supabase/queries/taxonomy'
+import type { Business } from '@/lib/types'
 
 const cityImages: Record<string, string> = {
   riverton: '/businesses/restaurant.png',
@@ -10,7 +10,7 @@ const cityImages: Record<string, string> = {
   brookside: '/businesses/bookstore.png',
 }
 
-export async function CitySection() {
+export async function CitySection({ businesses }: { businesses: Business[] }) {
   const cities = await getAppCities()
 
   return (

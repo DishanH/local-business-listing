@@ -457,6 +457,7 @@ export interface Database {
       is_admin: { Args: Record<string, never>; Returns: boolean }
       owns_business: { Args: { target_business_id: string }; Returns: boolean }
       ensure_profile: { Args: Record<string, never>; Returns: undefined }
+      become_business_owner: { Args: Record<string, never>; Returns: undefined }
     }
     Enums: {
       user_role: UserRole
