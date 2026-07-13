@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useMemo, useRef, useState } from 'react'
-import { Search, MapPin, ArrowRight, CornerDownLeft } from 'lucide-react'
+import { Search, MapPin, ArrowRight, CornerDownLeft, Store } from 'lucide-react'
 import { suggest } from '@/lib/search'
 import { CategoryIcon } from '@/components/category-icon'
 import { useStore } from '@/components/store-provider'
@@ -123,6 +123,14 @@ export function Hero() {
               )
             })}
           </div>
+
+          <Link
+            href="/become-owner"
+            className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+          >
+            <Store size={15} />
+            Own a business? List it free <ArrowRight size={13} />
+          </Link>
         </div>
 
         <div className="relative hidden lg:block">

@@ -1,42 +1,73 @@
+'use client'
+
 import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
 import { CategoryIcon } from '@/components/category-icon'
 import { getAppCategories } from '@/lib/supabase/queries/taxonomy'
 import type { Business } from '@/lib/types'
+import { useState, useRef } from 'react'
 
-export async function CategoryGrid({ businesses }: { businesses: Business[] }) {
-  const categories = await getAppCategories()
+export function CategoryGrid({ businesses, categories }: { businesses: Business[], categories: Awaited<ReturnType<typeof getAppCategories>> }) {
+  const [speed, setSpeed] = useState(1)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!containerRef.current) return
+    const rect = containerRef.current.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const containerWidth = rect.width
+    // Calculate speed based on mouse position (1x to 3x)
+    const newSpeed = 1 + (x / containerWidth) * 2
+    setSpeed(newSpeed)
+  }
+
+  const handleMouseLeave = () => {
+    setSpeed(1)
+  }
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
+    <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
       <div className="flex items-end justify-between gap-4">
-        <div>
-          <h2 className="font-serif text-2xl tracking-tight sm:text-3xl">Browse by category</h2>
-          <p className="mt-1 text-muted-foreground">Find exactly what you&apos;re looking for.</p>
-        </div>
-        <Link href="/search" className="hidden shrink-0 text-sm font-medium text-primary hover:underline sm:block">
-          View all
+        <h2 className="text-lg font-semibold tracking-tight sm:text-xl">Browse by category</h2>
+        <Link
+          href="/search"
+          className="inline-flex shrink-0 items-center gap-1 text-sm font-medium text-primary hover:underline"
+        >
+          View all <ArrowRight size={13} />
         </Link>
       </div>
 
-      <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        {categories.map((c) => {
-          const count = businesses.filter((b) => b.categoryId === c.id).length
-          return (
-            <Link
-              key={c.id}
-              href={`/search?category=${c.id}`}
-              className="group flex flex-col items-start gap-3 rounded-2xl border bg-card p-5 transition-all hover:-translate-y-1 hover:border-primary hover:shadow-md"
-            >
-              <span className="flex size-12 items-center justify-center rounded-xl bg-accent text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                <CategoryIcon name={c.icon} size={22} />
-              </span>
-              <span>
-                <span className="block font-medium">{c.name}</span>
-                <span className="text-sm text-muted-foreground">{count} places</span>
-              </span>
-            </Link>
-          )
-        })}
+      <div 
+        ref={containerRef}
+        className="mt-4 -mx-4 overflow-hidden px-4 sm:-mx-6 sm:px-6"
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+      >
+        <div 
+          className="flex gap-2.5 pb-1 will-change-transform"
+          style={{
+            animation: `scroll-left-infinite ${40 / speed}s linear infinite`
+          }}
+        >
+          {[...categories, ...categories, ...categories].map((c, index) => {
+            const count = businesses.filter((b) => b.categoryId === c.id).length
+            return (
+              <Link
+                key={`${c.id}-${index}`}
+                href={`/search?category=${c.id}`}
+                className="group flex shrink-0 items-center gap-2.5 rounded-full border bg-card px-3.5 py-2 mt-1 transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-sm"
+              >
+                <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-accent text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                  <CategoryIcon name={c.icon} size={16} />
+                </span>
+                <span className="whitespace-nowrap text-sm font-medium">{c.name}</span>
+                {count > 0 && (
+                  <span className="whitespace-nowrap text-xs text-muted-foreground">{count}</span>
+                )}
+              </Link>
+            )
+          })}
+        </div>
       </div>
     </section>
   )

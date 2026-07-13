@@ -11,11 +11,12 @@ import {
   SlidersHorizontal,
 } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { StepCard, type StepStatus } from '@/components/ui/step-card'
+import type { StepStatus } from '@/components/ui/step-card'
 import { Textarea } from '@/components/ui/textarea'
+import { cn } from '@/lib/utils'
 import type { Database } from '@/lib/supabase/database.types'
 
 import {
@@ -96,42 +97,55 @@ function HoursSection({ businessId, hours }: { businessId: string; hours: Busine
   }
 
   return (
-    <form action={saveHours} className="flex flex-col gap-3">
-      <div className="flex flex-wrap gap-2">
-        <Button type="button" variant="outline" size="sm" onClick={copyMondayToWeekdays}>
-          Copy Mon–Fri
-        </Button>
-        <Button type="button" variant="outline" size="sm" onClick={copyMondayToAllDays}>
-          Copy to all days
-        </Button>
-      </div>
-      {DAY_LABELS.map((label, dayOfWeek) => (
-        <div key={dayOfWeek} className="grid grid-cols-3 items-center gap-3 text-sm">
-          <span className="text-muted-foreground">{label}</span>
-          <Input
-            type="time"
-            name={`open_${dayOfWeek}`}
-            value={days[dayOfWeek].open}
-            onChange={(e) => {
-              const value = e.target.value
-              setDays((prev) => prev.map((d, i) => (i === dayOfWeek ? { ...d, open: value } : d)))
-            }}
-          />
-          <Input
-            type="time"
-            name={`close_${dayOfWeek}`}
-            value={days[dayOfWeek].close}
-            onChange={(e) => {
-              const value = e.target.value
-              setDays((prev) => prev.map((d, i) => (i === dayOfWeek ? { ...d, close: value } : d)))
-            }}
-          />
+    <form action={saveHours} className="flex flex-col gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-sm text-muted-foreground">Leave both times blank to mark a day closed.</p>
+        <div className="flex flex-wrap gap-2">
+          <Button type="button" variant="outline" size="sm" onClick={copyMondayToWeekdays}>
+            Copy Mon–Fri
+          </Button>
+          <Button type="button" variant="outline" size="sm" onClick={copyMondayToAllDays}>
+            Copy to all
+          </Button>
         </div>
-      ))}
-      <p className="text-xs text-muted-foreground">
-        Leave both fields blank for a day to mark it closed. Copy buttons use Monday&apos;s times.
-      </p>
-      <Button type="submit" className="mt-1 w-fit">
+      </div>
+      <div className="overflow-hidden rounded-xl border">
+        <div className="grid grid-cols-[1fr_1fr_1fr] gap-px bg-border text-xs font-medium text-muted-foreground">
+          <div className="bg-muted/50 px-3 py-2">Day</div>
+          <div className="bg-muted/50 px-3 py-2">Opens</div>
+          <div className="bg-muted/50 px-3 py-2">Closes</div>
+        </div>
+        {DAY_LABELS.map((label, dayOfWeek) => (
+          <div key={dayOfWeek} className="grid grid-cols-[1fr_1fr_1fr] gap-px bg-border">
+            <div className="flex items-center bg-background px-3 py-2 text-sm">{label}</div>
+            <div className="bg-background p-1.5">
+              <Input
+                type="time"
+                name={`open_${dayOfWeek}`}
+                value={days[dayOfWeek].open}
+                onChange={(e) => {
+                  const value = e.target.value
+                  setDays((prev) => prev.map((d, i) => (i === dayOfWeek ? { ...d, open: value } : d)))
+                }}
+                className="border-0 shadow-none focus-visible:ring-0"
+              />
+            </div>
+            <div className="bg-background p-1.5">
+              <Input
+                type="time"
+                name={`close_${dayOfWeek}`}
+                value={days[dayOfWeek].close}
+                onChange={(e) => {
+                  const value = e.target.value
+                  setDays((prev) => prev.map((d, i) => (i === dayOfWeek ? { ...d, close: value } : d)))
+                }}
+                className="border-0 shadow-none focus-visible:ring-0"
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+      <Button type="submit" className="w-fit">
         Save hours
       </Button>
     </form>
@@ -153,7 +167,7 @@ function ImagesSection({
   return (
     <div className="flex flex-col gap-6">
       {images.length > 0 && (
-        <ul key={imagesKey} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <ul key={imagesKey} className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-4">
           {images.map((image) => {
             const isCover = coverImageUrl === image.url
             return (
@@ -382,9 +396,12 @@ function FiltersSection({
       {[...byGroup.entries()].map(([group, groupFilters]) => (
         <fieldset key={group} className="flex flex-col gap-2">
           <legend className="text-sm font-medium">{group}</legend>
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {groupFilters.map((filter) => (
-              <label key={filter.id} className="flex items-center gap-2 text-sm">
+              <label
+                key={filter.id}
+                className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm transition-colors hover:bg-muted/40"
+              >
                 <input
                   type="checkbox"
                   name="filter_id"
@@ -551,6 +568,7 @@ function DetailsSection({ business, cities }: { business: Business; cities: City
   const detailsKey = fingerprint([
     business.updated_at,
     business.name,
+    business.slug,
     business.tagline,
     business.description,
     business.phone,
@@ -564,80 +582,97 @@ function DetailsSection({ business, cities }: { business: Business; cities: City
   ])
 
   return (
-    <form key={detailsKey} action={updateDetails} className="flex flex-col gap-4">
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="name">Business name</Label>
-        <Input id="name" name="name" defaultValue={business.name} required />
-      </div>
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="tagline">Tagline</Label>
-        <Input id="tagline" name="tagline" defaultValue={business.tagline ?? ''} placeholder="A short one-liner" />
-      </div>
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="description">Description</Label>
-        <Textarea id="description" name="description" defaultValue={business.description ?? ''} rows={4} />
-      </div>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="phone">Phone</Label>
-          <Input id="phone" name="phone" defaultValue={business.phone ?? ''} />
+    <form key={detailsKey} action={updateDetails} className="flex flex-col gap-6">
+      <div className="grid gap-4 lg:grid-cols-2">
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="name">Business name</Label>
+            <Input id="name" name="name" defaultValue={business.name} required />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="tagline">Tagline</Label>
+            <Input id="tagline" name="tagline" defaultValue={business.tagline ?? ''} placeholder="A short one-liner" />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="description">Description</Label>
+            <Textarea id="description" name="description" defaultValue={business.description ?? ''} rows={6} />
+          </div>
         </div>
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="email">Email</Label>
-          <Input id="email" name="email" type="email" defaultValue={business.email ?? ''} />
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="website">Website</Label>
-          <Input id="website" name="website" defaultValue={business.website ?? ''} />
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="price_level">Price level</Label>
-          <select
-            id="price_level"
-            name="price_level"
-            defaultValue={business.price_level?.toString() ?? ''}
-            className="h-9 rounded-lg border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-          >
-            <option value="">Not set</option>
-            <option value="1">$</option>
-            <option value="2">$$</option>
-            <option value="3">$$$</option>
-            <option value="4">$$$$</option>
-          </select>
+
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="slug">Public URL</Label>
+            <div className="flex items-stretch gap-2">
+              <span className="flex items-center rounded-lg border border-input bg-muted px-3 text-sm text-muted-foreground">
+                /business/
+              </span>
+              <Input id="slug" name="slug" defaultValue={business.slug} className="flex-1" required />
+            </div>
+            <p className="text-xs text-muted-foreground">Changing this breaks existing shared links.</p>
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="phone">Phone</Label>
+              <Input id="phone" name="phone" defaultValue={business.phone ?? ''} />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" name="email" type="email" defaultValue={business.email ?? ''} />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="website">Website</Label>
+              <Input id="website" name="website" defaultValue={business.website ?? ''} />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="price_level">Price level</Label>
+              <select
+                id="price_level"
+                name="price_level"
+                defaultValue={business.price_level?.toString() ?? ''}
+                className="h-9 rounded-lg border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+              >
+                <option value="">Not set</option>
+                <option value="1">$</option>
+                <option value="2">$$</option>
+                <option value="3">$$$</option>
+                <option value="4">$$$$</option>
+              </select>
+            </div>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="address_line1">Address</Label>
+            <Input id="address_line1" name="address_line1" defaultValue={business.address_line1 ?? ''} />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="address_line2">Address line 2</Label>
+            <Input id="address_line2" name="address_line2" defaultValue={business.address_line2 ?? ''} />
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="city_id">City</Label>
+              <select
+                id="city_id"
+                name="city_id"
+                defaultValue={business.city_id ?? ''}
+                className="h-9 rounded-lg border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+              >
+                <option value="">Not set</option>
+                {cities.map((city) => (
+                  <option key={city.id} value={city.id}>
+                    {city.name}
+                    {city.region ? `, ${city.region}` : ''}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="postal_code">Postal code</Label>
+              <Input id="postal_code" name="postal_code" defaultValue={business.postal_code ?? ''} />
+            </div>
+          </div>
         </div>
       </div>
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="address_line1">Address</Label>
-        <Input id="address_line1" name="address_line1" defaultValue={business.address_line1 ?? ''} />
-      </div>
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="address_line2">Address line 2</Label>
-        <Input id="address_line2" name="address_line2" defaultValue={business.address_line2 ?? ''} />
-      </div>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="city_id">City</Label>
-          <select
-            id="city_id"
-            name="city_id"
-            defaultValue={business.city_id ?? ''}
-            className="h-9 rounded-lg border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-          >
-            <option value="">Not set</option>
-            {cities.map((city) => (
-              <option key={city.id} value={city.id}>
-                {city.name}
-                {city.region ? `, ${city.region}` : ''}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="postal_code">Postal code</Label>
-          <Input id="postal_code" name="postal_code" defaultValue={business.postal_code ?? ''} />
-        </div>
-      </div>
-      <Button type="submit" className="mt-1 w-fit">
+      <Button type="submit" className="w-fit">
         Save changes
       </Button>
     </form>
@@ -683,7 +718,9 @@ export function EditListingForms({
         : { label: 'Not set', tone: 'empty' }
 
   const photosStatus: StepStatus =
-    images.length > 0 ? { label: `${images.length} photo${images.length === 1 ? '' : 's'}`, tone: 'done' } : { label: 'No photos yet', tone: 'empty' }
+    images.length > 0
+      ? { label: `${images.length} photo${images.length === 1 ? '' : 's'}`, tone: 'done' }
+      : { label: 'No photos yet', tone: 'empty' }
 
   const offeringsStatus: StepStatus =
     offerings.length > 0
@@ -701,73 +738,150 @@ export function EditListingForms({
     specials.length > 0 ? { label: `${specials.length} active`, tone: 'done' } : { label: 'None yet', tone: 'empty' }
 
   const postsStatus: StepStatus =
-    posts.length > 0 ? { label: `${posts.length} post${posts.length === 1 ? '' : 's'}`, tone: 'done' } : { label: 'None yet', tone: 'empty' }
+    posts.length > 0
+      ? { label: `${posts.length} post${posts.length === 1 ? '' : 's'}`, tone: 'done' }
+      : { label: 'None yet', tone: 'empty' }
+
+  type SectionId = 'details' | 'hours' | 'photos' | 'offerings' | 'filters' | 'specials' | 'posts'
+
+  const navItems: Array<{
+    id: SectionId
+    title: string
+    description: string
+    icon: typeof Building2
+    status: StepStatus
+  }> = [
+    {
+      id: 'details',
+      title: 'Business details',
+      description: 'Name, contact, address',
+      icon: Building2,
+      status: detailsStatus,
+    },
+    { id: 'hours', title: 'Hours', description: 'When you are open', icon: Clock, status: hoursStatus },
+    { id: 'photos', title: 'Photos', description: 'Cover and gallery', icon: Images, status: photosStatus },
+    {
+      id: 'offerings',
+      title: 'Offerings / menu',
+      description: 'Products and services',
+      icon: ListChecks,
+      status: offeringsStatus,
+    },
+    {
+      id: 'filters',
+      title: 'Amenities',
+      description: 'Filters customers use',
+      icon: SlidersHorizontal,
+      status: filtersStatus,
+    },
+    { id: 'specials', title: 'Specials', description: 'Deals and happy hours', icon: Percent, status: specialsStatus },
+    { id: 'posts', title: 'Owner posts', description: 'Updates and events', icon: Megaphone, status: postsStatus },
+  ]
+
+  const [active, setActive] = useState<SectionId>(detailsComplete ? 'hours' : 'details')
+  const activeItem = navItems.find((item) => item.id === active) ?? navItems[0]
+
+  const toneClass =
+    activeItem.status.tone === 'done'
+      ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400'
+      : activeItem.status.tone === 'pending'
+        ? 'bg-amber-500/10 text-amber-700 dark:text-amber-400'
+        : 'bg-muted text-muted-foreground'
 
   return (
-    <div className="flex flex-col gap-3">
-      <StepCard
-        icon={<Building2 size={19} />}
-        title="Business details"
-        description="Name, contact info, and address."
-        status={detailsStatus}
-        defaultOpen={!detailsComplete}
-      >
-        <DetailsSection business={business} cities={cities} />
-      </StepCard>
+    <div className="flex h-full min-h-0">
+      {/* Mail-style section nav */}
+      <aside className="hidden w-[220px] shrink-0 flex-col border-r lg:flex xl:w-[260px]">
+        <div className="border-b px-4 py-3">
+          <p className="text-sm font-semibold">Edit listing</p>
+          <p className="text-xs text-muted-foreground">One section at a time</p>
+        </div>
+        <nav className="flex flex-1 flex-col gap-1 overflow-y-auto p-2">
+          {navItems.map((item) => {
+            const Icon = item.icon
+            const isActive = item.id === active
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setActive(item.id)}
+                className={cn(
+                  buttonVariants({ variant: isActive ? 'secondary' : 'ghost', size: 'sm' }),
+                  'h-auto w-full flex-col items-start gap-0.5 px-3 py-2.5 text-left',
+                )}
+              >
+                <span className="flex w-full items-center gap-2">
+                  <Icon className="size-4 shrink-0" />
+                  <span className="truncate font-medium">{item.title}</span>
+                </span>
+                <span className="pl-6 text-xs font-normal text-muted-foreground">{item.status.label}</span>
+              </button>
+            )
+          })}
+        </nav>
+      </aside>
 
-      <StepCard
-        icon={<Clock size={19} />}
-        title="Hours"
-        description="When customers can visit or reach you."
-        status={hoursStatus}
-      >
-        <HoursSection key={hoursFormKey(new Map(hours.map((row) => [row.day_of_week, row])))} businessId={business.id} hours={hours} />
-      </StepCard>
+      {/* Content pane */}
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+        <div className="flex shrink-0 flex-col gap-3 border-b px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <h3 className="text-base font-semibold">{activeItem.title}</h3>
+              <span className={cn('inline-flex h-5 items-center rounded-full px-2 text-xs font-medium', toneClass)}>
+                {activeItem.status.label}
+              </span>
+            </div>
+            <p className="text-sm text-muted-foreground">{activeItem.description}</p>
+          </div>
 
-      <StepCard
-        icon={<Images size={19} />}
-        title="Photos"
-        description="Show off your space, products, or work."
-        status={photosStatus}
-      >
-        <ImagesSection businessId={business.id} images={images} coverImageUrl={business.cover_image_url} />
-      </StepCard>
+          {/* Mobile section switcher */}
+          <div className="flex gap-1 overflow-x-auto lg:hidden">
+            {navItems.map((item) => {
+              const Icon = item.icon
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setActive(item.id)}
+                  title={item.title}
+                  className={cn(
+                    buttonVariants({ variant: item.id === active ? 'default' : 'outline', size: 'icon-sm' }),
+                    'shrink-0',
+                  )}
+                >
+                  <Icon className="size-3.5" />
+                </button>
+              )
+            })}
+          </div>
+        </div>
 
-      <StepCard
-        icon={<ListChecks size={19} />}
-        title="Offerings / menu"
-        description="List your products, services, or menu items."
-        status={offeringsStatus}
-      >
-        <OfferingsSection businessId={business.id} sections={sections} offerings={offerings} />
-      </StepCard>
-
-      <StepCard
-        icon={<SlidersHorizontal size={19} />}
-        title="Amenities & filters"
-        description="Help customers filter for what you offer."
-        status={filtersStatus}
-      >
-        <FiltersSection businessId={business.id} filters={availableFilters} selectedFilterIds={selectedFilterIds} />
-      </StepCard>
-
-      <StepCard
-        icon={<Percent size={19} />}
-        title="Specials"
-        description="Recurring deals like happy hour or weekly discounts."
-        status={specialsStatus}
-      >
-        <SpecialsSection businessId={business.id} specials={specials} />
-      </StepCard>
-
-      <StepCard
-        icon={<Megaphone size={19} />}
-        title="Owner posts"
-        description="Share updates, offers, or events with customers."
-        status={postsStatus}
-      >
-        <PostsSection businessId={business.id} posts={posts} />
-      </StepCard>
+        <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-6">
+          {active === 'details' && <DetailsSection business={business} cities={cities} />}
+          {active === 'hours' && (
+            <HoursSection
+              key={hoursFormKey(new Map(hours.map((row) => [row.day_of_week, row])))}
+              businessId={business.id}
+              hours={hours}
+            />
+          )}
+          {active === 'photos' && (
+            <ImagesSection businessId={business.id} images={images} coverImageUrl={business.cover_image_url} />
+          )}
+          {active === 'offerings' && (
+            <OfferingsSection businessId={business.id} sections={sections} offerings={offerings} />
+          )}
+          {active === 'filters' && (
+            <FiltersSection
+              businessId={business.id}
+              filters={availableFilters}
+              selectedFilterIds={selectedFilterIds}
+            />
+          )}
+          {active === 'specials' && <SpecialsSection businessId={business.id} specials={specials} />}
+          {active === 'posts' && <PostsSection businessId={business.id} posts={posts} />}
+        </div>
+      </div>
     </div>
   )
 }

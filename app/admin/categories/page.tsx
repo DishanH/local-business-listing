@@ -44,8 +44,8 @@ export default async function AdminCategoriesPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h2 className="text-2xl font-semibold tracking-tight">Categories</h2>
-        <p className="text-sm text-muted-foreground">
+        <h2 className="text-lg font-semibold tracking-tight">Categories</h2>
+        <p className="text-xs text-muted-foreground">
           {topLevel.length} top-level categories,{' '}
           {[...childrenByParent.values()].reduce((n, list) => n + list.length, 0)} subcategories. Click a category
           below to edit it or manage its subcategories.

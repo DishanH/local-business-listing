@@ -4,6 +4,52 @@ import { revalidatePath } from 'next/cache'
 
 import { createClient } from '@/lib/supabase/server'
 
+/**
+ * Toggle a favorite for the signed-in user.
+ * `slug` is the public business id used in the UI; `dbId` is the UUID when known.
+ * Returns the new favorited state. Throws `DEMO_LISTING` for mock-only businesses.
+ */
+export async function toggleFavorite(slug: string, dbId?: string | null) {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not authenticated')
+
+  let businessUuid = dbId ?? null
+  if (!businessUuid) {
+    const { data: row } = await supabase.from('businesses').select('id').eq('slug', slug).maybeSingle()
+    businessUuid = row?.id ?? null
+  }
+  if (!businessUuid) throw new Error('DEMO_LISTING')
+
+  const { data: existing } = await supabase
+    .from('favorites')
+    .select('business_id')
+    .eq('profile_id', user.id)
+    .eq('business_id', businessUuid)
+    .maybeSingle()
+
+  if (existing) {
+    const { error } = await supabase
+      .from('favorites')
+      .delete()
+      .eq('profile_id', user.id)
+      .eq('business_id', businessUuid)
+    if (error) throw new Error(error.message)
+    revalidatePath('/favorites')
+    return { favorited: false as const }
+  }
+
+  const { error } = await supabase.from('favorites').insert({
+    profile_id: user.id,
+    business_id: businessUuid,
+  })
+  if (error) throw new Error(error.message)
+  revalidatePath('/favorites')
+  return { favorited: true as const }
+}
+
 export async function saveNote(businessId: string, body: string) {
   const supabase = await createClient()
   const {

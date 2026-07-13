@@ -132,6 +132,7 @@ with sub (parent_slug, slug, name, sort_order) as (
     ('retail-shopping', 'home-goods',         'Home goods',            50),
     ('retail-shopping', 'gifts-novelty',      'Gifts & novelty',       60),
     ('retail-shopping', 'thrift-vintage',     'Thrift & vintage',      70),
+    ('retail-shopping', 'discount-store',     'Discount Store',        80),
 
     -- Home & Trade Services
     ('home-services', 'plumbing',     'Plumbing',            10),
@@ -261,8 +262,9 @@ on conflict (slug) do nothing;
 -- Starter cities (match the mock data in lib/data.ts)
 -- ----------------------------------------------------------------------------
 
-insert into public.cities (slug, name, region, lat, lng) values
-  ('riverton',  'Riverton',  'NJ', 40.0, -74.0),
-  ('oakdale',   'Oakdale',   'NJ', 40.1, -74.1),
-  ('brookside', 'Brookside', 'NJ', 39.9, -73.9)
+insert into public.cities (slug, name, region, country, lat, lng) values
+  ('riverton',  'Riverton',  'NJ', 'US', 40.0, -74.0),
+  ('oakdale',   'Oakdale',   'NJ', 'US', 40.1, -74.1),
+  ('brookside', 'Brookside', 'NJ', 'US', 39.9, -73.9),
+  ('brantford', 'Brantford', 'ON', 'CA', 43.1394, -80.2644)
 on conflict (slug) do nothing;

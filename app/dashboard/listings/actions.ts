@@ -81,6 +81,7 @@ export async function createListing(formData: FormData) {
 
   if (error) throw new Error(error.message)
 
+  revalidatePath('/dashboard')
   revalidatePath('/dashboard/listings')
   redirect(`/dashboard/listings/${data.id}`)
 }
@@ -91,10 +92,26 @@ export async function updateListing(businessId: string, formData: FormData) {
   const priceLevelRaw = String(formData.get('price_level') ?? '')
   const cityId = emptyToNull(formData.get('city_id'))
 
+  const rawSlug = String(formData.get('slug') ?? '').trim()
+  let slug: string | undefined
+  if (rawSlug) {
+    const normalized = slugify(rawSlug)
+    if (!normalized) throw new Error('Public URL must contain at least one letter or number')
+    const { data: existing } = await supabase
+      .from('businesses')
+      .select('id')
+      .eq('slug', normalized)
+      .neq('id', businessId)
+      .maybeSingle()
+    if (existing) throw new Error('That URL is already taken — try a different one')
+    slug = normalized
+  }
+
   const { error } = await supabase
     .from('businesses')
     .update({
       name: String(formData.get('name') ?? ''),
+      ...(slug ? { slug } : {}),
       tagline: emptyToNull(formData.get('tagline')),
       description: emptyToNull(formData.get('description')),
       email: emptyToNull(formData.get('email')),
@@ -118,6 +135,7 @@ export async function submitForReview(businessId: string) {
   const { error } = await supabase.from('businesses').update({ status: 'pending_review' }).eq('id', businessId)
   if (error) throw new Error(error.message)
   revalidateListing(businessId)
+  revalidatePath('/dashboard')
   revalidatePath('/dashboard/listings')
 }
 
@@ -126,6 +144,7 @@ export async function archiveListing(businessId: string) {
   const { error } = await supabase.from('businesses').update({ status: 'archived' }).eq('id', businessId)
   if (error) throw new Error(error.message)
   revalidateListing(businessId)
+  revalidatePath('/dashboard')
   revalidatePath('/dashboard/listings')
 }
 

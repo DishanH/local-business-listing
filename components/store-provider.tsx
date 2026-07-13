@@ -11,6 +11,7 @@ import {
 } from 'react'
 import { seedReviews } from '@/lib/data'
 import { originAreaLabel } from '@/lib/location'
+import { toggleFavorite as toggleFavoriteAction } from '@/lib/supabase/actions/social'
 import { createClient } from '@/lib/supabase/client'
 import type { UserRole } from '@/lib/supabase/database.types'
 import type { Business, Category, City, Message, Review } from '@/lib/types'
@@ -41,10 +42,11 @@ interface StoreValue {
   // businesses: live Supabase listings mixed with bundled demo listings
   businesses: Business[]
 
-  // favorites
+  // favorites (persisted to Supabase for signed-in users)
   favorites: string[]
+  favoritesLoading: boolean
   isFavorite: (id: string) => boolean
-  toggleFavorite: (id: string) => void
+  toggleFavorite: (id: string, dbId?: string | null) => Promise<void>
 
   // reviews
   reviews: Review[]
@@ -84,7 +86,8 @@ export function StoreProvider({
 
   const [user, setUser] = useState<AppUser | null>(null)
   const [authLoading, setAuthLoading] = useState(true)
-  const [favorites, setFavorites] = useState<string[]>(['daybreak-coffee', 'chapter-and-verse'])
+  const [favorites, setFavorites] = useState<string[]>([])
+  const [favoritesLoading, setFavoritesLoading] = useState(false)
   const [reviews, setReviews] = useState<Review[]>(seedReviews)
   const [notes, setNotes] = useState<Record<string, string>>({})
   const [threads, setThreads] = useState<Record<string, Message[]>>({})
@@ -93,14 +96,56 @@ export function StoreProvider({
     lng: initialCities[0]?.lng ?? -74.0,
   })
 
+  const loadFavorites = useCallback(
+    async (profileId: string) => {
+      setFavoritesLoading(true)
+      try {
+        const { data: favRows, error } = await supabase
+          .from('favorites')
+          .select('business_id')
+          .eq('profile_id', profileId)
+        if (error) throw error
+        if (!favRows?.length) {
+          setFavorites([])
+          return
+        }
+
+        const ids = favRows.map((row) => row.business_id)
+        const { data: businessRows, error: bizError } = await supabase
+          .from('businesses')
+          .select('id, slug')
+          .in('id', ids)
+        if (bizError) throw bizError
+
+        const slugById = new Map((businessRows ?? []).map((b) => [b.id, b.slug]))
+        // Prefer slug (public id); fall back to UUID if the join missed a row.
+        setFavorites(ids.map((id) => slugById.get(id) ?? id))
+      } catch {
+        setFavorites([])
+      } finally {
+        setFavoritesLoading(false)
+      }
+    },
+    [supabase],
+  )
+
   useEffect(() => {
     let active = true
+    let lastUserId: string | null = null
 
     async function hydrateUser(authUser: { id: string; email?: string | null } | null) {
       if (!authUser) {
-        if (active) setUser(null)
+        lastUserId = null
+        if (active) {
+          setUser(null)
+          setFavorites([])
+        }
         return
       }
+
+      const userChanged = lastUserId !== authUser.id
+      lastUserId = authUser.id
+
       const { data: profile } = await supabase
         .from('profiles')
         .select('full_name, avatar_url, role')
@@ -114,6 +159,7 @@ export function StoreProvider({
         avatarUrl: profile?.avatar_url ?? null,
         role: profile?.role ?? 'customer',
       })
+      if (userChanged) await loadFavorites(authUser.id)
     }
 
     supabase.auth.getUser().then(({ data }) => {
@@ -129,7 +175,7 @@ export function StoreProvider({
       active = false
       subscription.subscription.unsubscribe()
     }
-  }, [supabase])
+  }, [supabase, loadFavorites])
 
   const setOrigin = useCallback((lat: number, lng: number) => {
     setOriginState({ lat, lng })
@@ -140,13 +186,38 @@ export function StoreProvider({
   const signOut = useCallback(async () => {
     await supabase.auth.signOut()
     setUser(null)
+    setFavorites([])
   }, [supabase])
 
   const isFavorite = useCallback((id: string) => favorites.includes(id), [favorites])
 
-  const toggleFavorite = useCallback((id: string) => {
-    setFavorites((prev) => (prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]))
-  }, [])
+  const toggleFavorite = useCallback(
+    async (id: string, dbId?: string | null) => {
+      if (!user) throw new Error('Not authenticated')
+
+      const business = initialBusinesses.find((b) => b.id === id)
+      const resolvedDbId = dbId ?? business?.dbId
+      let wasFavorited = false
+
+      setFavorites((prev) => {
+        wasFavorited = prev.includes(id)
+        return wasFavorited ? prev.filter((f) => f !== id) : [...prev, id]
+      })
+
+      try {
+        const result = await toggleFavoriteAction(id, resolvedDbId)
+        // Sync with authoritative server result
+        setFavorites((prev) => {
+          if (result.favorited) return prev.includes(id) ? prev : [...prev, id]
+          return prev.filter((f) => f !== id)
+        })
+      } catch (err) {
+        setFavorites((prev) => (wasFavorited ? (prev.includes(id) ? prev : [...prev, id]) : prev.filter((f) => f !== id)))
+        throw err
+      }
+    },
+    [user, initialBusinesses],
+  )
 
   const getReviews = useCallback(
     (businessId: string) =>
@@ -183,31 +254,34 @@ export function StoreProvider({
 
   const getThread = useCallback((businessId: string) => threads[businessId] ?? [], [threads])
 
-  const sendMessage = useCallback((businessId: string, text: string) => {
-    const trimmed = text.trim()
-    if (!trimmed) return
-    const business = initialBusinesses.find((b) => b.id === businessId)
-    const userMsg: Message = {
-      id: `m-${Date.now()}`,
-      businessId,
-      from: 'user',
-      text: trimmed,
-      time: Date.now(),
-    }
-    setThreads((prev) => ({ ...prev, [businessId]: [...(prev[businessId] ?? []), userMsg] }))
-
-    // Simulated business reply.
-    window.setTimeout(() => {
-      const reply: Message = {
-        id: `m-${Date.now()}-r`,
+  const sendMessage = useCallback(
+    (businessId: string, text: string) => {
+      const trimmed = text.trim()
+      if (!trimmed) return
+      const business = initialBusinesses.find((b) => b.id === businessId)
+      const userMsg: Message = {
+        id: `m-${Date.now()}`,
         businessId,
-        from: 'business',
-        text: `Thanks for reaching out to ${business?.name ?? 'us'}! We'll get back to you shortly. In the meantime, feel free to stop by during our open hours.`,
+        from: 'user',
+        text: trimmed,
         time: Date.now(),
       }
-      setThreads((prev) => ({ ...prev, [businessId]: [...(prev[businessId] ?? []), reply] }))
-    }, 1200)
-  }, [])
+      setThreads((prev) => ({ ...prev, [businessId]: [...(prev[businessId] ?? []), userMsg] }))
+
+      // Simulated business reply.
+      window.setTimeout(() => {
+        const reply: Message = {
+          id: `m-${Date.now()}-r`,
+          businessId,
+          from: 'business',
+          text: `Thanks for reaching out to ${business?.name ?? 'us'}! We'll get back to you shortly. In the meantime, feel free to stop by during our open hours.`,
+          time: Date.now(),
+        }
+        setThreads((prev) => ({ ...prev, [businessId]: [...(prev[businessId] ?? []), reply] }))
+      }, 1200)
+    },
+    [initialBusinesses],
+  )
 
   const unreadCount = useMemo(
     () => Object.values(threads).reduce((acc, t) => acc + t.length, 0),
@@ -223,6 +297,7 @@ export function StoreProvider({
       cities: initialCities,
       businesses: initialBusinesses,
       favorites,
+      favoritesLoading,
       isFavorite,
       toggleFavorite,
       reviews,
@@ -246,6 +321,7 @@ export function StoreProvider({
       initialCities,
       initialBusinesses,
       favorites,
+      favoritesLoading,
       isFavorite,
       toggleFavorite,
       reviews,

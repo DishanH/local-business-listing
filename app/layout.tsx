@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/components/theme-provider'
 import { StoreProvider } from '@/components/store-provider'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
+import { HideOnPortal } from '@/components/hide-on-portal'
 import { getAppCategories, getAppCities } from '@/lib/supabase/queries/taxonomy'
 import { getMixedBusinessesForApp } from '@/lib/supabase/queries/businesses'
 import './globals.css'
@@ -59,7 +60,9 @@ export default async function RootLayout({
             <div className="flex min-h-dvh flex-col">
               <SiteHeader />
               <main className="flex-1">{children}</main>
-              <SiteFooter />
+              <HideOnPortal>
+                <SiteFooter />
+              </HideOnPortal>
             </div>
           </StoreProvider>
         </ThemeProvider>

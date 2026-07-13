@@ -1,11 +1,14 @@
 import Link from 'next/link'
-import { MessageSquare, Plus, Star } from 'lucide-react'
+import { MessageSquare, Plus, Store, CheckCircle2, FileClock } from 'lucide-react'
 
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card } from '@/components/ui/card'
+import { ListingRow } from '@/components/dashboard/listing-card'
+import { Pagination, parsePageParam } from '@/components/ui/pagination'
 import { getBusinessesForOwner } from '@/lib/supabase/queries/businesses'
 import { createClient } from '@/lib/supabase/server'
+
+const PAGE_SIZE = 8
 
 async function getOverviewData() {
   const supabase = await createClient()
@@ -26,72 +29,103 @@ async function getOverviewData() {
   return { owned, unread }
 }
 
-export default async function DashboardOverviewPage() {
+export default async function DashboardOverviewPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>
+}) {
+  const { page: pageParam } = await searchParams
   const { owned, unread } = await getOverviewData()
+  const published = owned.filter(({ business }) => business?.status === 'published').length
+  const drafts = owned.filter(
+    ({ business }) => business?.status === 'draft' || business?.status === 'pending_review',
+  ).length
+
+  const { page, totalPages, from, to } = parsePageParam(pageParam, owned.length, PAGE_SIZE)
+  const pageItems = owned.slice(from, to + 1)
+
+  const stats = [
+    { label: 'Listings', value: owned.length, icon: Store },
+    { label: 'Published', value: published, icon: CheckCircle2 },
+    { label: 'In progress', value: drafts, icon: FileClock },
+    { label: 'Unread', value: unread, icon: MessageSquare },
+  ]
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h2 className="text-2xl font-semibold tracking-tight">Overview</h2>
-          <p className="text-sm text-muted-foreground">Manage your listings and respond to customers.</p>
+          <h2 className="text-lg font-semibold tracking-tight">Overview</h2>
+          <p className="text-xs text-muted-foreground">Manage listings and respond to customers.</p>
         </div>
         <Link href="/dashboard/listings/new">
-          <Button>
-            <Plus className="size-4" />
+          <Button size="sm">
+            <Plus className="size-3.5" />
             New listing
           </Button>
         </Link>
       </div>
 
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        {stats.map((stat) => (
+          <Card key={stat.label} className="flex flex-row items-center gap-3 rounded-xl p-3 shadow-none">
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-accent text-primary">
+              <stat.icon className="size-3.5" />
+            </span>
+            <div className="min-w-0">
+              <p className="text-lg font-semibold leading-none tracking-tight">{stat.value}</p>
+              <p className="mt-1 text-[11px] text-muted-foreground">{stat.label}</p>
+            </div>
+          </Card>
+        ))}
+      </div>
+
       {unread > 0 && (
-        <Card className="flex flex-row items-center gap-3 p-4">
-          <MessageSquare className="size-5 text-primary" />
+        <Card className="flex flex-row items-center gap-2.5 rounded-xl p-3 shadow-none">
+          <MessageSquare className="size-4 shrink-0 text-primary" />
           <p className="text-sm">
-            You have <strong>{unread}</strong> unread message{unread === 1 ? '' : 's'}.{' '}
+            <strong>{unread}</strong> unread message{unread === 1 ? '' : 's'}.{' '}
             <Link href="/dashboard/messages" className="font-medium text-primary hover:underline">
-              View inbox &rarr;
+              Open inbox
             </Link>
           </p>
         </Card>
       )}
 
-      {owned.length === 0 ? (
-        <Card className="flex flex-col items-center gap-3 p-10 text-center">
-          <p className="font-medium">You don&apos;t manage any businesses yet.</p>
-          <p className="text-sm text-muted-foreground">Create your first listing to start reaching customers.</p>
-          <Link href="/dashboard/listings/new">
-            <Button>
-              <Plus className="size-4" />
-              Create a listing
-            </Button>
-          </Link>
-        </Card>
-      ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {owned.map(({ business }) =>
-            business ? (
-              <Link key={business.id} href={`/dashboard/listings/${business.id}`}>
-                <Card className="h-full transition-shadow hover:shadow-md">
-                  <CardHeader>
-                    <CardTitle className="flex items-center justify-between gap-2">
-                      {business.name}
-                      <Badge variant={business.status === 'published' ? 'default' : 'outline'}>
-                        {business.status.replace('_', ' ')}
-                      </Badge>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                    <Star className="size-3.5 fill-current" />
-                    {business.avg_rating > 0 ? business.avg_rating.toFixed(1) : 'No ratings yet'}
-                    <span>&middot; {business.review_count} reviews</span>
-                  </CardContent>
-                </Card>
-              </Link>
-            ) : null,
-          )}
+      <Card className="overflow-hidden rounded-xl p-0 shadow-none">
+        <div className="border-b px-3 py-2.5 sm:px-4">
+          <h3 className="text-sm font-semibold">Your listings</h3>
+          <p className="text-[11px] text-muted-foreground">Title and description for each business</p>
         </div>
-      )}
+
+        {owned.length === 0 ? (
+          <div className="flex flex-col items-center gap-2 px-4 py-10 text-center">
+            <p className="text-sm font-medium">No businesses yet</p>
+            <p className="text-xs text-muted-foreground">Create a listing to start reaching customers.</p>
+            <Link href="/dashboard/listings/new" className="mt-1">
+              <Button size="sm">
+                <Plus className="size-3.5" />
+                Create a listing
+              </Button>
+            </Link>
+          </div>
+        ) : (
+          <>
+            <div>
+              {pageItems.map(({ business, role }) =>
+                business ? <ListingRow key={business.id} business={business} role={role} /> : null,
+              )}
+            </div>
+            <Pagination
+              basePath="/dashboard"
+              page={page}
+              totalPages={totalPages}
+              total={owned.length}
+              pageSize={PAGE_SIZE}
+            />
+          </>
+        )}
+      </Card>
     </div>
   )
 }

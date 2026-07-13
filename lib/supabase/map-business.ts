@@ -46,6 +46,7 @@ export function mapBusinessListRowToApp(
 ): Business {
   return {
     id: row.slug,
+    dbId: row.id,
     name: row.name,
     categoryId: category?.slug ?? '',
     tagline: row.tagline ?? '',
@@ -113,6 +114,7 @@ export function mapDbBusinessToApp(input: {
   return {
     business: {
       id: b.slug,
+      dbId: b.id,
       name: b.name,
       categoryId: category?.slug ?? '',
       tagline: b.tagline ?? '',

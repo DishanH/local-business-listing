@@ -1,4 +1,6 @@
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { Archive, Eye, Send } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -60,26 +62,39 @@ export default async function EditListingPage({ params }: { params: Promise<{ id
   } = listing
 
   return (
-    <div className="mx-auto flex max-w-2xl flex-col gap-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h2 className="flex items-center gap-2 text-2xl font-semibold tracking-tight">
-            {business.name}
-            <Badge variant={business.status === 'published' ? 'default' : 'outline'}>
+    <div className="flex h-full min-h-0 flex-col">
+      <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b px-4 py-3 sm:px-6">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <Link href="/dashboard" className="text-sm text-muted-foreground hover:text-foreground">
+              Overview
+            </Link>
+            <span className="text-muted-foreground">/</span>
+            <h2 className="truncate text-base font-semibold tracking-tight">{business.name}</h2>
+            <Badge variant={business.status === 'published' ? 'default' : 'outline'} className="capitalize">
               {business.status.replace('_', ' ')}
             </Badge>
-          </h2>
-          <p className="text-sm text-muted-foreground">Keep your listing accurate so customers can find and trust you.</p>
+          </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <a href={`/business/${business.slug}`} target="_blank" rel="noopener noreferrer">
+            <Button variant="outline" size="sm">
+              <Eye className="size-3.5" />
+              Preview
+            </Button>
+          </a>
           {business.status === 'draft' && (
             <form action={submitForReview.bind(null, business.id)}>
-              <Button type="submit">Submit for review</Button>
+              <Button type="submit" size="sm">
+                <Send className="size-3.5" />
+                Submit for review
+              </Button>
             </form>
           )}
           {business.status !== 'archived' && (
             <form action={archiveListing.bind(null, business.id)}>
-              <Button type="submit" variant="destructive">
+              <Button type="submit" variant="destructive" size="sm">
+                <Archive className="size-3.5" />
                 Archive
               </Button>
             </form>
@@ -87,18 +102,20 @@ export default async function EditListingPage({ params }: { params: Promise<{ id
         </div>
       </div>
 
-      <EditListingForms
-        business={business}
-        hours={hours}
-        images={images}
-        sections={sections}
-        offerings={offerings}
-        specials={specials}
-        posts={posts}
-        selectedFilterIds={selectedFilterIds}
-        availableFilters={availableFilters}
-        cities={cities}
-      />
+      <div className="min-h-0 flex-1 overflow-hidden">
+        <EditListingForms
+          business={business}
+          hours={hours}
+          images={images}
+          sections={sections}
+          offerings={offerings}
+          specials={specials}
+          posts={posts}
+          selectedFilterIds={selectedFilterIds}
+          availableFilters={availableFilters}
+          cities={cities}
+        />
+      </div>
     </div>
   )
 }

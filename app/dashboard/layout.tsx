@@ -7,7 +7,6 @@ import { createClient } from '@/lib/supabase/server'
 
 const navLinks: PortalNavLink[] = [
   { href: '/dashboard', label: 'Overview', icon: 'layout-dashboard', exact: true },
-  { href: '/dashboard/listings', label: 'My listings', icon: 'store' },
   { href: '/dashboard/messages', label: 'Messages', icon: 'message-square' },
 ]
 

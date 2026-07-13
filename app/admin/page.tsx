@@ -35,8 +35,8 @@ export default async function AdminDashboardPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h2 className="text-2xl font-semibold tracking-tight">Overview</h2>
-        <p className="text-sm text-muted-foreground">Moderate listings and manage user accounts across the platform.</p>
+        <h2 className="text-lg font-semibold tracking-tight">Overview</h2>
+        <p className="text-xs text-muted-foreground">Moderate listings and manage user accounts across the platform.</p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">

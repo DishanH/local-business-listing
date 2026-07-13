@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
+import { buttonVariants } from '@/components/ui/button'
 
 /** Serializable icon keys — resolved to Lucide components on the client. */
 export type PortalNavIcon = 'layout-dashboard' | 'store' | 'message-square' | 'folder-tree' | 'users'
@@ -31,11 +32,23 @@ export interface PortalNavLink {
   exact?: boolean
 }
 
-export function PortalNav({ links }: { links: PortalNavLink[] }) {
+export function PortalNav({
+  links,
+  collapsed = false,
+  orientation = 'vertical',
+}: {
+  links: PortalNavLink[]
+  collapsed?: boolean
+  orientation?: 'vertical' | 'horizontal'
+}) {
   const pathname = usePathname()
 
   return (
-    <nav className="flex flex-col gap-0.5">
+    <nav
+      className={cn(
+        orientation === 'horizontal' ? 'flex flex-row items-center gap-1' : 'flex flex-col gap-1',
+      )}
+    >
       {links.map((link) => {
         const isActive = link.exact
           ? pathname === link.href
@@ -45,15 +58,19 @@ export function PortalNav({ links }: { links: PortalNavLink[] }) {
           <Link
             key={link.href}
             href={link.href}
+            title={collapsed ? link.label : undefined}
             className={cn(
-              'flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-              isActive
-                ? 'bg-primary text-primary-foreground'
-                : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+              buttonVariants({
+                variant: isActive ? 'default' : 'ghost',
+                size: collapsed ? 'icon' : 'sm',
+              }),
+              collapsed ? 'size-8' : 'h-8 justify-start gap-2 px-2.5 text-xs',
+              !isActive && 'text-muted-foreground',
+              orientation === 'horizontal' && 'shrink-0',
             )}
           >
             <Icon className="size-4 shrink-0" />
-            {link.label}
+            {!collapsed && <span className="truncate">{link.label}</span>}
           </Link>
         )
       })}

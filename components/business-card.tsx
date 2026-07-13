@@ -34,7 +34,7 @@ export function BusinessCard({ business }: { business: Business }) {
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
         <div className="absolute right-3 top-3">
-          <FavoriteButton businessId={business.id} />
+          <FavoriteButton businessId={business.id} dbId={business.dbId} />
         </div>
         <div className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-background/85 px-2.5 py-1 text-xs font-medium backdrop-blur-sm">
           <CategoryIcon name={category?.icon ?? ''} size={13} className="text-primary" />

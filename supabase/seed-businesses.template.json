@@ -1,0 +1,317 @@
+[
+  {
+    "slug": "symposium-cafe-brantford",
+    "name": "Symposium Cafe Restaurant Brantford",
+    "tagline": "Gourmet comfort food and legendary all-day breakfast.",
+    "description": "A premier family-friendly restaurant specializing in gourmet comfort food, all-day breakfast, and indulgent desserts. Known for its cozy atmosphere, stylish dining, and famous 2-for-1 dessert Sundays.",
+    "category_slug": "restaurants",
+    "subcategory_slug": "cafe",
+    "status": "published",
+    "price_level": 2,
+    "email": "brantford@symposiumcafe.com",
+    "phone": "+1-519-756-2023",
+    "website": "https://symposiumcafe.com/locations/brantford-restaurants",
+    "address_line1": "58 King George Rd",
+    "address_line2": null,
+    "city_slug": "brantford",
+    "postal_code": "N3R 5K4",
+    "lat": 43.1672,
+    "lng": -80.2581,
+    "cover_image_url": "/businesses/symposium-cover.png",
+    "is_featured": true,
+    "avg_rating": 4.5,
+    "review_count": 2200,
+    "keywords": ["breakfast", "brunch", "dessert", "comfort food", "family friendly"],
+    "published_at": "2026-07-01T12:00:00Z",
+    "created_by": null,
+    "owners": [
+      { "profile_id": null, "role": "owner" }
+    ],
+    "filter_slugs": [
+      "free-wifi",
+      "parking-available",
+      "accepts-credit-cards",
+      "outdoor-seating"
+    ],
+    "images": [
+      {
+        "url": "/businesses/symposium-storefront.png",
+        "alt_text": "Symposium Cafe Storefront",
+        "sort_order": 0
+      }
+    ],
+    "hours": [
+      { "day_of_week": 0, "open_minute": 480, "close_minute": 1380 },
+      { "day_of_week": 1, "open_minute": 480, "close_minute": 1380 },
+      { "day_of_week": 2, "open_minute": 480, "close_minute": 1380 },
+      { "day_of_week": 3, "open_minute": 480, "close_minute": 1380 },
+      { "day_of_week": 4, "open_minute": 480, "close_minute": 1380 },
+      { "day_of_week": 5, "open_minute": 480, "close_minute": 1440 },
+      { "day_of_week": 6, "open_minute": 480, "close_minute": 1440 }
+    ],
+    "offering_sections": [
+      {
+        "name": "Breakfast Classics",
+        "sort_order": 0,
+        "offerings": [
+          {
+            "name": "Early Bird Breakfast",
+            "description": "Classic morning starter featuring eggs, bacon or sausage, and toast.",
+            "price_cents": 895,
+            "price_label": null,
+            "tag": "Popular",
+            "image_url": null,
+            "is_available": true,
+            "sort_order": 0
+          }
+        ]
+      },
+      {
+        "name": "Desserts",
+        "sort_order": 1,
+        "offerings": [
+          {
+            "name": "Sky-High Carrot Cake",
+            "description": "Our famous towering slice of carrot cake with rich cream cheese frosting.",
+            "price_cents": 1195,
+            "price_label": null,
+            "tag": "Signature",
+            "image_url": null,
+            "is_available": true,
+            "sort_order": 0
+          }
+        ]
+      }
+    ],
+    "specials": [
+      {
+        "day_of_week": 0,
+        "name": "Family Funday",
+        "description": "Kids eat free and two-for-one desserts all day Sunday.",
+        "price_cents": null,
+        "price_label": "2-for-1",
+        "starts_on": null,
+        "ends_on": null
+      }
+    ],
+    "posts": [
+      {
+        "type": "update",
+        "title": "Weekend Brunch is Here!",
+        "body": "Join us this weekend for our legendary Sunday Brunch menu. Don't forget to ask about our $6.95 brunch cocktails.",
+        "badge": "Event",
+        "published_at": "2026-07-01T10:00:00Z",
+        "expires_at": null,
+        "author_id": null
+      }
+    ]
+  },
+  {
+    "slug": "zanders-fire-grill-brew",
+    "name": "Zander's Fire Grill & Brew Lounge",
+    "tagline": "Motorcycles, live music, and the best fire-grilled food in town.",
+    "description": "A popular local hangout adorned with motorcycles and a guitar chandelier. Zander's prides themselves on fresh, locally-sourced ingredients, famous signature wings, and their legendary beer-can chicken.",
+    "category_slug": "restaurants",
+    "subcategory_slug": "american",
+    "status": "published",
+    "price_level": 2,
+    "email": "info@zanders.ca",
+    "phone": "+1-519-304-7625",
+    "website": "https://zanders.ca",
+    "address_line1": "190 King George Rd",
+    "address_line2": null,
+    "city_slug": "brantford",
+    "postal_code": "N3R 5L3",
+    "lat": 43.1770,
+    "lng": -80.2600,
+    "cover_image_url": "/businesses/zanders-cover.png",
+    "is_featured": false,
+    "avg_rating": 4.3,
+    "review_count": 490,
+    "keywords": ["grill", "wings", "live music", "patio", "beer"],
+    "published_at": "2026-07-01T12:00:00Z",
+    "created_by": null,
+    "owners": [
+      { "profile_id": null, "role": "owner" }
+    ],
+    "filter_slugs": [
+      "parking-available",
+      "accepts-credit-cards",
+      "locally-owned",
+      "live-music",
+      "outdoor-seating"
+    ],
+    "images": [
+      {
+        "url": "/businesses/zanders-patio.png",
+        "alt_text": "Zander's outdoor patio seating",
+        "sort_order": 0
+      }
+    ],
+    "hours": [
+      { "day_of_week": 0, "open_minute": 660, "close_minute": 1320 },
+      { "day_of_week": 1, "open_minute": 660, "close_minute": 1320 },
+      { "day_of_week": 2, "open_minute": 660, "close_minute": 1320 },
+      { "day_of_week": 3, "open_minute": 660, "close_minute": 1320 },
+      { "day_of_week": 4, "open_minute": 660, "close_minute": 1320 },
+      { "day_of_week": 5, "open_minute": 660, "close_minute": 1440 },
+      { "day_of_week": 6, "open_minute": 660, "close_minute": 1440 }
+    ],
+    "offering_sections": [
+      {
+        "name": "Chicken and Ribs",
+        "sort_order": 0,
+        "offerings": [
+          {
+            "name": "Righteous Ribs",
+            "description": "Hand-rubbed with our unique blend of seasoning, slow-roasted, grilled, and brushed with signature BBQ sauce.",
+            "price_cents": 2499,
+            "price_label": null,
+            "tag": "Signature",
+            "image_url": null,
+            "is_available": true,
+            "sort_order": 0
+          },
+          {
+            "name": "Beer Can Chicken",
+            "description": "Dry-rubbed capon chicken slow-roasted and lightly coated with homemade barbeque sauce.",
+            "price_cents": 2349,
+            "price_label": null,
+            "tag": "Popular",
+            "image_url": null,
+            "is_available": true,
+            "sort_order": 1
+          }
+        ]
+      }
+    ],
+    "specials": [
+      {
+        "day_of_week": 5,
+        "name": "Live Music Fridays",
+        "description": "Join us on the patio for local live bands every Friday night.",
+        "price_cents": null,
+        "price_label": "No Cover",
+        "starts_on": null,
+        "ends_on": null
+      }
+    ],
+    "posts": [
+      {
+        "type": "update",
+        "title": "Patio Season is Here!",
+        "body": "The sun is shining and the grill is hot. Grab a pint and join us outside.",
+        "badge": null,
+        "published_at": "2026-07-01T10:00:00Z",
+        "expires_at": null,
+        "author_id": null
+      }
+    ]
+  },
+  {
+    "slug": "brantford-surplus",
+    "name": "Brantford Surplus",
+    "tagline": "Your local discount retail and surplus destination since 2015.",
+    "description": "The flagship store of a popular southwestern Ontario discount chain. Brantford Surplus is stuffed with deals on groceries, tools, tactical gear, camping supplies, and electronics.",
+    "category_slug": "retail-shopping",
+    "subcategory_slug": "discount-store",
+    "status": "published",
+    "price_level": 1,
+    "email": "shop@brantfordsurplus.com",
+    "phone": "+1-226-401-5513",
+    "website": "https://brantfordsurplus.com",
+    "address_line1": "655 Colborne St E",
+    "address_line2": null,
+    "city_slug": "brantford",
+    "postal_code": "N3S 3M8",
+    "lat": 43.1360,
+    "lng": -80.2390,
+    "cover_image_url": "/businesses/surplus-cover.png",
+    "is_featured": false,
+    "avg_rating": 4.7,
+    "review_count": 850,
+    "keywords": ["discount", "camping", "hardware", "groceries", "surplus"],
+    "published_at": "2026-07-01T12:00:00Z",
+    "created_by": null,
+    "owners": [
+      { "profile_id": null, "role": "owner" }
+    ],
+    "filter_slugs": [
+      "parking-available",
+      "accepts-credit-cards",
+      "locally-owned"
+    ],
+    "images": [
+      {
+        "url": "/businesses/surplus-storefront.png",
+        "alt_text": "Brantford Surplus exterior facade",
+        "sort_order": 0
+      }
+    ],
+    "hours": [
+      { "day_of_week": 0, "open_minute": 600, "close_minute": 1080 },
+      { "day_of_week": 1, "open_minute": 540, "close_minute": 1200 },
+      { "day_of_week": 2, "open_minute": 540, "close_minute": 1200 },
+      { "day_of_week": 3, "open_minute": 540, "close_minute": 1200 },
+      { "day_of_week": 4, "open_minute": 540, "close_minute": 1200 },
+      { "day_of_week": 5, "open_minute": 540, "close_minute": 1200 },
+      { "day_of_week": 6, "open_minute": 540, "close_minute": 1080 }
+    ],
+    "offering_sections": [
+      {
+        "name": "Camping & Outdoor",
+        "sort_order": 0,
+        "offerings": [
+          {
+            "name": "Paracord Utility Rope",
+            "description": "100ft durable paracord for outdoor and camping needs.",
+            "price_cents": 699,
+            "price_label": null,
+            "tag": "Sale",
+            "image_url": null,
+            "is_available": true,
+            "sort_order": 0
+          }
+        ]
+      },
+      {
+        "name": "Hydroponics Equipment",
+        "sort_order": 1,
+        "offerings": [
+          {
+            "name": "ProYard 4ft T5 Grow Light",
+            "description": "54W Chainable LED grow light fixture.",
+            "price_cents": 2999,
+            "price_label": null,
+            "tag": "Popular",
+            "image_url": null,
+            "is_available": true,
+            "sort_order": 0
+          }
+        ]
+      }
+    ],
+    "specials": [
+      {
+        "day_of_week": 2,
+        "name": "Grocery Deals",
+        "description": "Check our weekly flyer for steep discounts on pantry staples and snacks.",
+        "price_cents": null,
+        "price_label": "Varies",
+        "starts_on": null,
+        "ends_on": null
+      }
+    ],
+    "posts": [
+      {
+        "type": "update",
+        "title": "Camping Days Are Back!",
+        "body": "Just received a massive shipment of tents, cots, and camp kitchen gear. Come grab them before they're gone.",
+        "badge": "New Arrivals",
+        "published_at": "2026-07-01T10:00:00Z",
+        "expires_at": null,
+        "author_id": null
+      }
+    ]
+  }
+]

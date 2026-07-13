@@ -19,7 +19,8 @@ export function ProfileHeader({
   category?: Category
 }) {
   const { getRating } = useStore()
-  const rating = getRating(business.id)
+  // Prefer DB-backed avg_rating / review_count on live listings.
+  const rating = business.rating ?? getRating(business.id)
   const status = useOpenStatus(business)
 
   return (
@@ -34,7 +35,7 @@ export function ProfileHeader({
           sizes="(max-width: 768px) 100vw, 1024px"
         />
         <div className="absolute right-4 top-4">
-          <FavoriteButton businessId={business.id} />
+          <FavoriteButton businessId={business.id} dbId={business.dbId} />
         </div>
       </div>
 

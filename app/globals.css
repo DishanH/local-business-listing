@@ -126,3 +126,20 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes scroll-left-infinite {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll-left {
+  animation: scroll-left-infinite 30s linear infinite;
+}
+
+.animate-scroll-left:hover {
+  animation-play-state: paused;
+}
