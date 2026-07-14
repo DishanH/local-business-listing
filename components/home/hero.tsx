@@ -11,7 +11,7 @@ import { useStore } from '@/components/store-provider'
 
 const heroImages = [
   { src: '/businesses/cafe.png', label: 'Cafés' },
-  { src: '/businesses/florist.png', label: 'Florists' },
+  { src: '/businesses/Yoga.png', label: 'Yoga & Wellness' },
   { src: '/businesses/bookstore.png', label: 'Bookstores' },
   { src: '/businesses/restaurant.png', label: 'Restaurants' },
 ]

@@ -24,18 +24,38 @@ async function getConversations() {
   if (!conversations?.length) return []
 
   const customerIds = [...new Set(conversations.map((c) => c.customer_id))]
-  const [{ data: customers }, businessNames] = await Promise.all([
-    supabase.from('profiles').select('id, full_name').in('id', customerIds),
-    new Map(owned.map((row) => [row.business.id, row.business.name])),
-  ])
+  let customers: {
+    id: string
+    full_name: string | null
+    customer_avg_rating?: number
+    customer_rating_count?: number
+  }[] = []
 
-  const nameByCustomerId = new Map((customers ?? []).map((c) => [c.id, c.full_name]))
+  const withRatings = await supabase
+    .from('profiles')
+    .select('id, full_name, customer_avg_rating, customer_rating_count')
+    .in('id', customerIds)
 
-  return conversations.map((conversation) => ({
-    ...conversation,
-    customerName: nameByCustomerId.get(conversation.customer_id) ?? 'Customer',
-    businessName: businessNames.get(conversation.business_id) ?? '',
-  }))
+  if (withRatings.error) {
+    const fallback = await supabase.from('profiles').select('id, full_name').in('id', customerIds)
+    customers = fallback.data ?? []
+  } else {
+    customers = withRatings.data ?? []
+  }
+
+  const businessNames = new Map(owned.map((row) => [row.business.id, row.business.name]))
+  const profileById = new Map(customers.map((c) => [c.id, c]))
+
+  return conversations.map((conversation) => {
+    const profile = profileById.get(conversation.customer_id)
+    return {
+      ...conversation,
+      customerName: profile?.full_name ?? 'Customer',
+      businessName: businessNames.get(conversation.business_id) ?? '',
+      customerAvgRating: profile?.customer_avg_rating ?? 0,
+      customerRatingCount: profile?.customer_rating_count ?? 0,
+    }
+  })
 }
 
 export default async function MessagesLayout({ children }: { children: React.ReactNode }) {

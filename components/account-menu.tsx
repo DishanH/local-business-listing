@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
-import { LogOut, ShieldCheck, Store, User } from 'lucide-react'
+import { LogOut, MessageSquare, ShieldCheck, Store, User } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { useStore } from '@/components/store-provider'
@@ -88,6 +88,15 @@ export function AccountMenu() {
           </div>
 
           <div className="mt-3 flex flex-col gap-1">
+            <Link
+              href="/messages"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-popover-foreground transition-colors hover:bg-muted"
+            >
+              <MessageSquare className="size-4 text-muted-foreground" aria-hidden="true" />
+              Messages
+            </Link>
+
             <Link
               href="/favorites"
               onClick={() => setOpen(false)}

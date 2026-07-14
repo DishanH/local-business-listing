@@ -8,6 +8,7 @@ import { ChevronLeft, ChevronRight, MessageSquare } from 'lucide-react'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { StarRating } from '@/components/dashboard/star-rating'
 import { cn } from '@/lib/utils'
 
 const PAGE_SIZE = 12
@@ -44,6 +45,8 @@ type Conversation = {
   business_unread_count: number
   customerName: string
   businessName: string
+  customerAvgRating: number
+  customerRatingCount: number
 }
 
 export function MessagesList({ conversations }: { conversations: Conversation[] }) {
@@ -104,6 +107,13 @@ export function MessagesList({ conversations }: { conversations: Conversation[] 
                       {formatWhen(conversation.last_message_at)}
                     </span>
                   </div>
+                  {conversation.customerRatingCount > 0 && (
+                    <StarRating
+                      value={conversation.customerAvgRating}
+                      count={conversation.customerRatingCount}
+                      className="mt-0.5"
+                    />
+                  )}
                 </div>
               </Link>
             )

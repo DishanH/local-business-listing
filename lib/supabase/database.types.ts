@@ -23,6 +23,8 @@ export interface Database {
           phone: string | null
           role: UserRole
           is_active: boolean
+          customer_avg_rating: number
+          customer_rating_count: number
           created_at: string
           updated_at: string
         }
@@ -33,6 +35,8 @@ export interface Database {
           phone?: string | null
           role?: UserRole
           is_active?: boolean
+          customer_avg_rating?: number
+          customer_rating_count?: number
           created_at?: string
           updated_at?: string
         }
@@ -371,6 +375,30 @@ export interface Database {
           updated_at?: string
         }
         Update: Partial<Database['public']['Tables']['reviews']['Insert']>
+        Relationships: []
+      }
+      customer_ratings: {
+        Row: {
+          id: string
+          customer_id: string
+          rater_id: string
+          business_id: string
+          rating: number
+          body: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          customer_id: string
+          rater_id: string
+          business_id: string
+          rating: number
+          body?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: Partial<Database['public']['Tables']['customer_ratings']['Insert']>
         Relationships: []
       }
       favorites: {

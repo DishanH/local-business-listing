@@ -2,6 +2,8 @@
 
 Follow these steps to seed your database with the base taxonomy and real business data.
 
+> **New migration:** After pulling latest code, run `supabase/migrations/0007_customer_ratings.sql` in the Supabase SQL Editor (same as Step 1) so owner→customer ratings work in the inbox.
+
 ## Step 1: Run Base Seeds (Categories, Filters, Cities)
 
 You need to run `seed.sql` first to create the base taxonomy. Here are your options:

@@ -156,4 +156,9 @@ export async function sendCustomerMessage(businessId: string, body: string) {
   if (error) throw new Error(error.message)
 
   await supabase.from('conversations').update({ customer_unread_count: 0 }).eq('id', conversationId)
+
+  const { data: business } = await supabase.from('businesses').select('slug').eq('id', businessId).maybeSingle()
+  if (business?.slug) revalidatePath(`/business/${business.slug}`)
+  revalidatePath('/messages')
+  revalidatePath('/dashboard/messages')
 }

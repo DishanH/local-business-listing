@@ -92,7 +92,15 @@ export function MessagePanel({
         <MessageCircle className="size-5 text-primary" aria-hidden="true" />
         <div>
           <h2 className="font-serif text-lg font-semibold text-card-foreground">Message {businessName}</h2>
-          <p className="text-xs text-muted-foreground">Typically replies within a few hours</p>
+            <p className="text-xs text-muted-foreground">Typically replies within a few hours</p>
+            {user ? (
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                Also in{' '}
+                <a href="/messages" className="font-medium text-primary hover:underline">
+                  your messages
+                </a>
+              </p>
+            ) : null}
         </div>
       </div>
 
