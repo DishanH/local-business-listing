@@ -1,0 +1,35 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+      - npm ci
+    build:
+      commands:
+      # Amplify Gen 2 does NOT automatically inject console env vars into the
+      # Next.js build. We must explicitly write them into .env.production so
+      # that Next.js (and API routes at runtime) can read them via process.env.
+      #
+      # Add every variable you set in Amplify Console → Environment variables here.
+      # Server-side only (no NEXT_PUBLIC_ prefix) - safe to write to .env.production
+      # because this file is only used during the build/runtime on the server.
+      - echo "GOOGLE_AI_API_KEY=$GOOGLE_AI_API_KEY" >> .env.production
+      - echo "UPSTASH_REDIS_REST_URL=$UPSTASH_REDIS_REST_URL" >> .env.production
+      - echo "UPSTASH_REDIS_REST_TOKEN=$UPSTASH_REDIS_REST_TOKEN" >> .env.production
+      - echo "FINANCIAL_API_KEY=$FINANCIAL_API_KEY" >> .env.production
+      - echo "FINANCIAL_API_PROVIDER=$FINANCIAL_API_PROVIDER" >> .env.production
+      # NEXT_PUBLIC_ vars are baked into the client bundle at build time.
+      # Uncomment and add any you need:
+      - echo "NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL" >> .env.production
+      - echo "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"="$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" >>  .env.production
+      # - echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY" >> .env.production
+      # - echo "NEXT_PUBLIC_GOOGLE_ADSENSE_ID=$NEXT_PUBLIC_GOOGLE_ADSENSE_ID" >> .env.production
+      - npm run build
+  artifacts:
+    baseDirectory: .next
+    files:
+    - '**/*'
+  cache:
+    paths:
+    - node_modules/**/*
+    - .next/cache/**/*
