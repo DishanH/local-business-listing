@@ -6,6 +6,8 @@ import { ListBusinessCta } from '@/components/home/list-business-cta'
 import { getMixedBusinessesForApp } from '@/lib/supabase/queries/businesses'
 import { getAppCategories } from '@/lib/supabase/queries/taxonomy'
 
+export const dynamic = 'force-dynamic'
+
 export default async function HomePage() {
   const businesses = await getMixedBusinessesForApp(200)
   const categories = await getAppCategories()

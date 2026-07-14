@@ -8,6 +8,8 @@ import { Pagination, parsePageParam } from '@/components/ui/pagination'
 import { getBusinessesForOwner } from '@/lib/supabase/queries/businesses'
 import { createClient } from '@/lib/supabase/server'
 
+export const dynamic = 'force-dynamic'
+
 const PAGE_SIZE = 8
 
 async function getOverviewData() {

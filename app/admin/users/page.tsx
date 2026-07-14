@@ -5,6 +5,8 @@ import { Pagination, parsePageParam } from '@/components/ui/pagination'
 import { createClient } from '@/lib/supabase/server'
 import type { UserRole } from '@/lib/supabase/database.types'
 
+export const dynamic = 'force-dynamic'
+
 import { toggleUserActive, updateUserRole } from './actions'
 
 const PAGE_SIZE = 15

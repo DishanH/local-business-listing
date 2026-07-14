@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { getTopLevelCategories } from '@/lib/supabase/queries/categories'
 
+export const dynamic = 'force-dynamic'
+
 import { createListing } from '../actions'
 
 export default async function NewListingPage() {

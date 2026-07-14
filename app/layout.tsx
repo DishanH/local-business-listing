@@ -10,6 +10,9 @@ import { getAppCategories, getAppCities } from '@/lib/supabase/queries/taxonomy'
 import { getMixedBusinessesForApp } from '@/lib/supabase/queries/businesses'
 import './globals.css'
 
+// Force dynamic rendering since we fetch Supabase data
+export const dynamic = 'force-dynamic'
+
 const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
   variable: '--font-sans',

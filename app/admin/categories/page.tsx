@@ -9,6 +9,8 @@ import { Label } from '@/components/ui/label'
 import { StepCard } from '@/components/ui/step-card'
 import { createClient } from '@/lib/supabase/server'
 
+export const dynamic = 'force-dynamic'
+
 import { createCategory, deleteCategory, updateCategory } from './actions'
 
 async function getTaxonomy() {

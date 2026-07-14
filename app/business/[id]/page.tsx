@@ -17,6 +17,9 @@ import { MenuPanel } from '@/components/profile/menu-panel'
 import { BusinessCard } from '@/components/business-card'
 import { Badge } from '@/components/ui/badge'
 
+// Force dynamic rendering since we fetch Supabase data at runtime
+export const dynamic = 'force-dynamic'
+
 export function generateStaticParams() {
   return businesses.map((b) => ({ id: b.id }))
 }

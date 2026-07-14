@@ -11,6 +11,8 @@ import { cn } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/server'
 import { getCustomerReputation, type CustomerReputation } from '@/lib/supabase/queries/customers'
 
+export const dynamic = 'force-dynamic'
+
 import { sendBusinessReply } from './actions'
 
 function initials(name: string) {
