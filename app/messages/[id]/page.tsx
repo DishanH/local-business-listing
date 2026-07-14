@@ -8,8 +8,6 @@ import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/server'
 
-export const dynamic = 'force-dynamic'
-
 import { sendCustomerReply } from './actions'
 
 function initials(name: string) {

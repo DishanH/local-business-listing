@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { Hero } from '@/components/home/hero'
 import { CategoryGrid } from '@/components/home/category-grid'
 import { NearestSection } from '@/components/home/nearest-section'
@@ -6,18 +7,83 @@ import { ListBusinessCta } from '@/components/home/list-business-cta'
 import { getMixedBusinessesForApp } from '@/lib/supabase/queries/businesses'
 import { getAppCategories } from '@/lib/supabase/queries/taxonomy'
 
-export const dynamic = 'force-dynamic'
+// ISR: Revalidate homepage every 15 minutes
+export const revalidate = 900
+
+// Server component that fetches and renders CategoryGrid
+async function CategoryGridServer() {
+  const [businesses, categories] = await Promise.all([
+    getMixedBusinessesForApp(200),
+    getAppCategories()
+  ])
+  return <CategoryGrid businesses={businesses} categories={categories} />
+}
+
+// Loading skeleton for CategoryGrid
+function CategoryGridSkeleton() {
+  return (
+    <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+      <div className="flex items-end justify-between gap-4">
+        <div className="h-7 w-48 animate-pulse rounded-lg bg-muted" />
+        <div className="h-5 w-20 animate-pulse rounded bg-muted" />
+      </div>
+      <div className="mt-4 flex gap-2.5 overflow-hidden">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div
+            key={i}
+            className="flex h-12 w-36 shrink-0 animate-pulse items-center gap-2.5 rounded-full bg-muted"
+          />
+        ))}
+      </div>
+    </section>
+  )
+}
+
+// Loading skeleton for FeaturedSection
+function FeaturedSectionSkeleton() {
+  return (
+    <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
+      <div className="flex items-end justify-between gap-4">
+        <div>
+          <div className="h-8 w-64 animate-pulse rounded-lg bg-muted" />
+          <div className="mt-2 h-5 w-96 animate-pulse rounded bg-muted" />
+        </div>
+      </div>
+      <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div key={i} className="animate-pulse overflow-hidden rounded-2xl border">
+            <div className="aspect-[4/3] bg-muted" />
+            <div className="p-4 space-y-2">
+              <div className="h-5 w-3/4 rounded bg-muted" />
+              <div className="h-4 w-1/2 rounded bg-muted" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
 
 export default async function HomePage() {
-  const businesses = await getMixedBusinessesForApp(200)
-  const categories = await getAppCategories()
-
   return (
     <>
+      {/* Hero loads immediately - no data fetching */}
       <Hero />
-      <CategoryGrid businesses={businesses} categories={categories} />
+      
+      {/* CategoryGrid streams in with Suspense */}
+      <Suspense fallback={<CategoryGridSkeleton />}>
+        <CategoryGridServer />
+      </Suspense>
+      
+      {/* NearestSection loads immediately - client-side geolocation */}
       <NearestSection />
-      <FeaturedSection />
+      
+      {/* FeaturedSection streams in with Suspense */}
+      <Suspense fallback={<FeaturedSectionSkeleton />}>
+        <FeaturedSection />
+      </Suspense>
+      
+      {/* CTA loads immediately - static content */}
       <ListBusinessCta />
     </>
   )

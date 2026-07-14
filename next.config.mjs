@@ -2,8 +2,8 @@
 const nextConfig = {
   reactStrictMode: true,
 
-  // Disable cacheComponents to allow dynamic routes with Supabase
-  // cacheComponents conflicts with export const dynamic = 'force-dynamic'
+  // Disable cacheComponents - it conflicts with Supabase cookies()
+  // We'll use traditional ISR with revalidate instead
   cacheComponents: false,
 
   experimental: {

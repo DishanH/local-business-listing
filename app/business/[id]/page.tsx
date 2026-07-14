@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
@@ -17,8 +18,8 @@ import { MenuPanel } from '@/components/profile/menu-panel'
 import { BusinessCard } from '@/components/business-card'
 import { Badge } from '@/components/ui/badge'
 
-// Force dynamic rendering since we fetch Supabase data at runtime
-export const dynamic = 'force-dynamic'
+// ISR: Revalidate business pages every 5 minutes
+export const revalidate = 300
 
 export function generateStaticParams() {
   return businesses.map((b) => ({ id: b.id }))
@@ -94,6 +95,69 @@ async function getSocialContext(businessUuid: string) {
   }
 }
 
+// Server component for reviews with social context
+async function ReviewsSection({ businessId, avgRating, reviewCount }: { businessId: string, avgRating: number | null, reviewCount: number }) {
+  const social = await getSocialContext(businessId)
+  return (
+    <ReviewsPanel
+      businessId={businessId}
+      reviews={social.reviews}
+      isOwner={social.isOwner}
+      avgRating={avgRating}
+      reviewCount={reviewCount}
+    />
+  )
+}
+
+// Server component for user-specific panels (notes & messages)
+async function UserSpecificPanels({ businessId, businessName }: { businessId: string, businessName: string }) {
+  const social = await getSocialContext(businessId)
+  return (
+    <>
+      <NotesPanel businessId={businessId} initialNote={social.note} />
+      <MessagePanel
+        businessId={businessId}
+        businessName={businessName}
+        isOwner={social.isOwner}
+        initialMessages={social.messages}
+      />
+    </>
+  )
+}
+
+// Loading skeletons
+function ReviewsSkeleton() {
+  return (
+    <div className="rounded-2xl border bg-card p-6">
+      <div className="h-6 w-32 animate-pulse rounded bg-muted" />
+      <div className="mt-4 space-y-4">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="space-y-2">
+            <div className="h-4 w-24 animate-pulse rounded bg-muted" />
+            <div className="h-4 w-full animate-pulse rounded bg-muted" />
+            <div className="h-4 w-3/4 animate-pulse rounded bg-muted" />
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function UserPanelsSkeleton() {
+  return (
+    <>
+      <div className="rounded-2xl border bg-card p-6">
+        <div className="h-5 w-24 animate-pulse rounded bg-muted" />
+        <div className="mt-3 h-20 w-full animate-pulse rounded bg-muted" />
+      </div>
+      <div className="rounded-2xl border bg-card p-6">
+        <div className="h-5 w-32 animate-pulse rounded bg-muted" />
+        <div className="mt-3 h-32 w-full animate-pulse rounded bg-muted" />
+      </div>
+    </>
+  )
+}
+
 export default async function BusinessPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
 
@@ -102,7 +166,6 @@ export default async function BusinessPage({ params }: { params: Promise<{ id: s
 
   if (dbPayload) {
     const { business: appBusiness, category } = mapDbBusinessToApp(dbPayload)
-    const social = await getSocialContext(dbPayload.business.id)
 
     return (
       <div className="mx-auto max-w-6xl px-4 py-6 md:py-8">
@@ -146,22 +209,26 @@ export default async function BusinessPage({ params }: { params: Promise<{ id: s
               <OwnerUpdatesPanel posts={appBusiness.ownerPosts} businessName={appBusiness.name} />
             ) : null}
             <MenuPanel weeklySpecials={appBusiness.weeklySpecials} menu={appBusiness.menu} />
-            <ReviewsPanel
-              businessId={dbPayload.business.id}
-              reviews={social.reviews}
-              isOwner={social.isOwner}
-              avgRating={dbPayload.business.avg_rating}
-              reviewCount={dbPayload.business.review_count}
-            />
+            
+            {/* Reviews stream in with Suspense */}
+            <Suspense fallback={<ReviewsSkeleton />}>
+              <ReviewsSection 
+                businessId={dbPayload.business.id}
+                avgRating={dbPayload.business.avg_rating}
+                reviewCount={dbPayload.business.review_count}
+              />
+            </Suspense>
           </div>
           <div className="flex flex-col gap-6">
-            <NotesPanel businessId={dbPayload.business.id} initialNote={social.note} />
-            <MessagePanel
-              businessId={dbPayload.business.id}
-              businessName={appBusiness.name}
-              isOwner={social.isOwner}
-              initialMessages={social.messages}
-            />
+            {/* User-specific panels stream in with Suspense */}
+            <Suspense fallback={<UserPanelsSkeleton />}>
+              <UserSpecificPanels
+                businessId={dbPayload.business.id}
+                businessName={appBusiness.name}
+              />
+            </Suspense>
+            
+            {/* Static panels load immediately */}
             <ContactPanel business={appBusiness} />
             <HoursPanel business={appBusiness} />
           </div>

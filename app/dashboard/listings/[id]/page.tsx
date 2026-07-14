@@ -8,8 +8,6 @@ import { EditListingForms } from '@/components/dashboard/edit-listing-forms'
 import { createClient } from '@/lib/supabase/server'
 import { getFiltersForCategory } from '@/lib/supabase/queries/categories'
 
-export const dynamic = 'force-dynamic'
-
 import { archiveListing, submitForReview } from '../actions'
 
 async function getListing(id: string) {

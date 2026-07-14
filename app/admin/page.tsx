@@ -4,8 +4,6 @@ import { AlertCircle, CheckCircle2, Store, Users } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
 
-export const dynamic = 'force-dynamic'
-
 async function getCounts() {
   const supabase = await createClient()
 

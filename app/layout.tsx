@@ -10,8 +10,8 @@ import { getAppCategories, getAppCities } from '@/lib/supabase/queries/taxonomy'
 import { getMixedBusinessesForApp } from '@/lib/supabase/queries/businesses'
 import './globals.css'
 
-// Force dynamic rendering since we fetch Supabase data
-export const dynamic = 'force-dynamic'
+// ISR: Revalidate layout data every 15 minutes
+export const revalidate = 900
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
