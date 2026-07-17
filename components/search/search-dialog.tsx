@@ -9,6 +9,7 @@ import { CategoryIcon } from '@/components/category-icon'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { useStore } from '@/components/store-provider'
 import { suggest } from '@/lib/search'
+import { cn } from '@/lib/utils'
 
 const quickChips = ['restaurants', 'cafe', 'bakery', 'yoga', 'salon']
 
@@ -21,13 +22,25 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
   const router = useRouter()
   const { categories, businesses } = useStore()
   const inputRef = useRef<HTMLInputElement>(null)
+  const listRef = useRef<HTMLUListElement>(null)
   const [q, setQ] = useState('')
+  const [activeIndex, setActiveIndex] = useState(-1)
 
   const suggestions = useMemo(() => (q.trim() ? suggest(businesses, q, categories, 6) : []), [businesses, categories, q])
 
   useEffect(() => {
+    setActiveIndex(-1)
+  }, [q])
+
+  useEffect(() => {
+    if (activeIndex < 0) return
+    listRef.current?.querySelector<HTMLElement>(`[data-index="${activeIndex}"]`)?.scrollIntoView({ block: 'nearest' })
+  }, [activeIndex])
+
+  useEffect(() => {
     if (!open) {
       setQ('')
+      setActiveIndex(-1)
       return
     }
     const t = window.setTimeout(() => inputRef.current?.focus(), 50)
@@ -50,6 +63,26 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
     router.push(query.trim() ? `/search?q=${encodeURIComponent(query.trim())}` : '/search')
   }
 
+  function selectBusiness(id: string) {
+    onOpenChange(false)
+    router.push(`/business/${id}`)
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (!suggestions.length) return
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      setActiveIndex((i) => (i + 1 >= suggestions.length ? 0 : i + 1))
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      setActiveIndex((i) => (i - 1 < 0 ? suggestions.length - 1 : i - 1))
+    } else if (e.key === 'Enter' && activeIndex >= 0) {
+      e.preventDefault()
+      selectBusiness(suggestions[activeIndex].id)
+    }
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
@@ -69,8 +102,14 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
               ref={inputRef}
               value={q}
               onChange={(e) => setQ(e.target.value)}
+              onKeyDown={handleKeyDown}
               placeholder="Search businesses..."
               aria-label="Search businesses"
+              role="combobox"
+              aria-expanded={suggestions.length > 0}
+              aria-controls="search-dialog-suggestions"
+              aria-activedescendant={activeIndex >= 0 ? `search-suggestion-${activeIndex}` : undefined}
+              autoComplete="off"
               className="min-w-0 flex-1 bg-transparent text-base outline-none placeholder:text-muted-foreground"
             />
             <kbd className="hidden rounded-md border bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground sm:inline">
@@ -81,15 +120,20 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
 
         <div className="max-h-[min(60vh,22rem)] overflow-y-auto p-2">
           {suggestions.length > 0 ? (
-            <ul className="flex flex-col gap-0.5">
-              {suggestions.map((b) => {
+            <ul ref={listRef} id="search-dialog-suggestions" role="listbox" className="flex flex-col gap-0.5">
+              {suggestions.map((b, i) => {
                 const cat = categories.find((c) => c.id === b.categoryId)
+                const isActive = i === activeIndex
                 return (
-                  <li key={b.id}>
+                  <li key={b.id} data-index={i} role="option" aria-selected={isActive} id={`search-suggestion-${i}`}>
                     <Link
                       href={`/business/${b.id}`}
                       onClick={() => onOpenChange(false)}
-                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors hover:bg-accent"
+                      onMouseEnter={() => setActiveIndex(i)}
+                      className={cn(
+                        'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors',
+                        isActive ? 'bg-accent' : 'hover:bg-accent',
+                      )}
                     >
                       <span className="relative size-9 shrink-0 overflow-hidden rounded-lg">
                         <Image src={b.image || '/placeholder.svg'} alt="" fill className="object-cover" sizes="36px" />

@@ -26,6 +26,14 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'assets.parqet.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'picsum.photos',
+      },
+      {
+        protocol: 'https',
+        hostname: 'placehold.co',
       }
     ],
   }

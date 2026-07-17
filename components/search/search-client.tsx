@@ -21,7 +21,7 @@ import {
 
 type Sort = 'relevance' | 'nearest' | 'rating' | 'name'
 
-const PAGE_SIZE = 9
+const PAGE_SIZE = 12
 
 const sortLabels: Record<Sort, string> = {
   relevance: 'Best match',
@@ -33,17 +33,19 @@ const sortLabels: Record<Sort, string> = {
 export function SearchClient() {
   const router = useRouter()
   const params = useSearchParams()
-  const { getRating, origin, categories, businesses } = useStore()
+  const { getRating, origin, categories, businesses, cities } = useStore()
 
   const [query, setQuery] = useState(params.get('q') ?? '')
   const [category, setCategory] = useState(params.get('category') ?? 'all')
   const [subcategory, setSubcategory] = useState(params.get('sub') ?? 'all')
+  const [city, setCity] = useState(params.get('city') ?? 'all')
   const [sort, setSort] = useState<Sort>((params.get('sort') as Sort) ?? 'relevance')
   const [openNow, setOpenNow] = useState(false)
   const [priceLevels, setPriceLevels] = useState<string[]>([])
   const [visiblePages, setVisiblePages] = useState(1)
 
   const activeCategory = categories.find((c) => c.id === category)
+  const activeCity = cities.find((c) => c.id === city)
   const subcategories = category !== 'all' ? getSubcategories(category) : []
   const activeSub = subcategories.find((s) => s.id === subcategory)
 
@@ -57,6 +59,7 @@ export function SearchClient() {
     if (subcategory !== 'all' && activeSub) {
       list = list.filter((r) => matchesSubcategory(r.business, activeSub))
     }
+    if (city !== 'all') list = list.filter((r) => r.business.city === city)
     if (openNow) list = list.filter((r) => getOpenStatus(r.business).open)
     if (priceLevels.length > 0) {
       list = list.filter((r) => priceLevels.includes(String(r.business.priceLevel)))
@@ -73,17 +76,17 @@ export function SearchClient() {
       sorted.sort((a, b) => b.score - a.score)
     }
     return sorted.map((r) => r.business)
-  }, [businesses, query, category, subcategory, activeSub, openNow, priceLevels, sort, origin, getRating])
+  }, [businesses, query, category, subcategory, activeSub, city, openNow, priceLevels, sort, origin, getRating])
 
   useEffect(() => {
     setVisiblePages(1)
-  }, [query, category, subcategory, openNow, priceLevels, sort])
+  }, [query, category, subcategory, city, openNow, priceLevels, sort])
 
   const visibleResults = results.slice(0, visiblePages * PAGE_SIZE)
   const hasMore = visibleResults.length < results.length
 
   const updateUrl = useCallback(
-    (next: Partial<{ q: string; category: string; sub: string; sort: string }>) => {
+    (next: Partial<{ q: string; category: string; sub: string; city: string; sort: string }>) => {
       const sp = new URLSearchParams(params.toString())
       Object.entries(next).forEach(([k, v]) => {
         if (v && v !== 'all' && v !== 'relevance') sp.set(k, v)
@@ -106,6 +109,7 @@ export function SearchClient() {
   const clearAll = () => {
     setCategory('all')
     setSubcategory('all')
+    setCity('all')
     clearFilters()
     setSort('relevance')
     setQuery('')
@@ -113,7 +117,7 @@ export function SearchClient() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
+    <div className="mx-auto max-w-[88rem] px-4 py-6 sm:px-6 sm:py-8">
       {activeCategory ? (
         <div className="flex items-center gap-3">
           <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
@@ -261,9 +265,24 @@ export function SearchClient() {
       ) : null}
 
       {/* Active filter tags */}
-      {(priceLevels.length > 0 || openNow) && (
+      {(priceLevels.length > 0 || openNow || activeCity) && (
         <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
           <span className="text-xs font-medium text-muted-foreground">Active:</span>
+          {activeCity && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-primary bg-accent px-2.5 py-1 text-xs font-medium text-primary">
+              {activeCity.name}
+              <button
+                type="button"
+                aria-label="Remove city filter"
+                onClick={() => {
+                  setCity('all')
+                  updateUrl({ city: 'all' })
+                }}
+              >
+                <X size={12} />
+              </button>
+            </span>
+          )}
           {openNow && (
             <span className="inline-flex items-center gap-1 rounded-full border border-primary bg-accent px-2.5 py-1 text-xs font-medium text-primary">
               Open now
@@ -288,7 +307,11 @@ export function SearchClient() {
             ))}
           <button
             type="button"
-            onClick={clearFilters}
+            onClick={() => {
+              clearFilters()
+              setCity('all')
+              updateUrl({ city: 'all' })
+            }}
             className="text-xs font-medium text-muted-foreground hover:text-foreground"
           >
             Clear all
@@ -304,11 +327,16 @@ export function SearchClient() {
             {' '}for <span className="font-medium text-foreground">&ldquo;{query}&rdquo;</span>
           </>
         ) : null}
+        {activeCity ? (
+          <>
+            {' '}in <span className="font-medium text-foreground">{activeCity.name}</span>
+          </>
+        ) : null}
       </p>
 
       {results.length > 0 ? (
         <>
-          <div className="mt-3 grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
+          <div className="mt-3 grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
             {visibleResults.map((b) => (
               <BusinessCard key={b.id} business={b} />
             ))}

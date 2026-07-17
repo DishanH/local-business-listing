@@ -3,11 +3,12 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Search, MapPin, ArrowRight, CornerDownLeft, Store } from 'lucide-react'
 import { suggest } from '@/lib/search'
 import { CategoryIcon } from '@/components/category-icon'
 import { useStore } from '@/components/store-provider'
+import { cn } from '@/lib/utils'
 
 const heroImages = [
   { src: '/businesses/cafe.png', label: 'Cafés' },
@@ -23,17 +24,46 @@ export function Hero() {
   const { categories, businesses } = useStore()
   const [q, setQ] = useState('')
   const [open, setOpen] = useState(false)
+  const [activeIndex, setActiveIndex] = useState(-1)
   const blurTimer = useRef<number | null>(null)
+  const listRef = useRef<HTMLDivElement>(null)
 
   const suggestions = useMemo(() => (q.trim() ? suggest(businesses, q, categories, 5) : []), [businesses, categories, q])
+
+  useEffect(() => {
+    setActiveIndex(-1)
+  }, [q])
+
+  useEffect(() => {
+    if (activeIndex < 0) return
+    listRef.current?.querySelector<HTMLElement>(`[data-index="${activeIndex}"]`)?.scrollIntoView({ block: 'nearest' })
+  }, [activeIndex])
 
   const go = (query: string) => {
     router.push(query.trim() ? `/search?q=${encodeURIComponent(query.trim())}` : '/search')
   }
 
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (!open || !suggestions.length) return
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      setActiveIndex((i) => (i + 1 >= suggestions.length ? 0 : i + 1))
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      setActiveIndex((i) => (i - 1 < 0 ? suggestions.length - 1 : i - 1))
+    } else if (e.key === 'Enter' && activeIndex >= 0) {
+      e.preventDefault()
+      router.push(`/business/${suggestions[activeIndex].id}`)
+      setOpen(false)
+    } else if (e.key === 'Escape') {
+      setOpen(false)
+    }
+  }
+
   return (
     <section className="relative overflow-hidden border-b bg-gradient-to-b from-accent/40 to-background">
-      <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 sm:px-6 lg:grid-cols-2 lg:py-20">
+      <div className="mx-auto grid max-w-[88rem] items-center gap-10 px-4 py-14 sm:px-6 lg:grid-cols-2 lg:py-20">
         <div>
           <span className="inline-flex items-center gap-1.5 rounded-full border bg-background px-3 py-1 text-xs font-medium text-muted-foreground">
             <MapPin size={13} className="text-primary" /> Supporting local, one visit at a time
@@ -64,8 +94,14 @@ export function Hero() {
                 onBlur={() => {
                   blurTimer.current = window.setTimeout(() => setOpen(false), 150)
                 }}
+                onKeyDown={handleKeyDown}
                 placeholder="Try 'coper fork' or 'flowers near me'"
                 aria-label="Search local businesses"
+                role="combobox"
+                aria-expanded={open && suggestions.length > 0}
+                aria-controls="hero-search-suggestions"
+                aria-activedescendant={activeIndex >= 0 ? `hero-suggestion-${activeIndex}` : undefined}
+                autoComplete="off"
                 className="h-14 w-full rounded-2xl border bg-card pl-12 pr-28 text-base shadow-sm outline-none transition-colors focus:border-ring"
               />
               <button
@@ -78,18 +114,30 @@ export function Hero() {
 
             {open && suggestions.length > 0 && (
               <div
+                ref={listRef}
+                id="hero-search-suggestions"
+                role="listbox"
                 className="absolute z-20 mt-2 w-full overflow-hidden rounded-2xl border bg-popover shadow-lg"
                 onMouseDown={() => {
                   if (blurTimer.current) window.clearTimeout(blurTimer.current)
                 }}
               >
-                {suggestions.map((b) => {
+                {suggestions.map((b, i) => {
                   const cat = categories.find((c) => c.id === b.categoryId)
+                  const isActive = i === activeIndex
                   return (
                     <Link
                       key={b.id}
                       href={`/business/${b.id}`}
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-accent"
+                      data-index={i}
+                      id={`hero-suggestion-${i}`}
+                      role="option"
+                      aria-selected={isActive}
+                      onMouseEnter={() => setActiveIndex(i)}
+                      className={cn(
+                        'flex items-center gap-3 px-4 py-2.5 text-sm transition-colors',
+                        isActive ? 'bg-accent' : 'hover:bg-accent',
+                      )}
                     >
                       <span className="relative size-9 shrink-0 overflow-hidden rounded-lg">
                         <Image src={b.image || '/placeholder.svg'} alt="" fill className="object-cover" sizes="36px" />

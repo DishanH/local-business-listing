@@ -3,7 +3,7 @@ import { ArrowRight, Store } from 'lucide-react'
 
 export function ListBusinessCta() {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+    <section className="mx-auto max-w-[88rem] px-4 py-10 sm:px-6">
       <div className="relative overflow-hidden rounded-3xl bg-primary px-6 py-10 text-primary-foreground sm:px-12 sm:py-14">
         <div
           className="pointer-events-none absolute -right-16 -top-16 size-64 rounded-full bg-primary-foreground/10"

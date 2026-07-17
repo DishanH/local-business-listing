@@ -1,0 +1,325 @@
+{
+  "_readme": [
+    "REFERENCE + SAMPLE for generating bulk test businesses.",
+    "Hand this whole file to your generation service and ask it to output an ARRAY",
+    "of business objects shaped like the entries in `samples`, choosing slugs ONLY",
+    "from `allowed_values`. Then save that array as its own .json file and run:",
+    "  npx tsx supabase/seed-businesses.ts supabase/seed-businesses.generated.json",
+    "Do NOT invent new category, subcategory, filter, or city slugs — the importer",
+    "looks each one up by slug and will skip/fail rows that reference a missing slug.",
+    "`category_slug`, `city_slug`, `name`, `slug`, and `status` are required; everything",
+    "else is optional. `slug` must be globally unique (kebab-case)."
+  ],
+
+  "field_reference": {
+    "slug": "Required. Unique, kebab-case identifier, e.g. 'copper-fork-cafe-hamilton'.",
+    "name": "Required. Display name.",
+    "tagline": "Short one-liner.",
+    "description": "1-3 sentences.",
+    "category_slug": "Required. MUST be a top-level key in allowed_values.categories.",
+    "subcategory_slug": "Optional. MUST be one of that category's subcategories in allowed_values.categories[category_slug].",
+    "status": "Required. One of allowed_values.status. Use 'published' so it shows on the site.",
+    "price_level": "Integer 1-4 (or omit). 1=$, 4=$$$$.",
+    "email": "Dummy address is fine, e.g. 'hello@example.com'.",
+    "phone": "Dummy Ontario number. Use the reserved 555-01xx range: '+1-519-555-0142'.",
+    "website": "Dummy URL is fine.",
+    "address_line1": "Ontario street address.",
+    "address_line2": "Optional (suite/unit) or null.",
+    "city_slug": "Required. MUST be an existing slug in allowed_values.cities.existing (only 'brantford' is Ontario by default — see allowed_values.cities.ontario_optional_add_first to add more first).",
+    "postal_code": "Canadian format 'A1A 1A1'.",
+    "lat": "Latitude (double). Ontario is roughly 42-46 N.",
+    "lng": "Longitude (double). Ontario is roughly -74 to -83 W (negative).",
+    "cover_image_url": "Card/hero image. Placeholder OK, e.g. 'https://picsum.photos/seed/<slug>/1200/800'.",
+    "is_featured": "Boolean. Keep most false; a few true.",
+    "avg_rating": "numeric(2,1): one decimal, keep 3.5-5.0. Denormalized; triggers overwrite it once real reviews exist.",
+    "review_count": "Integer.",
+    "keywords": "Array of lowercase search terms.",
+    "published_at": "ISO timestamp; set when status is 'published'.",
+    "created_by": "Keep null for seed data.",
+    "owners": "Array of { profile_id, role }. Assign ONE owner per business, ALTERNATING between the two ids in allowed_values.owner_profile_ids (roughly half to each). Use role 'owner'. profile_id must be an existing profiles.id; null profile_ids are skipped by the importer.",
+    "filter_slugs": "Array of amenity slugs. Use allowed_values.filters_global plus, if applicable, allowed_values.filters_by_category[category_slug]. Unknown slugs are silently ignored.",
+    "images": "Gallery photos. Each { url, alt_text, sort_order }.",
+    "hours": "Array of 0-7 rows. day_of_week 0-6 (see allowed_values.day_of_week). open_minute/close_minute are minutes past midnight (0-1440); e.g. 9:00 AM = 540, 10:30 PM = 1350. Use null/null (or omit the day) for closed.",
+    "offering_sections": "Menu/products grouped into sections; each section has offerings. price_cents is an integer (1295 = $12.95); use price_label for non-numeric prices ('Market price').",
+    "specials": "Weekly/limited deals. day_of_week optional (omit/null = any day).",
+    "posts": "News & offers. type is one of allowed_values.post_type."
+  },
+
+  "allowed_values": {
+    "status": ["draft", "pending_review", "published", "suspended", "archived"],
+    "price_level": [1, 2, 3, 4],
+    "post_type": ["offer", "event", "update"],
+    "owner_role": ["owner", "manager", "staff"],
+    "owner_profile_ids": ["b3f8be4c-6d7d-4618-b1d6-6b8f121d28e8", "bfedd27a-57ac-4d50-bb7d-962f964a46f2"],
+    "_owner_profile_ids_note": "Assign each business ONE owner, alternating between these two profile ids so ownership is split roughly evenly.",
+    "day_of_week": {
+      "0": "Sunday",
+      "1": "Monday",
+      "2": "Tuesday",
+      "3": "Wednesday",
+      "4": "Thursday",
+      "5": "Friday",
+      "6": "Saturday"
+    },
+
+    "categories": {
+      "restaurants": ["italian", "american", "plant-based", "asian", "mexican", "seafood", "pizza", "bbq", "fine-dining", "fast-casual"],
+      "cafe": ["coffee", "breakfast", "pastries", "tea-house", "juice-bar"],
+      "bakery": ["bread", "cakes", "donuts"],
+      "bars-nightlife": ["cocktail-bar", "brewery", "wine-bar", "sports-bar", "nightclub"],
+      "salon": ["hair", "barber", "nails", "lashes-brows", "makeup"],
+      "bookstore": ["new", "used", "travel", "comics", "kids"],
+      "gym": ["strength", "classes", "crossfit", "martial-arts", "personal-training"],
+      "florist": ["everyday", "events", "plants-succulents"],
+      "yoga": ["yoga", "wellness", "massage-therapy", "meditation"],
+      "petstore": ["supplies", "outdoor", "grooming", "boarding", "veterinary"],
+      "autoshop": ["repair", "tires", "detailing", "car-wash", "body-shop"],
+      "retail-shopping": ["clothing-apparel", "shoes", "jewelry-accessories", "electronics", "home-goods", "gifts-novelty", "thrift-vintage", "discount-store"],
+      "home-services": ["plumbing", "electrical", "hvac", "landscaping", "cleaning", "painting", "roofing", "handyman", "pest-control", "decks-fences"],
+      "professional-services": ["legal", "accounting-tax", "insurance", "marketing-design", "notary", "financial-planning"],
+      "health-medical": ["dentist", "chiropractor", "physical-therapy", "optometry", "urgent-care", "mental-health", "pediatrics"],
+      "education-training": ["tutoring", "music-lessons", "language-classes", "driving-school", "childcare-daycare", "test-prep"],
+      "arts-entertainment": ["art-gallery", "movie-theater", "live-music", "museum", "arcade-gaming", "photography-studio"],
+      "events-party": ["event-venue", "catering", "party-rentals", "photography-video", "dj-entertainment", "birthday-parties"],
+      "travel-lodging": ["hotel-bnb", "vacation-rental", "travel-agency", "tour-guide"],
+      "real-estate": ["real-estate-agent", "property-management", "home-inspection", "moving-services"],
+      "tech-electronics": ["computer-repair", "phone-repair", "electronics-store", "it-services", "web-design", "electronics-repair"],
+      "community-nonprofit": ["religious-organization", "nonprofit-charity", "community-center", "government-services"],
+      "kids-family": ["kids-play", "kids-parties", "kids-classes", "kids-care"],
+      "pottery-crafts": ["pottery-studio", "pottery-classes", "custom-pottery"]
+    },
+
+    "filters_global": [
+      "free-wifi",
+      "parking-available",
+      "wheelchair-accessible",
+      "accepts-credit-cards",
+      "online-booking",
+      "delivery-available",
+      "walk-ins-welcome",
+      "appointment-required",
+      "good-for-groups",
+      "open-late",
+      "family-friendly",
+      "pet-friendly",
+      "locally-owned",
+      "woman-owned",
+      "lgbtq-friendly"
+    ],
+    "filters_by_category": {
+      "restaurants": ["outdoor-seating", "takeout-available", "full-bar", "vegan-options", "gluten-free-options"],
+      "gym": ["24-7-access", "free-trial-class"],
+      "petstore": ["on-site-grooming"],
+      "autoshop": ["loaner-cars", "same-day-service", "mobile-service"],
+      "home-services": ["emergency-service", "free-estimates", "licensed-insured", "residential-commercial"],
+      "kids-family": ["age-0-5", "age-6-12", "kids-party-packages", "drop-in-welcome"],
+      "events-party": ["event-party-packages", "on-site-hosting", "custom-themes"],
+      "tech-electronics": ["walk-in-repair", "data-recovery", "while-you-wait"],
+      "pottery-crafts": ["open-studio", "beginner-friendly", "kids-welcome"]
+    },
+    "_filters_note": "These are the seeded defaults. If you added more via the admin Filters page, include those slugs too (query: select slug from filters).",
+
+    "cities": {
+      "_note": "city_slug MUST already exist in the cities table. Only 'brantford' is Ontario out of the box. To spread businesses across Ontario, insert some of `ontario_optional_add_first` FIRST (SQL snippet is in the chat message), then you may use their slugs.",
+      "existing": [
+        { "slug": "brantford", "name": "Brantford", "region": "ON", "country": "CA", "lat": 43.1394, "lng": -80.2644 },
+        { "slug": "riverton", "name": "Riverton", "region": "NJ", "country": "US" },
+        { "slug": "oakdale", "name": "Oakdale", "region": "NJ", "country": "US" },
+        { "slug": "brookside", "name": "Brookside", "region": "NJ", "country": "US" }
+      ],
+      "ontario_optional_add_first": [
+        { "slug": "hamilton", "name": "Hamilton", "region": "ON", "lat": 43.2557, "lng": -79.8711 },
+        { "slug": "cambridge", "name": "Cambridge", "region": "ON", "lat": 43.3616, "lng": -80.3144 },
+        { "slug": "kitchener", "name": "Kitchener", "region": "ON", "lat": 43.4516, "lng": -80.4925 },
+        { "slug": "waterloo", "name": "Waterloo", "region": "ON", "lat": 43.4643, "lng": -80.5204 },
+        { "slug": "guelph", "name": "Guelph", "region": "ON", "lat": 43.5448, "lng": -80.2482 },
+        { "slug": "paris-on", "name": "Paris", "region": "ON", "lat": 43.1934, "lng": -80.3841 },
+        { "slug": "woodstock-on", "name": "Woodstock", "region": "ON", "lat": 43.1301, "lng": -80.7329 },
+        { "slug": "london-on", "name": "London", "region": "ON", "lat": 42.9849, "lng": -81.2453 },
+        { "slug": "toronto", "name": "Toronto", "region": "ON", "lat": 43.6532, "lng": -79.3832 },
+        { "slug": "mississauga", "name": "Mississauga", "region": "ON", "lat": 43.589, "lng": -79.6441 },
+        { "slug": "burlington", "name": "Burlington", "region": "ON", "lat": 43.3255, "lng": -79.799 },
+        { "slug": "ottawa", "name": "Ottawa", "region": "ON", "lat": 45.4215, "lng": -75.6972 }
+      ]
+    }
+  },
+
+  "samples": [
+    {
+      "slug": "the-copper-fork-brantford",
+      "name": "The Copper Fork",
+      "tagline": "Seasonal Italian plates and wood-fired pasta.",
+      "description": "A neighbourhood trattoria serving hand-rolled pasta, wood-fired mains, and a curated Ontario wine list in a warm, brick-walled room.",
+      "category_slug": "restaurants",
+      "subcategory_slug": "italian",
+      "status": "published",
+      "price_level": 3,
+      "email": "hello@example.com",
+      "phone": "+1-519-555-0142",
+      "website": "https://example.com/copper-fork",
+      "address_line1": "88 Dalhousie St",
+      "address_line2": null,
+      "city_slug": "brantford",
+      "postal_code": "N3T 2J1",
+      "lat": 43.1385,
+      "lng": -80.2649,
+      "cover_image_url": "https://picsum.photos/seed/the-copper-fork-brantford/1200/800",
+      "is_featured": true,
+      "avg_rating": 4.6,
+      "review_count": 318,
+      "keywords": ["italian", "pasta", "wine", "date night", "wood-fired"],
+      "published_at": "2026-07-01T12:00:00Z",
+      "created_by": null,
+      "owners": [{ "profile_id": "b3f8be4c-6d7d-4618-b1d6-6b8f121d28e8", "role": "owner" }],
+      "filter_slugs": ["accepts-credit-cards", "parking-available", "good-for-groups", "locally-owned", "outdoor-seating", "full-bar", "vegan-options"],
+      "images": [
+        { "url": "https://picsum.photos/seed/copper-fork-1/1000/750", "alt_text": "Dining room interior", "sort_order": 0 },
+        { "url": "https://picsum.photos/seed/copper-fork-2/1000/750", "alt_text": "Plated pasta dish", "sort_order": 1 }
+      ],
+      "hours": [
+        { "day_of_week": 0, "open_minute": null, "close_minute": null },
+        { "day_of_week": 1, "open_minute": 660, "close_minute": 1320 },
+        { "day_of_week": 2, "open_minute": 660, "close_minute": 1320 },
+        { "day_of_week": 3, "open_minute": 660, "close_minute": 1320 },
+        { "day_of_week": 4, "open_minute": 660, "close_minute": 1350 },
+        { "day_of_week": 5, "open_minute": 660, "close_minute": 1380 },
+        { "day_of_week": 6, "open_minute": 600, "close_minute": 1380 }
+      ],
+      "offering_sections": [
+        {
+          "name": "Pasta",
+          "sort_order": 0,
+          "offerings": [
+            { "name": "Tagliatelle Bolognese", "description": "Slow-braised beef and pork ragù, hand-cut tagliatelle.", "price_cents": 2600, "price_label": null, "tag": "Popular", "image_url": null, "is_available": true, "sort_order": 0 },
+            { "name": "Cacio e Pepe", "description": "Pecorino, black pepper, house bucatini.", "price_cents": 2300, "price_label": null, "tag": null, "image_url": null, "is_available": true, "sort_order": 1 }
+          ]
+        },
+        {
+          "name": "Wood-fired Mains",
+          "sort_order": 1,
+          "offerings": [
+            { "name": "Branzino", "description": "Whole roasted sea bass, salsa verde, lemon.", "price_cents": null, "price_label": "Market price", "tag": "Chef's pick", "image_url": null, "is_available": true, "sort_order": 0 }
+          ]
+        }
+      ],
+      "specials": [
+        { "day_of_week": 3, "name": "Wine Wednesday", "description": "Half-price bottles from our Ontario list.", "price_cents": null, "price_label": "50% off", "starts_on": null, "ends_on": null }
+      ],
+      "posts": [
+        { "type": "event", "title": "Summer Patio Now Open", "body": "Join us out back for aperitivo hour, 4-6pm daily.", "badge": "New", "published_at": "2026-07-02T10:00:00Z", "expires_at": null, "author_id": null }
+      ]
+    },
+    {
+      "slug": "ironside-strength-co-brantford",
+      "name": "Ironside Strength Co.",
+      "tagline": "Barbell club and small-group coaching.",
+      "description": "A no-frills strength gym with competition platforms, specialty bars, and coached small-group sessions for every level.",
+      "category_slug": "gym",
+      "subcategory_slug": "strength",
+      "status": "published",
+      "price_level": 2,
+      "email": "hello@example.com",
+      "phone": "+1-226-555-0173",
+      "website": "https://example.com/ironside",
+      "address_line1": "410 Colborne St W",
+      "address_line2": "Unit 5",
+      "city_slug": "brantford",
+      "postal_code": "N3T 1M1",
+      "lat": 43.1442,
+      "lng": -80.2911,
+      "cover_image_url": "https://picsum.photos/seed/ironside-strength-co-brantford/1200/800",
+      "is_featured": false,
+      "avg_rating": 4.8,
+      "review_count": 96,
+      "keywords": ["gym", "powerlifting", "strength", "coaching", "barbell"],
+      "published_at": "2026-07-01T12:00:00Z",
+      "created_by": null,
+      "owners": [{ "profile_id": "bfedd27a-57ac-4d50-bb7d-962f964a46f2", "role": "owner" }],
+      "filter_slugs": ["parking-available", "locally-owned", "24-7-access", "free-trial-class"],
+      "images": [
+        { "url": "https://picsum.photos/seed/ironside-1/1000/750", "alt_text": "Weightlifting platforms", "sort_order": 0 }
+      ],
+      "hours": [
+        { "day_of_week": 0, "open_minute": 480, "close_minute": 1200 },
+        { "day_of_week": 1, "open_minute": 300, "close_minute": 1380 },
+        { "day_of_week": 2, "open_minute": 300, "close_minute": 1380 },
+        { "day_of_week": 3, "open_minute": 300, "close_minute": 1380 },
+        { "day_of_week": 4, "open_minute": 300, "close_minute": 1380 },
+        { "day_of_week": 5, "open_minute": 300, "close_minute": 1320 },
+        { "day_of_week": 6, "open_minute": 480, "close_minute": 1200 }
+      ],
+      "offering_sections": [
+        {
+          "name": "Memberships",
+          "sort_order": 0,
+          "offerings": [
+            { "name": "Monthly Open Gym", "description": "24/7 access, month-to-month.", "price_cents": 5900, "price_label": null, "tag": null, "image_url": null, "is_available": true, "sort_order": 0 },
+            { "name": "Small-Group Coaching", "description": "3 coached sessions per week.", "price_cents": 14900, "price_label": null, "tag": "Best value", "image_url": null, "is_available": true, "sort_order": 1 }
+          ]
+        }
+      ],
+      "specials": [
+        { "day_of_week": null, "name": "Free Intro Session", "description": "First coached session on us for new members.", "price_cents": null, "price_label": "Free", "starts_on": null, "ends_on": null }
+      ],
+      "posts": [
+        { "type": "offer", "title": "Summer Founding-Member Rate", "body": "Lock in $49/mo for life if you join before Labour Day.", "badge": "Offer", "published_at": "2026-07-03T09:00:00Z", "expires_at": "2026-09-01T00:00:00Z", "author_id": null }
+      ]
+    },
+    {
+      "slug": "grand-river-auto-care-brantford",
+      "name": "Grand River Auto Care",
+      "tagline": "Honest repairs and same-day service.",
+      "description": "A family-run repair shop handling diagnostics, brakes, tires, and seasonal maintenance for all makes, with loaner cars available.",
+      "category_slug": "autoshop",
+      "subcategory_slug": "repair",
+      "status": "published",
+      "price_level": 2,
+      "email": "hello@example.com",
+      "phone": "+1-519-555-0128",
+      "website": "https://example.com/grand-river-auto",
+      "address_line1": "225 Henry St",
+      "address_line2": null,
+      "city_slug": "brantford",
+      "postal_code": "N3S 5C9",
+      "lat": 43.1521,
+      "lng": -80.2378,
+      "cover_image_url": "https://picsum.photos/seed/grand-river-auto-care-brantford/1200/800",
+      "is_featured": false,
+      "avg_rating": 4.4,
+      "review_count": 204,
+      "keywords": ["auto repair", "brakes", "tires", "oil change", "mechanic"],
+      "published_at": "2026-07-01T12:00:00Z",
+      "created_by": null,
+      "owners": [{ "profile_id": "b3f8be4c-6d7d-4618-b1d6-6b8f121d28e8", "role": "owner" }],
+      "filter_slugs": ["parking-available", "accepts-credit-cards", "locally-owned", "walk-ins-welcome", "loaner-cars", "same-day-service"],
+      "images": [
+        { "url": "https://picsum.photos/seed/grand-river-auto-1/1000/750", "alt_text": "Service bays", "sort_order": 0 }
+      ],
+      "hours": [
+        { "day_of_week": 0, "open_minute": null, "close_minute": null },
+        { "day_of_week": 1, "open_minute": 480, "close_minute": 1080 },
+        { "day_of_week": 2, "open_minute": 480, "close_minute": 1080 },
+        { "day_of_week": 3, "open_minute": 480, "close_minute": 1080 },
+        { "day_of_week": 4, "open_minute": 480, "close_minute": 1080 },
+        { "day_of_week": 5, "open_minute": 480, "close_minute": 1020 },
+        { "day_of_week": 6, "open_minute": 540, "close_minute": 780 }
+      ],
+      "offering_sections": [
+        {
+          "name": "Services",
+          "sort_order": 0,
+          "offerings": [
+            { "name": "Oil & Filter Change", "description": "Synthetic blend, up to 5L, with multipoint inspection.", "price_cents": 8999, "price_label": null, "tag": null, "image_url": null, "is_available": true, "sort_order": 0 },
+            { "name": "Seasonal Tire Swap", "description": "Mount and balance, per set of four.", "price_cents": 6999, "price_label": null, "tag": "Seasonal", "image_url": null, "is_available": true, "sort_order": 1 }
+          ]
+        }
+      ],
+      "specials": [
+        { "day_of_week": null, "name": "Winter Prep Package", "description": "Battery test, coolant check, and tire swap bundle.", "price_cents": null, "price_label": "$129", "starts_on": "2026-10-01", "ends_on": "2026-12-15" }
+      ],
+      "posts": [
+        { "type": "update", "title": "Now Booking Online", "body": "Skip the phone — reserve your service slot on our website.", "badge": null, "published_at": "2026-07-04T08:00:00Z", "expires_at": null, "author_id": null }
+      ]
+    }
+  ]
+}

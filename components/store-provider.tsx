@@ -181,7 +181,10 @@ export function StoreProvider({
     setOriginState({ lat, lng })
   }, [])
 
-  const originLabel = useMemo(() => originAreaLabel(origin.lat, origin.lng), [origin])
+  const originLabel = useMemo(
+    () => originAreaLabel(origin.lat, origin.lng, initialCities),
+    [origin, initialCities],
+  )
 
   const signOut = useCallback(async () => {
     await supabase.auth.signOut()

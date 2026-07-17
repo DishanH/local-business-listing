@@ -11,7 +11,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { readFileSync } from 'fs';
-import { join } from 'path';
+import { isAbsolute, join } from 'path';
 import { config } from 'dotenv';
 
 // Load environment variables from .env.local
@@ -402,8 +402,14 @@ async function seedBusiness(template: BusinessTemplate) {
 async function main() {
   console.log('🚀 Starting business seeding process...\n');
 
-  // Read the template file
-  const templatePath = join(__dirname, 'seed-businesses.template.json');
+  // Read the template file. Optional first CLI arg overrides the default path so
+  // you can point at a generated batch, e.g.:
+  //   npx tsx supabase/seed-businesses.ts supabase/seed-businesses.generated.json
+  const fileArg = process.argv[2];
+  const templatePath = fileArg
+    ? (isAbsolute(fileArg) ? fileArg : join(process.cwd(), fileArg))
+    : join(__dirname, 'seed-businesses.template.json');
+  console.log(`📄 Reading businesses from: ${templatePath}`);
   const templateContent = readFileSync(templatePath, 'utf-8');
   const businesses: BusinessTemplate[] = JSON.parse(templateContent);
 

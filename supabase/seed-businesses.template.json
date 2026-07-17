@@ -21,11 +21,20 @@
     "is_featured": true,
     "avg_rating": 4.5,
     "review_count": 2200,
-    "keywords": ["breakfast", "brunch", "dessert", "comfort food", "family friendly"],
+    "keywords": [
+      "breakfast",
+      "brunch",
+      "dessert",
+      "comfort food",
+      "family friendly"
+    ],
     "published_at": "2026-07-01T12:00:00Z",
     "created_by": null,
     "owners": [
-      { "profile_id": null, "role": "owner" }
+      {
+        "profile_id": null,
+        "role": "owner"
+      }
     ],
     "filter_slugs": [
       "free-wifi",
@@ -41,13 +50,41 @@
       }
     ],
     "hours": [
-      { "day_of_week": 0, "open_minute": 480, "close_minute": 1380 },
-      { "day_of_week": 1, "open_minute": 480, "close_minute": 1380 },
-      { "day_of_week": 2, "open_minute": 480, "close_minute": 1380 },
-      { "day_of_week": 3, "open_minute": 480, "close_minute": 1380 },
-      { "day_of_week": 4, "open_minute": 480, "close_minute": 1380 },
-      { "day_of_week": 5, "open_minute": 480, "close_minute": 1440 },
-      { "day_of_week": 6, "open_minute": 480, "close_minute": 1440 }
+      {
+        "day_of_week": 0,
+        "open_minute": 480,
+        "close_minute": 1380
+      },
+      {
+        "day_of_week": 1,
+        "open_minute": 480,
+        "close_minute": 1380
+      },
+      {
+        "day_of_week": 2,
+        "open_minute": 480,
+        "close_minute": 1380
+      },
+      {
+        "day_of_week": 3,
+        "open_minute": 480,
+        "close_minute": 1380
+      },
+      {
+        "day_of_week": 4,
+        "open_minute": 480,
+        "close_minute": 1380
+      },
+      {
+        "day_of_week": 5,
+        "open_minute": 480,
+        "close_minute": 1440
+      },
+      {
+        "day_of_week": 6,
+        "open_minute": 480,
+        "close_minute": 1440
+      }
     ],
     "offering_sections": [
       {
@@ -122,17 +159,26 @@
     "address_line2": null,
     "city_slug": "brantford",
     "postal_code": "N3R 5L3",
-    "lat": 43.1770,
-    "lng": -80.2600,
+    "lat": 43.177,
+    "lng": -80.26,
     "cover_image_url": "/businesses/zanders-cover.png",
     "is_featured": false,
     "avg_rating": 4.3,
     "review_count": 490,
-    "keywords": ["grill", "wings", "live music", "patio", "beer"],
+    "keywords": [
+      "grill",
+      "wings",
+      "live music",
+      "patio",
+      "beer"
+    ],
     "published_at": "2026-07-01T12:00:00Z",
     "created_by": null,
     "owners": [
-      { "profile_id": null, "role": "owner" }
+      {
+        "profile_id": null,
+        "role": "owner"
+      }
     ],
     "filter_slugs": [
       "parking-available",
@@ -149,13 +195,41 @@
       }
     ],
     "hours": [
-      { "day_of_week": 0, "open_minute": 660, "close_minute": 1320 },
-      { "day_of_week": 1, "open_minute": 660, "close_minute": 1320 },
-      { "day_of_week": 2, "open_minute": 660, "close_minute": 1320 },
-      { "day_of_week": 3, "open_minute": 660, "close_minute": 1320 },
-      { "day_of_week": 4, "open_minute": 660, "close_minute": 1320 },
-      { "day_of_week": 5, "open_minute": 660, "close_minute": 1440 },
-      { "day_of_week": 6, "open_minute": 660, "close_minute": 1440 }
+      {
+        "day_of_week": 0,
+        "open_minute": 660,
+        "close_minute": 1320
+      },
+      {
+        "day_of_week": 1,
+        "open_minute": 660,
+        "close_minute": 1320
+      },
+      {
+        "day_of_week": 2,
+        "open_minute": 660,
+        "close_minute": 1320
+      },
+      {
+        "day_of_week": 3,
+        "open_minute": 660,
+        "close_minute": 1320
+      },
+      {
+        "day_of_week": 4,
+        "open_minute": 660,
+        "close_minute": 1320
+      },
+      {
+        "day_of_week": 5,
+        "open_minute": 660,
+        "close_minute": 1440
+      },
+      {
+        "day_of_week": 6,
+        "open_minute": 660,
+        "close_minute": 1440
+      }
     ],
     "offering_sections": [
       {
@@ -224,17 +298,26 @@
     "address_line2": null,
     "city_slug": "brantford",
     "postal_code": "N3S 3M8",
-    "lat": 43.1360,
-    "lng": -80.2390,
+    "lat": 43.136,
+    "lng": -80.239,
     "cover_image_url": "/businesses/surplus-cover.png",
     "is_featured": false,
     "avg_rating": 4.7,
     "review_count": 850,
-    "keywords": ["discount", "camping", "hardware", "groceries", "surplus"],
+    "keywords": [
+      "discount",
+      "camping",
+      "hardware",
+      "groceries",
+      "surplus"
+    ],
     "published_at": "2026-07-01T12:00:00Z",
     "created_by": null,
     "owners": [
-      { "profile_id": null, "role": "owner" }
+      {
+        "profile_id": null,
+        "role": "owner"
+      }
     ],
     "filter_slugs": [
       "parking-available",
@@ -249,13 +332,41 @@
       }
     ],
     "hours": [
-      { "day_of_week": 0, "open_minute": 600, "close_minute": 1080 },
-      { "day_of_week": 1, "open_minute": 540, "close_minute": 1200 },
-      { "day_of_week": 2, "open_minute": 540, "close_minute": 1200 },
-      { "day_of_week": 3, "open_minute": 540, "close_minute": 1200 },
-      { "day_of_week": 4, "open_minute": 540, "close_minute": 1200 },
-      { "day_of_week": 5, "open_minute": 540, "close_minute": 1200 },
-      { "day_of_week": 6, "open_minute": 540, "close_minute": 1080 }
+      {
+        "day_of_week": 0,
+        "open_minute": 600,
+        "close_minute": 1080
+      },
+      {
+        "day_of_week": 1,
+        "open_minute": 540,
+        "close_minute": 1200
+      },
+      {
+        "day_of_week": 2,
+        "open_minute": 540,
+        "close_minute": 1200
+      },
+      {
+        "day_of_week": 3,
+        "open_minute": 540,
+        "close_minute": 1200
+      },
+      {
+        "day_of_week": 4,
+        "open_minute": 540,
+        "close_minute": 1200
+      },
+      {
+        "day_of_week": 5,
+        "open_minute": 540,
+        "close_minute": 1200
+      },
+      {
+        "day_of_week": 6,
+        "open_minute": 540,
+        "close_minute": 1080
+      }
     ],
     "offering_sections": [
       {
@@ -309,6 +420,1053 @@
         "body": "Just received a massive shipment of tents, cots, and camp kitchen gear. Come grab them before they're gone.",
         "badge": "New Arrivals",
         "published_at": "2026-07-01T10:00:00Z",
+        "expires_at": null,
+        "author_id": null
+      }
+    ]
+  },
+  {
+    "slug": "brant-pipeworks-plumbing",
+    "name": "Brant Pipeworks Plumbing",
+    "tagline": "Licensed plumbing for homes and small businesses.",
+    "description": "A local plumbing crew handling leaks, drain clearing, water heaters, and bathroom rough-ins. Free estimates and same-day emergency calls when available.",
+    "category_slug": "home-services",
+    "subcategory_slug": "plumbing",
+    "status": "published",
+    "price_level": 2,
+    "email": "hello@example.com",
+    "phone": "+1-519-555-0188",
+    "website": "https://example.com/brant-pipeworks",
+    "address_line1": "112 Erie Ave",
+    "address_line2": null,
+    "city_slug": "brantford",
+    "postal_code": "N3S 2G3",
+    "lat": 43.1408,
+    "lng": -80.2551,
+    "cover_image_url": "https://picsum.photos/seed/brant-pipeworks-plumbing/1200/800",
+    "is_featured": false,
+    "avg_rating": 4.7,
+    "review_count": 142,
+    "keywords": [
+      "plumbing",
+      "drain",
+      "water heater",
+      "leak",
+      "emergency"
+    ],
+    "published_at": "2026-07-01T12:00:00Z",
+    "created_by": null,
+    "owners": [
+      {
+        "profile_id": "b3f8be4c-6d7d-4618-b1d6-6b8f121d28e8",
+        "role": "owner"
+      }
+    ],
+    "filter_slugs": [
+      "parking-available",
+      "accepts-credit-cards",
+      "locally-owned",
+      "online-booking",
+      "emergency-service",
+      "free-estimates",
+      "licensed-insured",
+      "residential-commercial"
+    ],
+    "images": [
+      {
+        "url": "https://picsum.photos/seed/brant-pipeworks-1/1000/750",
+        "alt_text": "Plumbing van and tools",
+        "sort_order": 0
+      }
+    ],
+    "hours": [
+      {
+        "day_of_week": 0,
+        "open_minute": null,
+        "close_minute": null
+      },
+      {
+        "day_of_week": 1,
+        "open_minute": 420,
+        "close_minute": 1080
+      },
+      {
+        "day_of_week": 2,
+        "open_minute": 420,
+        "close_minute": 1080
+      },
+      {
+        "day_of_week": 3,
+        "open_minute": 420,
+        "close_minute": 1080
+      },
+      {
+        "day_of_week": 4,
+        "open_minute": 420,
+        "close_minute": 1080
+      },
+      {
+        "day_of_week": 5,
+        "open_minute": 420,
+        "close_minute": 1020
+      },
+      {
+        "day_of_week": 6,
+        "open_minute": 480,
+        "close_minute": 720
+      }
+    ],
+    "offering_sections": [
+      {
+        "name": "Services",
+        "sort_order": 0,
+        "offerings": [
+          {
+            "name": "Drain Clearing",
+            "description": "Kitchen, bathroom, and main-line clearing.",
+            "price_cents": 12900,
+            "price_label": null,
+            "tag": "Popular",
+            "image_url": null,
+            "is_available": true,
+            "sort_order": 0
+          },
+          {
+            "name": "Water Heater Install",
+            "description": "Tank or tankless install with haul-away of old unit.",
+            "price_cents": null,
+            "price_label": "Quote",
+            "tag": null,
+            "image_url": null,
+            "is_available": true,
+            "sort_order": 1
+          }
+        ]
+      }
+    ],
+    "specials": [
+      {
+        "day_of_week": null,
+        "name": "Senior Discount",
+        "description": "10% off labour for customers 65+.",
+        "price_cents": null,
+        "price_label": "10% off",
+        "starts_on": null,
+        "ends_on": null
+      }
+    ],
+    "posts": [
+      {
+        "type": "update",
+        "title": "Same-day emergency slots open",
+        "body": "Call before noon for same-day emergency visits in Brantford.",
+        "badge": null,
+        "published_at": "2026-07-05T09:00:00Z",
+        "expires_at": null,
+        "author_id": null
+      }
+    ]
+  },
+  {
+    "slug": "sparkline-electrical-brantford",
+    "name": "Sparkline Electrical",
+    "tagline": "Panel upgrades, lighting, and safe repairs.",
+    "description": "Licensed electricians for residential and light commercial work — outlets, panels, EV chargers, and troubleshooting.",
+    "category_slug": "home-services",
+    "subcategory_slug": "electrical",
+    "status": "published",
+    "price_level": 2,
+    "email": "hello@example.com",
+    "phone": "+1-226-555-0134",
+    "website": "https://example.com/sparkline",
+    "address_line1": "45 Sheridan St",
+    "address_line2": null,
+    "city_slug": "brantford",
+    "postal_code": "N3T 2P7",
+    "lat": 43.1462,
+    "lng": -80.2688,
+    "cover_image_url": "https://picsum.photos/seed/sparkline-electrical-brantford/1200/800",
+    "is_featured": false,
+    "avg_rating": 4.8,
+    "review_count": 89,
+    "keywords": [
+      "electrician",
+      "panel",
+      "lighting",
+      "EV charger",
+      "wiring"
+    ],
+    "published_at": "2026-07-01T12:00:00Z",
+    "created_by": null,
+    "owners": [
+      {
+        "profile_id": "bfedd27a-57ac-4d50-bb7d-962f964a46f2",
+        "role": "owner"
+      }
+    ],
+    "filter_slugs": [
+      "accepts-credit-cards",
+      "locally-owned",
+      "appointment-required",
+      "emergency-service",
+      "free-estimates",
+      "licensed-insured"
+    ],
+    "images": [
+      {
+        "url": "https://picsum.photos/seed/sparkline-1/1000/750",
+        "alt_text": "Electrical panel work",
+        "sort_order": 0
+      }
+    ],
+    "hours": [
+      {
+        "day_of_week": 0,
+        "open_minute": null,
+        "close_minute": null
+      },
+      {
+        "day_of_week": 1,
+        "open_minute": 480,
+        "close_minute": 1020
+      },
+      {
+        "day_of_week": 2,
+        "open_minute": 480,
+        "close_minute": 1020
+      },
+      {
+        "day_of_week": 3,
+        "open_minute": 480,
+        "close_minute": 1020
+      },
+      {
+        "day_of_week": 4,
+        "open_minute": 480,
+        "close_minute": 1020
+      },
+      {
+        "day_of_week": 5,
+        "open_minute": 480,
+        "close_minute": 960
+      },
+      {
+        "day_of_week": 6,
+        "open_minute": null,
+        "close_minute": null
+      }
+    ],
+    "offering_sections": [
+      {
+        "name": "Services",
+        "sort_order": 0,
+        "offerings": [
+          {
+            "name": "Service Call & Diagnosis",
+            "description": "On-site troubleshooting and written estimate.",
+            "price_cents": 9900,
+            "price_label": null,
+            "tag": null,
+            "image_url": null,
+            "is_available": true,
+            "sort_order": 0
+          },
+          {
+            "name": "EV Charger Install",
+            "description": "Level 2 charger install for home garages.",
+            "price_cents": null,
+            "price_label": "Quote",
+            "tag": "Popular",
+            "image_url": null,
+            "is_available": true,
+            "sort_order": 1
+          }
+        ]
+      }
+    ],
+    "specials": [],
+    "posts": [
+      {
+        "type": "offer",
+        "title": "Panel upgrade package",
+        "body": "Book a 100A→200A panel upgrade this month and get a free smoke-detector check.",
+        "badge": "Offer",
+        "published_at": "2026-07-06T10:00:00Z",
+        "expires_at": "2026-08-31T00:00:00Z",
+        "author_id": null
+      }
+    ]
+  },
+  {
+    "slug": "cedarline-decks-fences",
+    "name": "Cedarline Decks & Fences",
+    "tagline": "Custom decks, fences, and outdoor rebuilds.",
+    "description": "Family-run deck and fence builders using pressure-treated and cedar materials. Free on-site estimates across Brantford.",
+    "category_slug": "home-services",
+    "subcategory_slug": "decks-fences",
+    "status": "published",
+    "price_level": 3,
+    "email": "hello@example.com",
+    "phone": "+1-519-555-0161",
+    "website": "https://example.com/cedarline",
+    "address_line1": "780 West St",
+    "address_line2": null,
+    "city_slug": "brantford",
+    "postal_code": "N3R 6N7",
+    "lat": 43.1712,
+    "lng": -80.2715,
+    "cover_image_url": "https://picsum.photos/seed/cedarline-decks-fences/1200/800",
+    "is_featured": true,
+    "avg_rating": 4.9,
+    "review_count": 67,
+    "keywords": [
+      "deck",
+      "fence",
+      "cedar",
+      "outdoor",
+      "builder"
+    ],
+    "published_at": "2026-07-01T12:00:00Z",
+    "created_by": null,
+    "owners": [
+      {
+        "profile_id": "b3f8be4c-6d7d-4618-b1d6-6b8f121d28e8",
+        "role": "owner"
+      }
+    ],
+    "filter_slugs": [
+      "parking-available",
+      "locally-owned",
+      "free-estimates",
+      "licensed-insured",
+      "appointment-required"
+    ],
+    "images": [
+      {
+        "url": "https://picsum.photos/seed/cedarline-1/1000/750",
+        "alt_text": "Finished cedar deck",
+        "sort_order": 0
+      }
+    ],
+    "hours": [
+      {
+        "day_of_week": 0,
+        "open_minute": null,
+        "close_minute": null
+      },
+      {
+        "day_of_week": 1,
+        "open_minute": 480,
+        "close_minute": 1020
+      },
+      {
+        "day_of_week": 2,
+        "open_minute": 480,
+        "close_minute": 1020
+      },
+      {
+        "day_of_week": 3,
+        "open_minute": 480,
+        "close_minute": 1020
+      },
+      {
+        "day_of_week": 4,
+        "open_minute": 480,
+        "close_minute": 1020
+      },
+      {
+        "day_of_week": 5,
+        "open_minute": 480,
+        "close_minute": 960
+      },
+      {
+        "day_of_week": 6,
+        "open_minute": 540,
+        "close_minute": 720
+      }
+    ],
+    "offering_sections": [
+      {
+        "name": "Projects",
+        "sort_order": 0,
+        "offerings": [
+          {
+            "name": "Privacy Fence (per linear ft)",
+            "description": "6ft cedar or PVC privacy fencing, installed.",
+            "price_cents": null,
+            "price_label": "From $45/ft",
+            "tag": null,
+            "image_url": null,
+            "is_available": true,
+            "sort_order": 0
+          },
+          {
+            "name": "Custom Deck Build",
+            "description": "Design, permits guidance, and full build.",
+            "price_cents": null,
+            "price_label": "Quote",
+            "tag": "Signature",
+            "image_url": null,
+            "is_available": true,
+            "sort_order": 1
+          }
+        ]
+      }
+    ],
+    "specials": [],
+    "posts": [
+      {
+        "type": "event",
+        "title": "Spring build slots filling up",
+        "body": "Book your free estimate now for May–June installs.",
+        "badge": "Seasonal",
+        "published_at": "2026-07-07T11:00:00Z",
+        "expires_at": null,
+        "author_id": null
+      }
+    ]
+  },
+  {
+    "slug": "quick-swap-tire-brantford",
+    "name": "Quick Swap Tire",
+    "tagline": "Seasonal tire change and mobile swap.",
+    "description": "Fast seasonal tire changes, balancing, and mobile on-site swaps for apartments and driveways.",
+    "category_slug": "autoshop",
+    "subcategory_slug": "tires",
+    "status": "published",
+    "price_level": 1,
+    "email": "hello@example.com",
+    "phone": "+1-519-555-0199",
+    "website": "https://example.com/quick-swap",
+    "address_line1": "310 Clarence St",
+    "address_line2": null,
+    "city_slug": "brantford",
+    "postal_code": "N3T 0B5",
+    "lat": 43.1335,
+    "lng": -80.2488,
+    "cover_image_url": "https://picsum.photos/seed/quick-swap-tire-brantford/1200/800",
+    "is_featured": false,
+    "avg_rating": 4.5,
+    "review_count": 210,
+    "keywords": [
+      "tire change",
+      "winter tires",
+      "mobile",
+      "balancing"
+    ],
+    "published_at": "2026-07-01T12:00:00Z",
+    "created_by": null,
+    "owners": [
+      {
+        "profile_id": "bfedd27a-57ac-4d50-bb7d-962f964a46f2",
+        "role": "owner"
+      }
+    ],
+    "filter_slugs": [
+      "parking-available",
+      "accepts-credit-cards",
+      "walk-ins-welcome",
+      "same-day-service",
+      "mobile-service",
+      "locally-owned"
+    ],
+    "images": [
+      {
+        "url": "https://picsum.photos/seed/quick-swap-1/1000/750",
+        "alt_text": "Tire change bay",
+        "sort_order": 0
+      }
+    ],
+    "hours": [
+      {
+        "day_of_week": 0,
+        "open_minute": 600,
+        "close_minute": 960
+      },
+      {
+        "day_of_week": 1,
+        "open_minute": 480,
+        "close_minute": 1080
+      },
+      {
+        "day_of_week": 2,
+        "open_minute": 480,
+        "close_minute": 1080
+      },
+      {
+        "day_of_week": 3,
+        "open_minute": 480,
+        "close_minute": 1080
+      },
+      {
+        "day_of_week": 4,
+        "open_minute": 480,
+        "close_minute": 1080
+      },
+      {
+        "day_of_week": 5,
+        "open_minute": 480,
+        "close_minute": 1080
+      },
+      {
+        "day_of_week": 6,
+        "open_minute": 540,
+        "close_minute": 960
+      }
+    ],
+    "offering_sections": [
+      {
+        "name": "Tire services",
+        "sort_order": 0,
+        "offerings": [
+          {
+            "name": "Seasonal Tire Swap (set of 4)",
+            "description": "Mount and balance, includes torque check.",
+            "price_cents": 7999,
+            "price_label": null,
+            "tag": "Popular",
+            "image_url": null,
+            "is_available": true,
+            "sort_order": 0
+          },
+          {
+            "name": "Mobile Driveway Swap",
+            "description": "We come to you within city limits.",
+            "price_cents": 11999,
+            "price_label": null,
+            "tag": null,
+            "image_url": null,
+            "is_available": true,
+            "sort_order": 1
+          }
+        ]
+      }
+    ],
+    "specials": [
+      {
+        "day_of_week": 2,
+        "name": "Tuesday Tire Tuesday",
+        "description": "$10 off any in-shop seasonal swap.",
+        "price_cents": null,
+        "price_label": "$10 off",
+        "starts_on": null,
+        "ends_on": null
+      }
+    ],
+    "posts": []
+  },
+  {
+    "slug": "clay-and-kiln-pottery",
+    "name": "Clay & Kiln Pottery Studio",
+    "tagline": "Wheel classes, open studio, and custom pieces.",
+    "description": "A community pottery studio offering beginner wheel classes, open studio hours, and custom mug commissions.",
+    "category_slug": "pottery-crafts",
+    "subcategory_slug": "pottery-studio",
+    "status": "published",
+    "price_level": 2,
+    "email": "hello@example.com",
+    "phone": "+1-519-555-0117",
+    "website": "https://example.com/clay-and-kiln",
+    "address_line1": "22 Market St",
+    "address_line2": "Studio B",
+    "city_slug": "brantford",
+    "postal_code": "N3T 2Z5",
+    "lat": 43.1399,
+    "lng": -80.2632,
+    "cover_image_url": "https://picsum.photos/seed/clay-and-kiln-pottery/1200/800",
+    "is_featured": false,
+    "avg_rating": 4.9,
+    "review_count": 54,
+    "keywords": [
+      "pottery",
+      "ceramics",
+      "wheel",
+      "classes",
+      "studio"
+    ],
+    "published_at": "2026-07-01T12:00:00Z",
+    "created_by": null,
+    "owners": [
+      {
+        "profile_id": "b3f8be4c-6d7d-4618-b1d6-6b8f121d28e8",
+        "role": "owner"
+      }
+    ],
+    "filter_slugs": [
+      "parking-available",
+      "locally-owned",
+      "woman-owned",
+      "online-booking",
+      "open-studio",
+      "beginner-friendly",
+      "kids-welcome"
+    ],
+    "images": [
+      {
+        "url": "https://picsum.photos/seed/clay-kiln-1/1000/750",
+        "alt_text": "Pottery wheels in the studio",
+        "sort_order": 0
+      }
+    ],
+    "hours": [
+      {
+        "day_of_week": 0,
+        "open_minute": 720,
+        "close_minute": 1020
+      },
+      {
+        "day_of_week": 1,
+        "open_minute": null,
+        "close_minute": null
+      },
+      {
+        "day_of_week": 2,
+        "open_minute": 600,
+        "close_minute": 1260
+      },
+      {
+        "day_of_week": 3,
+        "open_minute": 600,
+        "close_minute": 1260
+      },
+      {
+        "day_of_week": 4,
+        "open_minute": 600,
+        "close_minute": 1260
+      },
+      {
+        "day_of_week": 5,
+        "open_minute": 600,
+        "close_minute": 1260
+      },
+      {
+        "day_of_week": 6,
+        "open_minute": 600,
+        "close_minute": 1080
+      }
+    ],
+    "offering_sections": [
+      {
+        "name": "Classes",
+        "sort_order": 0,
+        "offerings": [
+          {
+            "name": "Intro to Wheel Throwing",
+            "description": "4-week beginner series, clay and firing included.",
+            "price_cents": 18900,
+            "price_label": null,
+            "tag": "Popular",
+            "image_url": null,
+            "is_available": true,
+            "sort_order": 0
+          },
+          {
+            "name": "Open Studio Drop-in",
+            "description": "2-hour open studio for members and guests.",
+            "price_cents": 2500,
+            "price_label": null,
+            "tag": null,
+            "image_url": null,
+            "is_available": true,
+            "sort_order": 1
+          }
+        ]
+      }
+    ],
+    "specials": [],
+    "posts": [
+      {
+        "type": "event",
+        "title": "Kids clay Saturday",
+        "body": "Ages 8–12 welcome for a 90-minute hand-building workshop.",
+        "badge": "Event",
+        "published_at": "2026-07-08T09:00:00Z",
+        "expires_at": null,
+        "author_id": null
+      }
+    ]
+  },
+  {
+    "slug": "little-leap-play-centre",
+    "name": "Little Leap Play Centre",
+    "tagline": "Indoor soft play and birthday parties.",
+    "description": "A bright indoor play centre for toddlers and kids, with drop-in play and all-inclusive birthday party packages.",
+    "category_slug": "kids-family",
+    "subcategory_slug": "kids-play",
+    "status": "published",
+    "price_level": 2,
+    "email": "hello@example.com",
+    "phone": "+1-226-555-0155",
+    "website": "https://example.com/little-leap",
+    "address_line1": "50 Market St S",
+    "address_line2": "Unit 3",
+    "city_slug": "brantford",
+    "postal_code": "N3S 2E1",
+    "lat": 43.1371,
+    "lng": -80.2619,
+    "cover_image_url": "https://picsum.photos/seed/little-leap-play-centre/1200/800",
+    "is_featured": false,
+    "avg_rating": 4.6,
+    "review_count": 128,
+    "keywords": [
+      "kids",
+      "soft play",
+      "birthday",
+      "toddlers",
+      "indoor playground"
+    ],
+    "published_at": "2026-07-01T12:00:00Z",
+    "created_by": null,
+    "owners": [
+      {
+        "profile_id": "bfedd27a-57ac-4d50-bb7d-962f964a46f2",
+        "role": "owner"
+      }
+    ],
+    "filter_slugs": [
+      "parking-available",
+      "family-friendly",
+      "wheelchair-accessible",
+      "accepts-credit-cards",
+      "online-booking",
+      "age-0-5",
+      "age-6-12",
+      "kids-party-packages",
+      "drop-in-welcome"
+    ],
+    "images": [
+      {
+        "url": "https://picsum.photos/seed/little-leap-1/1000/750",
+        "alt_text": "Indoor soft play area",
+        "sort_order": 0
+      }
+    ],
+    "hours": [
+      {
+        "day_of_week": 0,
+        "open_minute": 600,
+        "close_minute": 1080
+      },
+      {
+        "day_of_week": 1,
+        "open_minute": 600,
+        "close_minute": 1080
+      },
+      {
+        "day_of_week": 2,
+        "open_minute": 600,
+        "close_minute": 1080
+      },
+      {
+        "day_of_week": 3,
+        "open_minute": 600,
+        "close_minute": 1080
+      },
+      {
+        "day_of_week": 4,
+        "open_minute": 600,
+        "close_minute": 1080
+      },
+      {
+        "day_of_week": 5,
+        "open_minute": 600,
+        "close_minute": 1140
+      },
+      {
+        "day_of_week": 6,
+        "open_minute": 540,
+        "close_minute": 1140
+      }
+    ],
+    "offering_sections": [
+      {
+        "name": "Play & parties",
+        "sort_order": 0,
+        "offerings": [
+          {
+            "name": "Drop-in Play (per child)",
+            "description": "Unlimited play during open hours, socked feet required.",
+            "price_cents": 1499,
+            "price_label": null,
+            "tag": null,
+            "image_url": null,
+            "is_available": true,
+            "sort_order": 0
+          },
+          {
+            "name": "Birthday Party Package",
+            "description": "Private room, host, and 90 minutes of play for up to 12 kids.",
+            "price_cents": 29900,
+            "price_label": null,
+            "tag": "Popular",
+            "image_url": null,
+            "is_available": true,
+            "sort_order": 1
+          }
+        ]
+      }
+    ],
+    "specials": [],
+    "posts": [
+      {
+        "type": "offer",
+        "title": "Weekday party discount",
+        "body": "$40 off birthday packages booked Monday–Thursday.",
+        "badge": "Offer",
+        "published_at": "2026-07-09T08:00:00Z",
+        "expires_at": "2026-09-30T00:00:00Z",
+        "author_id": null
+      }
+    ]
+  },
+  {
+    "slug": "circuit-fix-electronics",
+    "name": "Circuit Fix Electronics",
+    "tagline": "Phone, laptop, and gadget repair.",
+    "description": "Walk-in electronics repair for phones, tablets, laptops, gaming consoles, and small appliances. Most screen repairs while you wait.",
+    "category_slug": "tech-electronics",
+    "subcategory_slug": "electronics-repair",
+    "status": "published",
+    "price_level": 2,
+    "email": "hello@example.com",
+    "phone": "+1-519-555-0144",
+    "website": "https://example.com/circuit-fix",
+    "address_line1": "245 Colborne St",
+    "address_line2": null,
+    "city_slug": "brantford",
+    "postal_code": "N3T 2H2",
+    "lat": 43.1401,
+    "lng": -80.2584,
+    "cover_image_url": "https://picsum.photos/seed/circuit-fix-electronics/1200/800",
+    "is_featured": false,
+    "avg_rating": 4.4,
+    "review_count": 176,
+    "keywords": [
+      "phone repair",
+      "screen",
+      "laptop",
+      "electronics",
+      "data recovery"
+    ],
+    "published_at": "2026-07-01T12:00:00Z",
+    "created_by": null,
+    "owners": [
+      {
+        "profile_id": "b3f8be4c-6d7d-4618-b1d6-6b8f121d28e8",
+        "role": "owner"
+      }
+    ],
+    "filter_slugs": [
+      "parking-available",
+      "accepts-credit-cards",
+      "walk-ins-welcome",
+      "locally-owned",
+      "walk-in-repair",
+      "data-recovery",
+      "while-you-wait"
+    ],
+    "images": [
+      {
+        "url": "https://picsum.photos/seed/circuit-fix-1/1000/750",
+        "alt_text": "Phone repair bench",
+        "sort_order": 0
+      }
+    ],
+    "hours": [
+      {
+        "day_of_week": 0,
+        "open_minute": null,
+        "close_minute": null
+      },
+      {
+        "day_of_week": 1,
+        "open_minute": 600,
+        "close_minute": 1080
+      },
+      {
+        "day_of_week": 2,
+        "open_minute": 600,
+        "close_minute": 1080
+      },
+      {
+        "day_of_week": 3,
+        "open_minute": 600,
+        "close_minute": 1080
+      },
+      {
+        "day_of_week": 4,
+        "open_minute": 600,
+        "close_minute": 1080
+      },
+      {
+        "day_of_week": 5,
+        "open_minute": 600,
+        "close_minute": 1080
+      },
+      {
+        "day_of_week": 6,
+        "open_minute": 600,
+        "close_minute": 960
+      }
+    ],
+    "offering_sections": [
+      {
+        "name": "Repairs",
+        "sort_order": 0,
+        "offerings": [
+          {
+            "name": "Phone Screen Replacement",
+            "description": "Most popular models; while-you-wait when parts are in stock.",
+            "price_cents": null,
+            "price_label": "From $89",
+            "tag": "Popular",
+            "image_url": null,
+            "is_available": true,
+            "sort_order": 0
+          },
+          {
+            "name": "Laptop Diagnostic",
+            "description": "Full hardware check with written quote.",
+            "price_cents": 4900,
+            "price_label": null,
+            "tag": null,
+            "image_url": null,
+            "is_available": true,
+            "sort_order": 1
+          }
+        ]
+      }
+    ],
+    "specials": [],
+    "posts": []
+  },
+  {
+    "slug": "party-pop-birthday-studio",
+    "name": "Party Pop Birthday Studio",
+    "tagline": "Themed birthday parties, all ages.",
+    "description": "Private birthday party rooms with custom themes, hosting, and add-on catering. Great for kids and milestone celebrations.",
+    "category_slug": "events-party",
+    "subcategory_slug": "birthday-parties",
+    "status": "published",
+    "price_level": 2,
+    "email": "hello@example.com",
+    "phone": "+1-226-555-0122",
+    "website": "https://example.com/party-pop",
+    "address_line1": "15 Fairview Dr",
+    "address_line2": null,
+    "city_slug": "brantford",
+    "postal_code": "N3R 2Y5",
+    "lat": 43.1688,
+    "lng": -80.2491,
+    "cover_image_url": "https://picsum.photos/seed/party-pop-birthday-studio/1200/800",
+    "is_featured": false,
+    "avg_rating": 4.7,
+    "review_count": 93,
+    "keywords": [
+      "birthday",
+      "party",
+      "themes",
+      "kids party",
+      "celebration"
+    ],
+    "published_at": "2026-07-01T12:00:00Z",
+    "created_by": null,
+    "owners": [
+      {
+        "profile_id": "bfedd27a-57ac-4d50-bb7d-962f964a46f2",
+        "role": "owner"
+      }
+    ],
+    "filter_slugs": [
+      "parking-available",
+      "family-friendly",
+      "accepts-credit-cards",
+      "online-booking",
+      "locally-owned",
+      "event-party-packages",
+      "on-site-hosting",
+      "custom-themes"
+    ],
+    "images": [
+      {
+        "url": "https://picsum.photos/seed/party-pop-1/1000/750",
+        "alt_text": "Decorated birthday party room",
+        "sort_order": 0
+      }
+    ],
+    "hours": [
+      {
+        "day_of_week": 0,
+        "open_minute": 600,
+        "close_minute": 1140
+      },
+      {
+        "day_of_week": 1,
+        "open_minute": null,
+        "close_minute": null
+      },
+      {
+        "day_of_week": 2,
+        "open_minute": 660,
+        "close_minute": 1140
+      },
+      {
+        "day_of_week": 3,
+        "open_minute": 660,
+        "close_minute": 1140
+      },
+      {
+        "day_of_week": 4,
+        "open_minute": 660,
+        "close_minute": 1140
+      },
+      {
+        "day_of_week": 5,
+        "open_minute": 660,
+        "close_minute": 1200
+      },
+      {
+        "day_of_week": 6,
+        "open_minute": 540,
+        "close_minute": 1200
+      }
+    ],
+    "offering_sections": [
+      {
+        "name": "Party packages",
+        "sort_order": 0,
+        "offerings": [
+          {
+            "name": "Classic Kids Party",
+            "description": "2 hours, room, host, and basic decor for up to 15 guests.",
+            "price_cents": 34900,
+            "price_label": null,
+            "tag": "Popular",
+            "image_url": null,
+            "is_available": true,
+            "sort_order": 0
+          },
+          {
+            "name": "Premium Theme Party",
+            "description": "Custom theme, balloon garland, and photo backdrop.",
+            "price_cents": 49900,
+            "price_label": null,
+            "tag": null,
+            "image_url": null,
+            "is_available": true,
+            "sort_order": 1
+          }
+        ]
+      }
+    ],
+    "specials": [],
+    "posts": [
+      {
+        "type": "update",
+        "title": "New space theme room",
+        "body": "Our Galaxy Glow room is ready to book for weekend parties.",
+        "badge": "New",
+        "published_at": "2026-07-10T12:00:00Z",
         "expires_at": null,
         "author_id": null
       }

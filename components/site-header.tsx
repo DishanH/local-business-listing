@@ -9,6 +9,8 @@ import { AccountMenu } from '@/components/account-menu'
 import { LocationMenu } from '@/components/location-picker'
 import { SearchDialog } from '@/components/search/search-dialog'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import { useHideOnScrollDown } from '@/hooks/use-scroll-direction'
+import { cn } from '@/lib/utils'
 
 function Logo() {
   return (
@@ -24,10 +26,17 @@ function Logo() {
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
+  const scrolledDown = useHideOnScrollDown()
+  const hidden = scrolledDown && !menuOpen && !searchOpen
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur-md">
+      <header
+        className={cn(
+          'sticky top-0 z-40 border-b bg-background/80 backdrop-blur-md transition-transform duration-300 ease-out',
+          hidden && '-translate-y-full',
+        )}
+      >
         <div className="mx-auto flex h-14 max-w-7xl items-center gap-2 px-4 sm:h-16 sm:px-6">
           <Logo />
 

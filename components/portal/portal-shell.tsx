@@ -29,7 +29,7 @@ export function PortalShell({
 
   return (
     <div className="bg-muted/30 px-3 py-3 sm:px-4 sm:py-4 md:px-6">
-      <div className="mx-auto flex h-[calc(100dvh-3.5rem-1.5rem)] w-full max-w-7xl overflow-hidden rounded-xl border bg-background shadow-sm sm:h-[calc(100dvh-4rem-2rem)]">
+      <div className="mx-auto flex h-[calc(100dvh-3.5rem-1.5rem)] w-full max-w-[88rem] overflow-hidden rounded-xl border bg-background shadow-sm sm:h-[calc(100dvh-4rem-2rem)]">
         <aside className="hidden w-[200px] shrink-0 flex-col border-r bg-muted/20 lg:flex xl:w-[220px]">
           <div className="flex h-12 items-center gap-2 px-3">
             <span className="flex size-7 items-center justify-center rounded-md bg-primary text-primary-foreground">

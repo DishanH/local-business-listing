@@ -28,7 +28,7 @@ const sortLabels: Record<Sort, string> = {
 
 function FavoritesSkeleton() {
   return (
-    <div className="mt-8 grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
+    <div className="mt-8 grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
       {Array.from({ length: 3 }).map((_, i) => (
         <div key={i} className="flex flex-col overflow-hidden rounded-2xl border bg-card">
           <div className="aspect-[4/3] animate-pulse bg-muted" />
@@ -96,7 +96,7 @@ export default function FavoritesPage() {
 
   if (authLoading || (user && favoritesLoading)) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+      <div className="mx-auto max-w-[88rem] px-4 py-8 sm:px-6">
         <PageHeader count={0} />
         <FavoritesSkeleton />
       </div>
@@ -105,7 +105,7 @@ export default function FavoritesPage() {
 
   if (!user) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+      <div className="mx-auto max-w-[88rem] px-4 py-8 sm:px-6">
         <PageHeader count={0} />
         <div className="mt-8">
           <SignInPrompt message="Sign in to save favorites and access them from any device." />
@@ -115,7 +115,7 @@ export default function FavoritesPage() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-[88rem] px-4 py-8 sm:px-6">
       <PageHeader count={saved.length} />
 
       {saved.length > 0 ? (
@@ -188,7 +188,7 @@ export default function FavoritesPage() {
           )}
 
           {filtered.length > 0 ? (
-            <div className="mt-5 grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
+            <div className="mt-5 grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
               {filtered.map((b) => (
                 <BusinessCard key={b.id} business={b} />
               ))}

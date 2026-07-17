@@ -22,6 +22,8 @@ import {
   Building2,
   Laptop,
   HeartHandshake,
+  Baby,
+  Paintbrush,
   type LucideProps,
 } from 'lucide-react'
 
@@ -49,6 +51,8 @@ const icons = {
   Building2,
   Laptop,
   HeartHandshake,
+  Baby,
+  Paintbrush,
 } as const
 
 export function CategoryIcon({ name, ...props }: { name: string } & LucideProps) {

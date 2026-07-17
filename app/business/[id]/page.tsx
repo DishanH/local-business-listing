@@ -192,7 +192,7 @@ export default async function BusinessPage({ params }: { params: Promise<{ id: s
     const amenities = dbPayload.filters.map((f) => ({ id: f.id, label: f.label }))
 
     return (
-      <div className="mx-auto max-w-6xl px-4 py-6 md:py-8">
+      <div className="mx-auto max-w-7xl px-4 py-6 md:py-8">
         <nav className="mb-4 flex items-center gap-1 text-sm text-muted-foreground" aria-label="Breadcrumb">
           <Link href="/" className="transition-colors hover:text-foreground">
             Home
@@ -286,7 +286,7 @@ export default async function BusinessPage({ params }: { params: Promise<{ id: s
     .slice(0, 3)
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6 md:py-8">
+    <div className="mx-auto max-w-7xl px-4 py-6 md:py-8">
       <nav className="mb-4 flex items-center gap-1 text-sm text-muted-foreground" aria-label="Breadcrumb">
         <Link href="/" className="transition-colors hover:text-foreground">
           Home

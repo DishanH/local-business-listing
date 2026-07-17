@@ -1,197 +1,151 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { ChevronDown, MapPin, Navigation } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Check, ChevronDown, Crosshair, MapPin, Search } from 'lucide-react'
+import { toast } from 'sonner'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { useStore } from '@/components/store-provider'
-import {
-  mapBusinessDots,
-  nearestCity,
-  originAreaLabel,
-  projectToMap,
-  unprojectFromMap,
-} from '@/lib/location'
+import { nearestCity, originAreaLabel } from '@/lib/location'
 import { cn } from '@/lib/utils'
+import type { City } from '@/lib/types'
 
-const MAP_W = 360
-const MAP_H = 220
+function normalize(s: string) {
+  return s.toLowerCase().trim()
+}
 
-function LocationMapPanel({ onClose }: { onClose: () => void }) {
+function CityPickerPanel({ onClose }: { onClose: () => void }) {
   const { origin, setOrigin, cities } = useStore()
-  const svgRef = useRef<SVGSVGElement>(null)
-  const [draft, setDraft] = useState(origin)
+  const [query, setQuery] = useState('')
+  const [activeIndex, setActiveIndex] = useState(0)
+  const [locating, setLocating] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const listRef = useRef<HTMLUListElement>(null)
+
+  const selectedCity = nearestCity(origin.lat, origin.lng, cities)
+
+  const filtered = useMemo(() => {
+    const q = normalize(query)
+    if (!q) return cities
+    return cities.filter((c) => normalize(c.name).includes(q))
+  }, [cities, query])
 
   useEffect(() => {
-    setDraft(origin)
-  }, [origin])
+    setActiveIndex(0)
+  }, [query])
 
-  const pin = projectToMap(draft, MAP_W, MAP_H)
-  const label = originAreaLabel(draft.lat, draft.lng)
-  const snappedCity = nearestCity(draft.lat, draft.lng)
-
-  const pickFromEvent = useCallback((clientX: number, clientY: number) => {
-    const svg = svgRef.current
-    if (!svg) return
-    const rect = svg.getBoundingClientRect()
-    const x = ((clientX - rect.left) / rect.width) * MAP_W
-    const y = ((clientY - rect.top) / rect.height) * MAP_H
-    const clampedX = Math.max(12, Math.min(MAP_W - 12, x))
-    const clampedY = Math.max(12, Math.min(MAP_H - 12, y))
-    setDraft(unprojectFromMap(clampedX, clampedY, MAP_W, MAP_H))
+  useEffect(() => {
+    const t = window.setTimeout(() => inputRef.current?.focus(), 50)
+    return () => window.clearTimeout(t)
   }, [])
 
-  function handleApply() {
-    setOrigin(draft.lat, draft.lng)
+  useEffect(() => {
+    const item = listRef.current?.querySelector<HTMLElement>(`[data-index="${activeIndex}"]`)
+    item?.scrollIntoView({ block: 'nearest' })
+  }, [activeIndex])
+
+  function choose(city: City) {
+    setOrigin(city.lat, city.lng)
     onClose()
   }
 
-  function snapToCity(cityId: string) {
-    const city = cities.find((c) => c.id === cityId)
-    if (city) setDraft({ lat: city.lat, lng: city.lng })
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      if (filtered.length) setActiveIndex((i) => Math.min(i + 1, filtered.length - 1))
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      if (filtered.length) setActiveIndex((i) => Math.max(i - 1, 0))
+    } else if (e.key === 'Enter') {
+      e.preventDefault()
+      const pick = filtered[activeIndex]
+      if (pick) choose(pick)
+    }
+  }
+
+  function useMyLocation() {
+    if (!('geolocation' in navigator)) {
+      toast.error("Your browser doesn't support location detection.")
+      return
+    }
+    setLocating(true)
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setLocating(false)
+        choose(nearestCity(pos.coords.latitude, pos.coords.longitude, cities))
+      },
+      () => {
+        setLocating(false)
+        toast.error("Couldn't access your location. Pick a city below instead.")
+      },
+      { timeout: 8000 },
+    )
   }
 
   return (
     <div className="w-[min(calc(100vw-1.5rem),20rem)] sm:w-80">
       <div className="border-b border-border px-4 py-3">
         <p className="text-sm font-semibold">Choose your area</p>
-        <p className="text-xs text-muted-foreground">Tap the map or pick a town</p>
+        <p className="text-xs text-muted-foreground">Search or pick a town to browse nearby listings</p>
       </div>
 
-      <div className="p-3">
-        <div className="overflow-hidden rounded-xl border border-border">
-          <svg
-            ref={svgRef}
-            viewBox={`0 0 ${MAP_W} ${MAP_H}`}
-            className="block w-full touch-none select-none"
-            role="img"
-            aria-label="Map to choose your location"
-            onClick={(e) => pickFromEvent(e.clientX, e.clientY)}
-            onPointerDown={(e) => {
-              e.currentTarget.setPointerCapture(e.pointerId)
-              pickFromEvent(e.clientX, e.clientY)
-            }}
-            onPointerMove={(e) => {
-              if (e.buttons !== 1) return
-              pickFromEvent(e.clientX, e.clientY)
-            }}
-          >
-            <defs>
-              <pattern id="loc-map-grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                <path
-                  d="M 20 0 L 0 0 0 20"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="0.4"
-                  className="text-border/60"
-                />
-              </pattern>
-              <radialGradient id="loc-radius-fill" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.18" />
-                <stop offset="100%" stopColor="var(--primary)" stopOpacity="0" />
-              </radialGradient>
-            </defs>
+      <div className="border-b border-border p-2">
+        <div className="relative">
+          <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <input
+            ref={inputRef}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Search towns..."
+            aria-label="Search towns"
+            className="h-10 w-full rounded-xl border border-transparent bg-secondary/60 pl-9 pr-3 text-sm outline-none transition-colors focus:border-ring focus:bg-background"
+          />
+        </div>
+      </div>
 
-            <rect width={MAP_W} height={MAP_H} className="fill-[#e8f0e6] dark:fill-[#1a2420]" />
-            <rect width={MAP_W} height={MAP_H} fill="url(#loc-map-grid)" />
-            <ellipse cx="65" cy="165" rx="50" ry="32" className="fill-[#b8d4e8]/70 dark:fill-[#1e3a4f]/50" />
-            <ellipse cx="295" cy="45" rx="60" ry="36" className="fill-[#c5dcc0]/80 dark:fill-[#243828]/60" />
-            <path
-              d="M 0 110 Q 100 95 180 115 T 360 105"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              className="text-background/90 dark:text-foreground/15"
-            />
-            <circle cx={pin.x} cy={pin.y} r={44} fill="url(#loc-radius-fill)" />
-            <circle
-              cx={pin.x}
-              cy={pin.y}
-              r={44}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeDasharray="4 3"
-              className="text-primary/50"
-            />
-            {mapBusinessDots.map((b, i) => {
-              const p = projectToMap(b, MAP_W, MAP_H)
-              return <circle key={i} cx={p.x} cy={p.y} r={2} className="fill-foreground/20" />
-            })}
-            {cities.map((city) => {
-              const p = projectToMap(city, MAP_W, MAP_H)
-              const active = city.id === snappedCity.id
-              return (
-                <g
-                  key={city.id}
-                  className="cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    snapToCity(city.id)
-                  }}
+      <div className="p-2">
+        <button
+          type="button"
+          onClick={useMyLocation}
+          disabled={locating}
+          className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2.5 text-left text-sm font-medium text-primary transition-colors hover:bg-accent disabled:opacity-60"
+        >
+          <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10">
+            <Crosshair size={15} className={cn(locating && 'animate-spin')} />
+          </span>
+          {locating ? 'Finding you...' : 'Use my current location'}
+        </button>
+      </div>
+
+      <ul ref={listRef} role="listbox" aria-label="Towns" className="max-h-64 overflow-y-auto p-2 pt-0">
+        {filtered.length === 0 ? (
+          <li className="px-2.5 py-6 text-center text-sm text-muted-foreground">No towns match &ldquo;{query}&rdquo;</li>
+        ) : (
+          filtered.map((city, i) => {
+            const isSelected = city.id === selectedCity.id
+            const isActive = i === activeIndex
+            return (
+              <li key={city.id} data-index={i} role="option" aria-selected={isSelected}>
+                <button
+                  type="button"
+                  onClick={() => choose(city)}
+                  onMouseEnter={() => setActiveIndex(i)}
+                  className={cn(
+                    'flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2.5 text-left text-sm transition-colors',
+                    isActive ? 'bg-accent' : 'hover:bg-accent/60',
+                  )}
                 >
-                  <circle
-                    cx={p.x}
-                    cy={p.y}
-                    r={active ? 8 : 6}
-                    className={cn(active ? 'fill-primary' : 'fill-foreground/30')}
-                  />
-                  <text
-                    x={p.x}
-                    y={p.y - 10}
-                    textAnchor="middle"
-                    className="fill-foreground text-[10px] font-semibold"
-                    style={{ fontFamily: 'var(--font-sans)' }}
-                  >
-                    {city.name}
-                  </text>
-                </g>
-              )
-            })}
-            <g transform={`translate(${pin.x}, ${pin.y})`} pointerEvents="none">
-              <ellipse cx={0} cy={12} rx={7} ry={2.5} className="fill-foreground/15" />
-              <path
-                d="M 0 -16 C -7 -16 -11 -10 -11 -3 C -11 5 0 14 0 14 C 0 14 11 5 11 -3 C 11 -10 7 -16 0 -16 Z"
-                className="fill-primary stroke-primary-foreground"
-                strokeWidth="1.5"
-              />
-              <circle cx={0} cy={-5} r={3.5} className="fill-primary-foreground" />
-            </g>
-          </svg>
-        </div>
-
-        <p className="mt-2 flex items-center gap-1.5 text-xs">
-          <Navigation size={13} className="text-primary" />
-          Near <span className="font-semibold">{label}</span>
-        </p>
-
-        <div className="mt-2 flex flex-wrap gap-1.5">
-          {cities.map((city) => (
-            <button
-              key={city.id}
-              type="button"
-              onClick={() => snapToCity(city.id)}
-              className={cn(
-                'rounded-full border px-2.5 py-1 text-xs font-medium transition-colors',
-                snappedCity.id === city.id && Math.abs(draft.lat - city.lat) < 0.008
-                  ? 'border-primary bg-accent text-primary'
-                  : 'hover:border-primary',
-              )}
-            >
-              {city.name}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="flex gap-2 border-t border-border p-3">
-        <Button variant="outline" size="sm" className="flex-1 rounded-lg" onClick={onClose}>
-          Cancel
-        </Button>
-        <Button size="sm" className="flex-1 rounded-lg" onClick={handleApply}>
-          Apply
-        </Button>
-      </div>
+                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-secondary text-muted-foreground">
+                    <MapPin size={14} />
+                  </span>
+                  <span className="min-w-0 flex-1 truncate font-medium">{city.name}</span>
+                  {isSelected && <Check size={16} className="shrink-0 text-primary" />}
+                </button>
+              </li>
+            )
+          })
+        )}
+      </ul>
     </div>
   )
 }
@@ -203,9 +157,9 @@ interface LocationMenuProps {
 }
 
 export function LocationMenu({ className, responsive = true }: LocationMenuProps) {
-  const { origin } = useStore()
+  const { origin, cities } = useStore()
   const [open, setOpen] = useState(false)
-  const label = originAreaLabel(origin.lat, origin.lng)
+  const label = originAreaLabel(origin.lat, origin.lng, cities)
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -222,7 +176,7 @@ export function LocationMenu({ className, responsive = true }: LocationMenuProps
         <ChevronDown size={14} className={cn('shrink-0 text-muted-foreground', responsive && 'hidden md:inline')} />
       </PopoverTrigger>
       <PopoverContent side="bottom" align="end" className="p-0">
-        <LocationMapPanel onClose={() => setOpen(false)} />
+        <CityPickerPanel onClose={() => setOpen(false)} />
       </PopoverContent>
     </Popover>
   )

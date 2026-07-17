@@ -26,8 +26,8 @@ export function CategoryGrid({ businesses, categories }: { businesses: Business[
   }
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
-      <div className="flex items-end justify-between gap-4">
+    <section className="py-10">
+      <div className="mx-auto flex max-w-[88rem] items-end justify-between gap-4 px-4 sm:px-6">
         <h2 className="text-lg font-semibold tracking-tight sm:text-xl">Browse by category</h2>
         <Link
           href="/search"
@@ -37,14 +37,14 @@ export function CategoryGrid({ businesses, categories }: { businesses: Business[
         </Link>
       </div>
 
-      <div 
+      <div
         ref={containerRef}
-        className="mt-4 -mx-4 overflow-hidden px-4 sm:-mx-6 sm:px-6"
+        className="mt-4 w-full overflow-hidden"
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
         <div 
-          className="flex gap-2.5 pb-1 will-change-transform"
+          className="flex gap-2.5 px-4 pb-1 will-change-transform sm:px-6"
           style={{
             animation: `scroll-left-infinite ${40 / speed}s linear infinite`
           }}

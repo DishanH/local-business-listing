@@ -50,7 +50,34 @@ export const subcategoriesByCategory: Record<string, Subcategory[]> = {
   ],
   autoshop: [
     { id: 'repair', label: 'Repair & service', keywords: ['repair', 'mechanic', 'service', 'european'] },
-    { id: 'tires', label: 'Tires & maintenance', keywords: ['tire', 'oil change', 'brakes', 'maintenance'] },
+    { id: 'tires', label: 'Tires & tire change', keywords: ['tire', 'tire change', 'winter tires', 'oil change', 'brakes', 'maintenance', 'mobile'] },
+  ],
+  'home-services': [
+    { id: 'plumbing', label: 'Plumbing', keywords: ['plumbing', 'plumber', 'drain', 'water heater', 'leak'] },
+    { id: 'electrical', label: 'Electrical repair', keywords: ['electrician', 'electrical', 'panel', 'wiring', 'ev charger'] },
+    { id: 'decks-fences', label: 'Decks & fences', keywords: ['deck', 'fence', 'cedar', 'outdoor'] },
+    { id: 'handyman', label: 'Handyman', keywords: ['handyman', 'repair', 'fix'] },
+  ],
+  'kids-family': [
+    { id: 'kids-play', label: 'Play centres & soft play', keywords: ['soft play', 'play centre', 'indoor playground', 'toddlers'] },
+    { id: 'kids-parties', label: 'Kids party venues', keywords: ['kids party', 'birthday', 'party venue'] },
+    { id: 'kids-classes', label: 'Kids classes & camps', keywords: ['kids class', 'camp', 'workshop'] },
+    { id: 'kids-care', label: 'Babysitting & nanny', keywords: ['babysitting', 'nanny', 'childcare'] },
+  ],
+  'pottery-crafts': [
+    { id: 'pottery-studio', label: 'Pottery studio', keywords: ['pottery', 'ceramics', 'studio', 'kiln'] },
+    { id: 'pottery-classes', label: 'Classes & workshops', keywords: ['pottery class', 'wheel', 'workshop'] },
+    { id: 'custom-pottery', label: 'Custom & commissions', keywords: ['custom', 'commission', 'mug'] },
+  ],
+  'events-party': [
+    { id: 'birthday-parties', label: 'Birthday parties', keywords: ['birthday', 'party', 'theme', 'celebration'] },
+    { id: 'catering', label: 'Catering', keywords: ['catering', 'caterer'] },
+    { id: 'party-rentals', label: 'Party rentals', keywords: ['rental', 'bounce', 'tables'] },
+  ],
+  'tech-electronics': [
+    { id: 'electronics-repair', label: 'Electronics repair', keywords: ['electronics repair', 'phone repair', 'screen', 'laptop', 'gadget'] },
+    { id: 'computer-repair', label: 'Computer repair', keywords: ['computer', 'pc', 'mac'] },
+    { id: 'phone-repair', label: 'Phone repair', keywords: ['iphone', 'android', 'screen'] },
   ],
 }
 
