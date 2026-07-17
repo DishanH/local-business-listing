@@ -1,6 +1,9 @@
+import Link from 'next/link'
 import { CalendarDays, Megaphone, TicketPercent } from 'lucide-react'
 import type { OwnerPost, OwnerPostType } from '@/lib/types'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { SectionEditLink } from '@/components/profile/section-edit-link'
 import { cn } from '@/lib/utils'
 
 const typeMeta: Record<
@@ -17,14 +20,45 @@ function formatDate(iso: string) {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
-export function OwnerUpdatesPanel({ posts, businessName }: { posts: OwnerPost[]; businessName: string }) {
-  if (!posts.length) return null
+export function OwnerUpdatesPanel({
+  posts,
+  businessName,
+  isOwner,
+  manageHref,
+}: {
+  posts: OwnerPost[]
+  businessName: string
+  isOwner?: boolean
+  manageHref?: string
+}) {
+  if (!posts.length) {
+    if (!isOwner) return null
+    return (
+      <section className="rounded-2xl border border-dashed border-border bg-card/50 p-6">
+        <div className="mb-1 flex items-center gap-2">
+          <Megaphone className="size-5 text-muted-foreground" aria-hidden="true" />
+          <h2 className="font-serif text-lg font-semibold text-card-foreground">News &amp; offers</h2>
+        </div>
+        <p className="mb-4 text-sm text-muted-foreground">
+          Only you can see this. Post an offer, event, or update and it&apos;ll show here for customers.
+        </p>
+        {manageHref ? (
+          <Link href={manageHref}>
+            <Button variant="outline" size="sm">
+              Add a post
+            </Button>
+          </Link>
+        ) : null}
+      </section>
+    )
+  }
 
   return (
     <section className="rounded-2xl border border-border bg-card p-6">
       <div className="mb-1 flex items-center gap-2">
         <Megaphone className="size-5 text-primary" aria-hidden="true" />
         <h2 className="font-serif text-lg font-semibold text-card-foreground">News &amp; offers</h2>
+        {isOwner && manageHref ? <SectionEditLink href={manageHref} /> : null}
       </div>
       <p className="mb-5 text-sm text-muted-foreground">Promotions and announcements from {businessName}.</p>
 

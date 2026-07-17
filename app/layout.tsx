@@ -6,6 +6,7 @@ import { StoreProvider } from '@/components/store-provider'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { HideOnPortal } from '@/components/hide-on-portal'
+import { Toaster } from '@/components/ui/sonner'
 import { getAppCategories, getAppCities } from '@/lib/supabase/queries/taxonomy'
 import { getMixedBusinessesForApp } from '@/lib/supabase/queries/businesses'
 import './globals.css'
@@ -30,6 +31,14 @@ export const metadata: Metadata = {
   description:
     'Find, favorite, and connect with the best local businesses near you. Browse by category, city, or distance with smart search.',
   generator: 'v0.app',
+  icons: {
+    icon: [
+      { url: '/icon-light-32x32.png', media: '(prefers-color-scheme: light)' },
+      { url: '/icon-dark-32x32.png', media: '(prefers-color-scheme: dark)' },
+      { url: '/icon.svg', type: 'image/svg+xml' },
+    ],
+    apple: '/apple-icon.png',
+  },
 }
 
 export const viewport: Viewport = {
@@ -67,6 +76,7 @@ export default async function RootLayout({
                 <SiteFooter />
               </HideOnPortal>
             </div>
+            <Toaster />
           </StoreProvider>
         </ThemeProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}

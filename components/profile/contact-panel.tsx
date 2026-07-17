@@ -4,8 +4,17 @@ import { Globe, Mail, MapPin, Navigation, Phone } from 'lucide-react'
 import type { Business } from '@/lib/types'
 import { useStore } from '@/components/store-provider'
 import { distanceMiles, formatDistance } from '@/lib/format'
+import { SectionEditLink } from '@/components/profile/section-edit-link'
 
-export function ContactPanel({ business }: { business: Business }) {
+export function ContactPanel({
+  business,
+  isOwner,
+  manageHref,
+}: {
+  business: Business
+  isOwner?: boolean
+  manageHref?: string
+}) {
   const { origin, originLabel } = useStore()
   const miles = distanceMiles(origin, business)
 
@@ -25,6 +34,7 @@ export function ContactPanel({ business }: { business: Business }) {
       <div className="mb-4 flex items-center gap-2">
         <Navigation className="size-5 text-primary" aria-hidden="true" />
         <h2 className="font-serif text-lg font-semibold text-card-foreground">Contact & location</h2>
+        {isOwner && manageHref ? <SectionEditLink href={manageHref} /> : null}
       </div>
 
       <ul className="flex flex-col gap-3">

@@ -4,6 +4,7 @@ import { Archive, Eye, Send } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { ToastForm } from '@/components/toast-form'
 import { EditListingForms } from '@/components/dashboard/edit-listing-forms'
 import { createClient } from '@/lib/supabase/server'
 import { getFiltersForCategory } from '@/lib/supabase/queries/categories'
@@ -84,20 +85,20 @@ export default async function EditListingPage({ params }: { params: Promise<{ id
             </Button>
           </a>
           {business.status === 'draft' && (
-            <form action={submitForReview.bind(null, business.id)}>
+            <ToastForm action={submitForReview.bind(null, business.id)} successMessage="Submitted for review">
               <Button type="submit" size="sm">
                 <Send className="size-3.5" />
                 Submit for review
               </Button>
-            </form>
+            </ToastForm>
           )}
           {business.status !== 'archived' && (
-            <form action={archiveListing.bind(null, business.id)}>
+            <ToastForm action={archiveListing.bind(null, business.id)} successMessage="Listing archived">
               <Button type="submit" variant="destructive" size="sm">
                 <Archive className="size-3.5" />
                 Archive
               </Button>
-            </form>
+            </ToastForm>
           )}
         </div>
       </div>

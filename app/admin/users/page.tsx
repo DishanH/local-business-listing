@@ -2,6 +2,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Pagination, parsePageParam } from '@/components/ui/pagination'
+import { ToastForm } from '@/components/toast-form'
+import { AdminPageShell } from '@/components/admin/admin-page-shell'
 import { createClient } from '@/lib/supabase/server'
 import type { UserRole } from '@/lib/supabase/database.types'
 
@@ -50,14 +52,10 @@ export default async function AdminUsersPage({
   const currentUserId = user?.id
 
   return (
-    <div className="flex flex-col gap-4">
-      <div>
-        <h2 className="text-lg font-semibold tracking-tight">Users</h2>
-        <p className="text-xs text-muted-foreground">
-          Manage account roles. New sign-ups start as customers until promoted.
-        </p>
-      </div>
-
+    <AdminPageShell
+      title="Users"
+      description="Manage account roles. New sign-ups start as customers until promoted."
+    >
       <Card className="overflow-hidden rounded-xl p-0 shadow-none">
         <table className="w-full text-sm">
           <thead className="border-b bg-muted/50 text-left text-xs text-muted-foreground uppercase">
@@ -76,10 +74,14 @@ export default async function AdminUsersPage({
                 <tr key={profile.id}>
                   <td className="px-4 py-2.5 font-medium">
                     {profile.full_name ?? 'Unnamed user'}
-                    {isSelf ? <span className="ml-2 text-xs text-muted-foreground">(you)</span> : null}
+                    {isSelf ? (
+                      <span className="ml-2 text-xs text-muted-foreground">(you)</span>
+                    ) : null}
                   </td>
                   <td className="px-4 py-2.5">
-                    <Badge variant={ROLE_BADGE_VARIANT[profile.role]}>{profile.role.replace('_', ' ')}</Badge>
+                    <Badge variant={ROLE_BADGE_VARIANT[profile.role]}>
+                      {profile.role.replace('_', ' ')}
+                    </Badge>
                   </td>
                   <td className="px-4 py-2.5 text-muted-foreground">
                     {profile.is_active ? 'Active' : 'Suspended'}
@@ -91,18 +93,29 @@ export default async function AdminUsersPage({
                     <div className="flex flex-wrap justify-end gap-1.5">
                       {!isSelf &&
                         ROLE_OPTIONS.filter((role) => role !== profile.role).map((role) => (
-                          <form key={role} action={updateUserRole.bind(null, profile.id, role)}>
+                          <ToastForm
+                            key={role}
+                            action={updateUserRole.bind(null, profile.id, role)}
+                            successMessage={`Role updated to ${role.replace('_', ' ')}`}
+                          >
                             <Button type="submit" size="sm" variant="outline">
                               Make {role.replace('_', ' ')}
                             </Button>
-                          </form>
+                          </ToastForm>
                         ))}
                       {!isSelf && (
-                        <form action={toggleUserActive.bind(null, profile.id, !profile.is_active)}>
-                          <Button type="submit" size="sm" variant={profile.is_active ? 'destructive' : 'outline'}>
+                        <ToastForm
+                          action={toggleUserActive.bind(null, profile.id, !profile.is_active)}
+                          successMessage={profile.is_active ? 'User suspended' : 'User reactivated'}
+                        >
+                          <Button
+                            type="submit"
+                            size="sm"
+                            variant={profile.is_active ? 'destructive' : 'outline'}
+                          >
                             {profile.is_active ? 'Suspend' : 'Reactivate'}
                           </Button>
-                        </form>
+                        </ToastForm>
                       )}
                     </div>
                   </td>
@@ -126,6 +139,6 @@ export default async function AdminUsersPage({
           pageSize={PAGE_SIZE}
         />
       </Card>
-    </div>
+    </AdminPageShell>
   )
 }

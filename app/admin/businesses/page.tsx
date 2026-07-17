@@ -4,6 +4,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Pagination, parsePageParam } from '@/components/ui/pagination'
+import { ToastForm } from '@/components/toast-form'
+import { AdminPageShell } from '@/components/admin/admin-page-shell'
 import { createClient } from '@/lib/supabase/server'
 import type { BusinessStatus } from '@/lib/supabase/database.types'
 
@@ -20,7 +22,10 @@ const STATUS_TABS: { value: BusinessStatus | 'all'; label: string }[] = [
   { value: 'archived', label: 'Archived' },
 ]
 
-const STATUS_BADGE_VARIANT: Record<BusinessStatus, 'default' | 'secondary' | 'outline' | 'destructive'> = {
+const STATUS_BADGE_VARIANT: Record<
+  BusinessStatus,
+  'default' | 'secondary' | 'outline' | 'destructive'
+> = {
   draft: 'outline',
   pending_review: 'secondary',
   published: 'default',
@@ -80,89 +85,102 @@ export default async function AdminBusinessesPage({
   const { businesses, page, totalPages, total } = await getBusinesses(activeStatus, pageParam)
 
   return (
-    <div className="flex flex-col gap-4">
-      <div>
-        <h2 className="text-lg font-semibold tracking-tight">Businesses</h2>
-        <p className="text-xs text-muted-foreground">Approve, publish, or suspend listings.</p>
-      </div>
+    <AdminPageShell title="Businesses" description="Approve, publish, or suspend listings.">
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-wrap gap-1.5">
+          {STATUS_TABS.map((tab) => (
+            <Link
+              key={tab.value}
+              href={
+                tab.value === 'all' ? '/admin/businesses' : `/admin/businesses?status=${tab.value}`
+              }
+            >
+              <Button variant={activeStatus === tab.value ? 'default' : 'outline'} size="sm">
+                {tab.label}
+              </Button>
+            </Link>
+          ))}
+        </div>
 
-      <div className="flex flex-wrap gap-1.5">
-        {STATUS_TABS.map((tab) => (
-          <Link
-            key={tab.value}
-            href={tab.value === 'all' ? '/admin/businesses' : `/admin/businesses?status=${tab.value}`}
-          >
-            <Button variant={activeStatus === tab.value ? 'default' : 'outline'} size="sm">
-              {tab.label}
-            </Button>
-          </Link>
-        ))}
-      </div>
-
-      <Card className="overflow-hidden rounded-xl p-0 shadow-none">
-        <table className="w-full text-sm">
-          <thead className="border-b bg-muted/50 text-left text-xs text-muted-foreground uppercase">
-            <tr>
-              <th className="px-4 py-2.5 font-medium">Name</th>
-              <th className="px-4 py-2.5 font-medium">Category</th>
-              <th className="px-4 py-2.5 font-medium">Status</th>
-              <th className="px-4 py-2.5 font-medium">Rating</th>
-              <th className="px-4 py-2.5 font-medium text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y">
-            {businesses.map((biz) => (
-              <tr key={biz.id}>
-                <td className="px-4 py-2.5 font-medium">
-                  <Link href={`/business/${biz.slug}`} className="hover:underline" target="_blank">
-                    {biz.name}
-                  </Link>
-                </td>
-                <td className="px-4 py-2.5 text-muted-foreground">{biz.categoryName}</td>
-                <td className="px-4 py-2.5">
-                  <Badge variant={STATUS_BADGE_VARIANT[biz.status]}>{biz.status.replace('_', ' ')}</Badge>
-                </td>
-                <td className="px-4 py-2.5 text-muted-foreground">
-                  {biz.avg_rating > 0 ? `${biz.avg_rating.toFixed(1)} (${biz.review_count})` : '—'}
-                </td>
-                <td className="px-4 py-2.5">
-                  <div className="flex justify-end gap-1.5">
-                    {biz.status !== 'published' && (
-                      <form action={updateBusinessStatus.bind(null, biz.id, 'published')}>
-                        <Button type="submit" size="sm" variant="outline">
-                          Publish
-                        </Button>
-                      </form>
-                    )}
-                    {biz.status !== 'suspended' && (
-                      <form action={updateBusinessStatus.bind(null, biz.id, 'suspended')}>
-                        <Button type="submit" size="sm" variant="destructive">
-                          Suspend
-                        </Button>
-                      </form>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {businesses.length === 0 && (
+        <Card className="overflow-hidden rounded-xl p-0 shadow-none">
+          <table className="w-full text-sm">
+            <thead className="border-b bg-muted/50 text-left text-xs text-muted-foreground uppercase">
               <tr>
-                <td colSpan={5} className="px-4 py-10 text-center text-muted-foreground">
-                  No businesses in this view yet.
-                </td>
+                <th className="px-4 py-2.5 font-medium">Name</th>
+                <th className="px-4 py-2.5 font-medium">Category</th>
+                <th className="px-4 py-2.5 font-medium">Status</th>
+                <th className="px-4 py-2.5 font-medium">Rating</th>
+                <th className="px-4 py-2.5 font-medium text-right">Actions</th>
               </tr>
-            )}
-          </tbody>
-        </table>
-        <Pagination
-          basePath="/admin/businesses"
-          page={page}
-          totalPages={totalPages}
-          total={total}
-          pageSize={PAGE_SIZE}
-          params={{ status: activeStatus === 'all' ? undefined : activeStatus }}
-        />
-      </Card>
-    </div>
+            </thead>
+            <tbody className="divide-y">
+              {businesses.map((biz) => (
+                <tr key={biz.id}>
+                  <td className="px-4 py-2.5 font-medium">
+                    <Link
+                      href={`/business/${biz.slug}`}
+                      className="hover:underline"
+                      target="_blank"
+                    >
+                      {biz.name}
+                    </Link>
+                  </td>
+                  <td className="px-4 py-2.5 text-muted-foreground">{biz.categoryName}</td>
+                  <td className="px-4 py-2.5">
+                    <Badge variant={STATUS_BADGE_VARIANT[biz.status]}>
+                      {biz.status.replace('_', ' ')}
+                    </Badge>
+                  </td>
+                  <td className="px-4 py-2.5 text-muted-foreground">
+                    {biz.avg_rating > 0
+                      ? `${biz.avg_rating.toFixed(1)} (${biz.review_count})`
+                      : '—'}
+                  </td>
+                  <td className="px-4 py-2.5">
+                    <div className="flex justify-end gap-1.5">
+                      {biz.status !== 'published' && (
+                        <ToastForm
+                          action={updateBusinessStatus.bind(null, biz.id, 'published')}
+                          successMessage="Listing published"
+                        >
+                          <Button type="submit" size="sm" variant="outline">
+                            Publish
+                          </Button>
+                        </ToastForm>
+                      )}
+                      {biz.status !== 'suspended' && (
+                        <ToastForm
+                          action={updateBusinessStatus.bind(null, biz.id, 'suspended')}
+                          successMessage="Listing suspended"
+                        >
+                          <Button type="submit" size="sm" variant="destructive">
+                            Suspend
+                          </Button>
+                        </ToastForm>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {businesses.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="px-4 py-10 text-center text-muted-foreground">
+                    No businesses in this view yet.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+          <Pagination
+            basePath="/admin/businesses"
+            page={page}
+            totalPages={totalPages}
+            total={total}
+            pageSize={PAGE_SIZE}
+            params={{ status: activeStatus === 'all' ? undefined : activeStatus }}
+          />
+        </Card>
+      </div>
+    </AdminPageShell>
   )
 }

@@ -24,7 +24,8 @@ export function PortalShell({
   const flush =
     pathname.startsWith('/dashboard/messages') ||
     pathname.startsWith('/dashboard/listings/') ||
-    pathname === '/dashboard/listings/new'
+    pathname === '/dashboard/listings/new' ||
+    pathname.startsWith('/admin')
 
   return (
     <div className="bg-muted/30 px-3 py-3 sm:px-4 sm:py-4 md:px-6">

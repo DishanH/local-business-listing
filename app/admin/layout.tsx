@@ -9,6 +9,7 @@ const navLinks: PortalNavLink[] = [
   { href: '/admin', label: 'Dashboard', icon: 'layout-dashboard', exact: true },
   { href: '/admin/businesses', label: 'Businesses', icon: 'store' },
   { href: '/admin/categories', label: 'Categories', icon: 'folder-tree' },
+  { href: '/admin/filters', label: 'Filters', icon: 'sliders' },
   { href: '/admin/users', label: 'Users', icon: 'users' },
 ]
 

@@ -64,6 +64,10 @@ export interface Business {
   weeklySpecials?: WeeklySpecial[]
   /** full menu grouped into sections (food businesses) */
   menu?: MenuSection[]
+  /** owner-editable blurb shown under the "Menu" heading; falls back to a category default when unset */
+  menuIntro?: string | null
+  /** owner-editable blurb shown under the "Specials" heading; falls back to a category default when unset */
+  specialsIntro?: string | null
   /**
    * Precomputed rating for real (database-backed) listings. When present,
    * this takes priority over the mock review store in `useStore().getRating`.

@@ -1,16 +1,13 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-import { Search, Compass, Menu, Heart } from 'lucide-react'
+import { Search, Compass, Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { AccountMenu } from '@/components/account-menu'
 import { LocationMenu } from '@/components/location-picker'
 import { SearchDialog } from '@/components/search/search-dialog'
-import { useStore } from '@/components/store-provider'
-import { cn } from '@/lib/utils'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 
 function Logo() {
@@ -25,11 +22,8 @@ function Logo() {
 }
 
 export function SiteHeader() {
-  const pathname = usePathname()
-  const { favorites } = useStore()
   const [menuOpen, setMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
-  const onFavorites = pathname.startsWith('/favorites')
 
   return (
     <>
@@ -53,21 +47,6 @@ export function SiteHeader() {
             <span className="mx-0.5 hidden h-6 w-px bg-border sm:block" aria-hidden="true" />
 
             <ThemeToggle />
-
-            <Button
-              render={<Link href="/favorites" aria-label={`Favorites (${favorites.length})`} />}
-              nativeButton={false}
-              variant={onFavorites ? 'secondary' : 'ghost'}
-              size="icon"
-              className="relative rounded-full sm:size-8"
-            >
-              <Heart size={18} className={onFavorites ? 'text-[color:var(--destructive)]' : undefined} />
-              {favorites.length > 0 && (
-                <span className="absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
-                  {favorites.length}
-                </span>
-              )}
-            </Button>
 
             <span className="mx-0.5 hidden h-6 w-px bg-border sm:block" aria-hidden="true" />
 
@@ -97,26 +76,6 @@ export function SiteHeader() {
                   <Search size={16} />
                   Search businesses...
                 </button>
-
-                <Link
-                  href="/favorites"
-                  onClick={() => setMenuOpen(false)}
-                  aria-current={onFavorites ? 'page' : undefined}
-                  className={cn(
-                    'inline-flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-medium transition-colors',
-                    onFavorites ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:bg-muted hover:text-foreground',
-                  )}
-                >
-                  <span className="inline-flex items-center gap-2">
-                    <Heart size={16} />
-                    Favorites
-                  </span>
-                  {favorites.length > 0 && (
-                    <span className="flex size-5 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
-                      {favorites.length}
-                    </span>
-                  )}
-                </Link>
 
                 <div className="h-px bg-border" />
 

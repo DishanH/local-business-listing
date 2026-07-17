@@ -18,6 +18,31 @@ function formatPrice(cents: number | null, label: string | null): string {
   return `$${(cents / 100).toFixed(cents % 100 === 0 ? 0 : 2)}`
 }
 
+/**
+ * A special selected for multiple days (e.g. Mon + Wed + Fri) is stored as one
+ * row per day with identical name/description/price. Group those back into a
+ * single card for display instead of repeating the same special N times.
+ */
+function groupSpecialsByOffer(specials: DbSpecial[]) {
+  const groups = new Map<string, { name: string; description: string | null; price_cents: number | null; price_label: string | null; days: number[] }>()
+  for (const s of specials) {
+    const key = [s.name, s.description, s.price_cents, s.price_label, s.starts_on, s.ends_on].join('|')
+    const existing = groups.get(key)
+    if (existing) {
+      if (s.day_of_week != null) existing.days.push(s.day_of_week)
+    } else {
+      groups.set(key, {
+        name: s.name,
+        description: s.description,
+        price_cents: s.price_cents,
+        price_label: s.price_label,
+        days: s.day_of_week != null ? [s.day_of_week] : [],
+      })
+    }
+  }
+  return [...groups.values()]
+}
+
 function buildHoursRecord(hours: DbHours[]): Business['hours'] {
   return Object.fromEntries(
     dayKeys.map((key, i) => {
@@ -93,11 +118,17 @@ export function mapDbBusinessToApp(input: {
     })),
   }))
 
-  const weeklySpecials: WeeklySpecial[] = specials.map((s) => ({
-    day: s.day_of_week != null ? dayKeys[s.day_of_week] : 'any',
-    name: s.name,
-    price: formatPrice(s.price_cents, s.price_label),
-    description: s.description ?? undefined,
+  const weeklySpecials: WeeklySpecial[] = groupSpecialsByOffer(specials).map((group) => ({
+    day: group.days.length
+      ? group.days
+          .slice()
+          .sort((a, b) => a - b)
+          .map((d) => dayKeys[d])
+          .join(', ')
+      : 'any',
+    name: group.name,
+    price: formatPrice(group.price_cents, group.price_label),
+    description: group.description ?? undefined,
   }))
 
   const ownerPosts: OwnerPost[] = posts.map((p) => ({
@@ -134,6 +165,8 @@ export function mapDbBusinessToApp(input: {
       ownerPosts,
       weeklySpecials,
       menu,
+      menuIntro: b.menu_intro,
+      specialsIntro: b.specials_intro,
       rating: { avg: b.avg_rating, count: b.review_count },
       isLive: true,
     },

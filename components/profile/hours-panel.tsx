@@ -5,11 +5,20 @@ import { Clock } from 'lucide-react'
 import type { Business, DayKey } from '@/lib/types'
 import { dayLabels, dayOrder, formatTime } from '@/lib/format'
 import { useOpenStatus } from '@/hooks/use-open-status'
+import { SectionEditLink } from '@/components/profile/section-edit-link'
 import { cn } from '@/lib/utils'
 
 const jsDayToKey = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'] as const
 
-export function HoursPanel({ business }: { business: Business }) {
+export function HoursPanel({
+  business,
+  isOwner,
+  manageHref,
+}: {
+  business: Business
+  isOwner?: boolean
+  manageHref?: string
+}) {
   const status = useOpenStatus(business)
   // Compute the current day on the client to avoid SSR/timezone hydration mismatches.
   const [todayKey, setTodayKey] = useState<DayKey | null>(null)
@@ -23,6 +32,7 @@ export function HoursPanel({ business }: { business: Business }) {
       <div className="mb-4 flex items-center gap-2">
         <Clock className="size-5 text-primary" aria-hidden="true" />
         <h2 className="font-serif text-lg font-semibold text-card-foreground">Working hours</h2>
+        {isOwner && manageHref ? <SectionEditLink href={manageHref} /> : null}
       </div>
 
       <p

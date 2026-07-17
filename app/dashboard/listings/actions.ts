@@ -130,6 +130,26 @@ export async function updateListing(businessId: string, formData: FormData) {
   revalidateListing(businessId)
 }
 
+export async function updateOfferingsIntro(businessId: string, formData: FormData) {
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from('businesses')
+    .update({ menu_intro: emptyToNull(formData.get('menu_intro')) })
+    .eq('id', businessId)
+  if (error) throw new Error(error.message)
+  revalidateListing(businessId)
+}
+
+export async function updateSpecialsIntro(businessId: string, formData: FormData) {
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from('businesses')
+    .update({ specials_intro: emptyToNull(formData.get('specials_intro')) })
+    .eq('id', businessId)
+  if (error) throw new Error(error.message)
+  revalidateListing(businessId)
+}
+
 export async function submitForReview(businessId: string) {
   const supabase = await createClient()
   const { error } = await supabase.from('businesses').update({ status: 'pending_review' }).eq('id', businessId)
@@ -395,18 +415,23 @@ export async function addSpecial(businessId: string, formData: FormData) {
   const name = String(formData.get('name') ?? '').trim()
   if (!name) throw new Error('Special name is required')
 
-  const dayRaw = emptyToNull(formData.get('day_of_week'))
+  // "day_of_week" checkboxes can be selected multiple times (e.g. Mon + Wed).
+  // Leaving all of them unchecked means "any day", stored as a single null row.
+  const days = [...new Set(formData.getAll('day_of_week').map((v) => Number(v)).filter((n) => Number.isFinite(n)))]
 
-  const { error } = await supabase.from('business_specials').insert({
+  const base = {
     business_id: businessId,
     name,
     description: emptyToNull(formData.get('description')),
     price_label: emptyToNull(formData.get('price_label')),
     price_cents: parseOptionalInt(formData.get('price_cents')),
-    day_of_week: dayRaw != null ? Number(dayRaw) : null,
     starts_on: emptyToNull(formData.get('starts_on')),
     ends_on: emptyToNull(formData.get('ends_on')),
-  })
+  }
+
+  const rows = (days.length > 0 ? days : [null]).map((day_of_week) => ({ ...base, day_of_week }))
+
+  const { error } = await supabase.from('business_specials').insert(rows)
   if (error) throw new Error(error.message)
   revalidateListing(businessId)
 }
@@ -439,6 +464,29 @@ export async function addPost(businessId: string, formData: FormData) {
     badge: emptyToNull(formData.get('badge')),
     expires_at: emptyToNull(formData.get('expires_at')),
   })
+  if (error) throw new Error(error.message)
+  revalidateListing(businessId)
+}
+
+export async function updatePost(businessId: string, postId: string, formData: FormData) {
+  const supabase = await createClient()
+  const title = String(formData.get('title') ?? '').trim()
+  const body = String(formData.get('body') ?? '').trim()
+  const type = String(formData.get('type') ?? 'update') as PostType
+  if (!title || !body) throw new Error('Title and body are required')
+  if (!['offer', 'event', 'update'].includes(type)) throw new Error('Invalid post type')
+
+  const { error } = await supabase
+    .from('business_posts')
+    .update({
+      type,
+      title,
+      body,
+      badge: emptyToNull(formData.get('badge')),
+      expires_at: emptyToNull(formData.get('expires_at')),
+    })
+    .eq('id', postId)
+    .eq('business_id', businessId)
   if (error) throw new Error(error.message)
   revalidateListing(businessId)
 }

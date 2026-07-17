@@ -144,6 +144,8 @@ export interface Database {
           avg_rating: number
           review_count: number
           keywords: string[]
+          menu_intro: string | null
+          specials_intro: string | null
           created_by: string | null
           created_at: string
           updated_at: string
@@ -173,6 +175,8 @@ export interface Database {
           avg_rating?: number
           review_count?: number
           keywords?: string[]
+          menu_intro?: string | null
+          specials_intro?: string | null
           created_by?: string | null
           created_at?: string
           updated_at?: string

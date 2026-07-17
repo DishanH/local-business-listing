@@ -6,6 +6,7 @@ import {
   FolderTree,
   LayoutDashboard,
   MessageSquare,
+  SlidersHorizontal,
   Store,
   Users,
   type LucideIcon,
@@ -15,7 +16,13 @@ import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
 
 /** Serializable icon keys — resolved to Lucide components on the client. */
-export type PortalNavIcon = 'layout-dashboard' | 'store' | 'message-square' | 'folder-tree' | 'users'
+export type PortalNavIcon =
+  | 'layout-dashboard'
+  | 'store'
+  | 'message-square'
+  | 'folder-tree'
+  | 'users'
+  | 'sliders'
 
 const icons: Record<PortalNavIcon, LucideIcon> = {
   'layout-dashboard': LayoutDashboard,
@@ -23,6 +30,7 @@ const icons: Record<PortalNavIcon, LucideIcon> = {
   'message-square': MessageSquare,
   'folder-tree': FolderTree,
   users: Users,
+  sliders: SlidersHorizontal,
 }
 
 export interface PortalNavLink {

@@ -1,7 +1,8 @@
 'use client'
 
 import Image from 'next/image'
-import { MapPin } from 'lucide-react'
+import Link from 'next/link'
+import { MapPin, Pencil } from 'lucide-react'
 import type { Business, Category } from '@/lib/types'
 import { StarRating } from '@/components/star-rating'
 import { FavoriteButton } from '@/components/favorite-button'
@@ -10,13 +11,20 @@ import { useStore } from '@/components/store-provider'
 import { useOpenStatus } from '@/hooks/use-open-status'
 import { priceLabel } from '@/lib/format'
 import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
 
 export function ProfileHeader({
   business,
   category,
+  isOwner,
+  detailsHref,
+  photosHref,
 }: {
   business: Business
   category?: Category
+  isOwner?: boolean
+  detailsHref?: string
+  photosHref?: string
 }) {
   const { getRating } = useStore()
   // Prefer DB-backed avg_rating / review_count on live listings.
@@ -34,13 +42,29 @@ export function ProfileHeader({
           className="object-cover"
           sizes="(max-width: 768px) 100vw, 1024px"
         />
-        <div className="absolute right-4 top-4">
+        <div className="absolute right-4 top-4 flex items-center gap-2">
+          {isOwner && photosHref ? (
+            <Link href={photosHref} target="_blank" rel="noopener noreferrer">
+              <Button variant="secondary" size="sm" className="gap-1.5 shadow-sm">
+                <Pencil className="size-3.5" aria-hidden="true" />
+                Edit photos
+              </Button>
+            </Link>
+          ) : null}
           <FavoriteButton businessId={business.id} dbId={business.dbId} />
         </div>
       </div>
 
       <div className="p-6 md:p-8">
         <div className="flex flex-wrap items-center gap-2">
+          {isOwner && detailsHref ? (
+            <Link href={detailsHref} target="_blank" rel="noopener noreferrer" className="order-last ml-auto">
+              <Button variant="ghost" size="sm" className="h-7 gap-1.5 px-2 text-xs text-muted-foreground hover:text-foreground">
+                <Pencil className="size-3.5" aria-hidden="true" />
+                Edit details
+              </Button>
+            </Link>
+          ) : null}
           {category ? (
             <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-sm font-medium text-secondary-foreground">
               <CategoryIcon name={category.icon} className="size-3.5" />

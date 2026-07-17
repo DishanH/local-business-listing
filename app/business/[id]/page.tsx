@@ -15,6 +15,8 @@ import { ReviewsPanel } from '@/components/profile/reviews-panel'
 import { MessagePanel } from '@/components/profile/message-panel'
 import { OwnerUpdatesPanel } from '@/components/profile/owner-updates-panel'
 import { MenuPanel } from '@/components/profile/menu-panel'
+import { SpecialsPanel } from '@/components/profile/specials-panel'
+import { AmenitiesPanel } from '@/components/profile/amenities-panel'
 import { BusinessCard } from '@/components/business-card'
 import { Badge } from '@/components/ui/badge'
 
@@ -23,6 +25,25 @@ export const revalidate = 300
 
 export function generateStaticParams() {
   return businesses.map((b) => ({ id: b.id }))
+}
+
+// Quick, blocking ownership check so we can decide whether to show owner-only
+// "add this" placeholders for empty sections (menu, specials, posts, amenities).
+async function getIsOwner(businessUuid: string) {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) return false
+
+  const { data } = await supabase
+    .from('business_owners')
+    .select('business_id')
+    .eq('business_id', businessUuid)
+    .eq('profile_id', user.id)
+    .maybeSingle()
+
+  return Boolean(data)
 }
 
 async function getSocialContext(businessUuid: string) {
@@ -166,6 +187,9 @@ export default async function BusinessPage({ params }: { params: Promise<{ id: s
 
   if (dbPayload) {
     const { business: appBusiness, category } = mapDbBusinessToApp(dbPayload)
+    const isOwner = await getIsOwner(dbPayload.business.id)
+    const dashboardHref = (section: string) => `/dashboard/listings/${dbPayload.business.id}?section=${section}`
+    const amenities = dbPayload.filters.map((f) => ({ id: f.id, label: f.label }))
 
     return (
       <div className="mx-auto max-w-6xl px-4 py-6 md:py-8">
@@ -191,25 +215,37 @@ export default async function BusinessPage({ params }: { params: Promise<{ id: s
           </div>
         )}
 
-        {dbPayload.filters.length > 0 && (
-          <div className="mb-4 flex flex-wrap gap-1.5">
-            {dbPayload.filters.map((f) => (
-              <Badge key={f.id} variant="secondary">
-                {f.label}
-              </Badge>
-            ))}
-          </div>
-        )}
-
-        <ProfileHeader business={appBusiness} category={category} />
+        <ProfileHeader
+          business={appBusiness}
+          category={category}
+          isOwner={isOwner}
+          detailsHref={dashboardHref('details')}
+          photosHref={dashboardHref('photos')}
+        />
 
         <div className="mt-6 grid gap-6 lg:grid-cols-3">
           <div className="flex flex-col gap-6 lg:col-span-2">
-            {appBusiness.ownerPosts?.length ? (
-              <OwnerUpdatesPanel posts={appBusiness.ownerPosts} businessName={appBusiness.name} />
-            ) : null}
-            <MenuPanel weeklySpecials={appBusiness.weeklySpecials} menu={appBusiness.menu} />
-            
+            <OwnerUpdatesPanel
+              posts={appBusiness.ownerPosts ?? []}
+              businessName={appBusiness.name}
+              isOwner={isOwner}
+              manageHref={dashboardHref('posts')}
+            />
+            <MenuPanel
+              menu={appBusiness.menu}
+              intro={appBusiness.menuIntro}
+              categorySlug={category?.id}
+              isOwner={isOwner}
+              manageHref={dashboardHref('offerings')}
+            />
+            <SpecialsPanel
+              weeklySpecials={appBusiness.weeklySpecials}
+              intro={appBusiness.specialsIntro}
+              categorySlug={category?.id}
+              isOwner={isOwner}
+              manageHref={dashboardHref('specials')}
+            />
+
             {/* Reviews stream in with Suspense */}
             <Suspense fallback={<ReviewsSkeleton />}>
               <ReviewsSection 
@@ -227,10 +263,12 @@ export default async function BusinessPage({ params }: { params: Promise<{ id: s
                 businessName={appBusiness.name}
               />
             </Suspense>
-            
+
+            <AmenitiesPanel amenities={amenities} isOwner={isOwner} manageHref={dashboardHref('filters')} />
+
             {/* Static panels load immediately */}
-            <ContactPanel business={appBusiness} />
-            <HoursPanel business={appBusiness} />
+            <ContactPanel business={appBusiness} isOwner={isOwner} manageHref={dashboardHref('details')} />
+            <HoursPanel business={appBusiness} isOwner={isOwner} manageHref={dashboardHref('hours')} />
           </div>
         </div>
       </div>
@@ -271,7 +309,8 @@ export default async function BusinessPage({ params }: { params: Promise<{ id: s
           {business.ownerPosts?.length ? (
             <OwnerUpdatesPanel posts={business.ownerPosts} businessName={business.name} />
           ) : null}
-          <MenuPanel weeklySpecials={business.weeklySpecials} menu={business.menu} />
+          <MenuPanel menu={business.menu} />
+          <SpecialsPanel weeklySpecials={business.weeklySpecials} />
           <p className="rounded-xl border border-dashed border-border p-4 text-sm text-muted-foreground">
             Reviews, notes, and messaging for demo listings are not persisted. Create a real listing from the
             business dashboard to use the database-backed features.
