@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { ArrowUpDown, Search, X, ChevronDown } from 'lucide-react'
+import { ArrowUpDown, MapPin, Search, X, ChevronDown } from 'lucide-react'
 import { BusinessCard } from '@/components/business-card'
 import { CategoryIcon } from '@/components/category-icon'
 import { useStore } from '@/components/store-provider'
@@ -85,16 +85,23 @@ export function SearchClient() {
   const visibleResults = results.slice(0, visiblePages * PAGE_SIZE)
   const hasMore = visibleResults.length < results.length
 
+  // Build the URL from the *full* current state (plus any overrides) so that
+  // changing one filter never accidentally drops another (e.g. picking a
+  // category must keep the selected city). Overrides use the passed value
+  // directly since the corresponding setState hasn't flushed yet.
   const updateUrl = useCallback(
     (next: Partial<{ q: string; category: string; sub: string; city: string; sort: string }>) => {
-      const sp = new URLSearchParams(params.toString())
-      Object.entries(next).forEach(([k, v]) => {
-        if (v && v !== 'all' && v !== 'relevance') sp.set(k, v)
-        else sp.delete(k)
-      })
-      router.replace(sp.toString() ? `/search?${sp.toString()}` : '/search', { scroll: false })
+      const merged = { q: query, category, sub: subcategory, city, sort, ...next }
+      const sp = new URLSearchParams()
+      if (merged.q.trim()) sp.set('q', merged.q.trim())
+      if (merged.category && merged.category !== 'all') sp.set('category', merged.category)
+      if (merged.sub && merged.sub !== 'all') sp.set('sub', merged.sub)
+      if (merged.city && merged.city !== 'all') sp.set('city', merged.city)
+      if (merged.sort && merged.sort !== 'relevance') sp.set('sort', merged.sort)
+      const qs = sp.toString()
+      router.replace(qs ? `/search?${qs}` : '/search', { scroll: false })
     },
-    [params, router],
+    [router, query, category, subcategory, city, sort],
   )
 
   const togglePrice = (value: string) => {
@@ -180,6 +187,32 @@ export function SearchClient() {
         <span className="h-6 w-px shrink-0 bg-border" aria-hidden="true" />
 
         <Select
+          value={city}
+          onValueChange={(v) => {
+            if (!v) return
+            setCity(v)
+            updateUrl({ city: v })
+          }}
+        >
+          <SelectTrigger className="h-9 shrink-0 gap-1.5 rounded-full border-none bg-transparent px-2.5 text-sm shadow-none sm:px-3">
+            <MapPin size={14} className="text-muted-foreground" />
+            <span className="max-w-[7rem] truncate">
+              <SelectValue placeholder="All cities" />
+            </span>
+          </SelectTrigger>
+          <SelectContent align="end">
+            <SelectItem value="all">All cities</SelectItem>
+            {cities.map((c) => (
+              <SelectItem key={c.id} value={c.id}>
+                {c.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <span className="h-6 w-px shrink-0 bg-border" aria-hidden="true" />
+
+        <Select
           value={sort}
           onValueChange={(v) => {
             if (!v) return
@@ -213,23 +246,56 @@ export function SearchClient() {
 
       {/* Category / subcategory chips */}
       {category === 'all' ? (
-        <div className="mt-3 flex gap-1.5 overflow-x-auto pb-1">
-          {categories.map((c) => (
-            <button
-              key={c.id}
-              type="button"
-              onClick={() => {
-                setCategory(c.id)
-                setSubcategory('all')
-                updateUrl({ category: c.id, sub: 'all' })
-              }}
-              className="inline-flex shrink-0 items-center gap-1.5 rounded-full border bg-card px-2.5 py-1 text-xs font-medium transition-colors hover:border-primary sm:px-3 sm:py-1.5 sm:text-sm"
-            >
-              <CategoryIcon name={c.icon} size={13} />
-              {c.name}
-            </button>
-          ))}
-        </div>
+        query.trim() ? (
+          <div className="mt-3 flex gap-1.5 overflow-x-auto pb-1">
+            {categories.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => {
+                  setCategory(c.id)
+                  setSubcategory('all')
+                  updateUrl({ category: c.id, sub: 'all' })
+                }}
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-full border bg-card px-2.5 py-1 text-xs font-medium transition-colors hover:border-primary sm:px-3 sm:py-1.5 sm:text-sm"
+              >
+                <CategoryIcon name={c.icon} size={13} />
+                {c.name}
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="mt-5">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+              Browse by category
+            </h2>
+            <div className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+              {categories.map((c) => {
+                const count = results.filter((b) => b.categoryId === c.id).length
+                return (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onClick={() => {
+                      setCategory(c.id)
+                      setSubcategory('all')
+                      updateUrl({ category: c.id, sub: 'all' })
+                    }}
+                    className="group flex flex-col items-start gap-2 rounded-2xl border bg-card p-3.5 text-left transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-sm"
+                  >
+                    <span className="flex size-10 items-center justify-center rounded-xl bg-accent text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                      <CategoryIcon name={c.icon} size={20} />
+                    </span>
+                    <span className="text-sm font-medium leading-tight">{c.name}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {count} {count === 1 ? 'place' : 'places'}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        )
       ) : subcategories.length > 0 ? (
         <div className="mt-3 flex gap-1.5 overflow-x-auto pb-1">
           <button
@@ -265,24 +331,9 @@ export function SearchClient() {
       ) : null}
 
       {/* Active filter tags */}
-      {(priceLevels.length > 0 || openNow || activeCity) && (
+      {(priceLevels.length > 0 || openNow) && (
         <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
           <span className="text-xs font-medium text-muted-foreground">Active:</span>
-          {activeCity && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-primary bg-accent px-2.5 py-1 text-xs font-medium text-primary">
-              {activeCity.name}
-              <button
-                type="button"
-                aria-label="Remove city filter"
-                onClick={() => {
-                  setCity('all')
-                  updateUrl({ city: 'all' })
-                }}
-              >
-                <X size={12} />
-              </button>
-            </span>
-          )}
           {openNow && (
             <span className="inline-flex items-center gap-1 rounded-full border border-primary bg-accent px-2.5 py-1 text-xs font-medium text-primary">
               Open now
@@ -307,11 +358,7 @@ export function SearchClient() {
             ))}
           <button
             type="button"
-            onClick={() => {
-              clearFilters()
-              setCity('all')
-              updateUrl({ city: 'all' })
-            }}
+            onClick={clearFilters}
             className="text-xs font-medium text-muted-foreground hover:text-foreground"
           >
             Clear all
