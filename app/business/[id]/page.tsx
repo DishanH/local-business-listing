@@ -192,20 +192,20 @@ export default async function BusinessPage({ params }: { params: Promise<{ id: s
     const amenities = dbPayload.filters.map((f) => ({ id: f.id, label: f.label }))
 
     return (
-      <div className="mx-auto max-w-7xl px-4 py-6 md:py-8">
-        <nav className="mb-4 flex items-center gap-1 text-sm text-muted-foreground" aria-label="Breadcrumb">
-          <Link href="/" className="transition-colors hover:text-foreground">
+      <div className="mx-auto max-w-[88rem] overflow-x-hidden px-4 py-6 md:py-8">
+        <nav className="mb-4 flex min-w-0 items-center gap-1 text-sm text-muted-foreground" aria-label="Breadcrumb">
+          <Link href="/" className="shrink-0 transition-colors hover:text-foreground">
             Home
           </Link>
-          <ChevronRight className="size-4" aria-hidden="true" />
+          <ChevronRight className="size-4 shrink-0" aria-hidden="true" />
           <Link
             href={`/search?category=${category?.id ?? ''}`}
-            className="transition-colors hover:text-foreground"
+            className="min-w-0 shrink truncate transition-colors hover:text-foreground"
           >
             {category?.name}
           </Link>
-          <ChevronRight className="size-4" aria-hidden="true" />
-          <span className="text-foreground">{appBusiness.name}</span>
+          <ChevronRight className="size-4 shrink-0" aria-hidden="true" />
+          <span className="min-w-0 flex-1 truncate text-foreground">{appBusiness.name}</span>
         </nav>
 
         {dbPayload.business.status !== 'published' && (
@@ -223,52 +223,69 @@ export default async function BusinessPage({ params }: { params: Promise<{ id: s
           photosHref={dashboardHref('photos')}
         />
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-3">
-          <div className="flex flex-col gap-6 lg:col-span-2">
-            <OwnerUpdatesPanel
-              posts={appBusiness.ownerPosts ?? []}
-              businessName={appBusiness.name}
-              isOwner={isOwner}
-              manageHref={dashboardHref('posts')}
-            />
-            <MenuPanel
-              menu={appBusiness.menu}
-              intro={appBusiness.menuIntro}
-              categorySlug={category?.id}
-              isOwner={isOwner}
-              manageHref={dashboardHref('offerings')}
-            />
-            <SpecialsPanel
-              weeklySpecials={appBusiness.weeklySpecials}
-              intro={appBusiness.specialsIntro}
-              categorySlug={category?.id}
-              isOwner={isOwner}
-              manageHref={dashboardHref('specials')}
-            />
-
-            {/* Reviews stream in with Suspense */}
-            <Suspense fallback={<ReviewsSkeleton />}>
-              <ReviewsSection 
-                businessId={dbPayload.business.id}
-                avgRating={dbPayload.business.avg_rating}
-                reviewCount={dbPayload.business.review_count}
-              />
-            </Suspense>
-          </div>
-          <div className="flex flex-col gap-6">
-            {/* User-specific panels stream in with Suspense */}
-            <Suspense fallback={<UserPanelsSkeleton />}>
-              <UserSpecificPanels
-                businessId={dbPayload.business.id}
+        {/*
+          Desktop (lg+): classic 2-col — main (posts/menu/specials/reviews) + sidebar
+          (notes/messages/amenities/contact/hours).
+          Mobile: same panels, CSS order pulls contact/hours to the top and reviews
+          to the bottom via `contents` so children participate in the parent flex.
+        */}
+        <div className="mt-6 flex flex-col gap-6 lg:grid lg:grid-cols-3">
+          <div className="contents lg:col-span-2 lg:flex lg:flex-col lg:gap-6">
+            <div className="order-3 empty:hidden lg:order-none">
+              <OwnerUpdatesPanel
+                posts={appBusiness.ownerPosts ?? []}
                 businessName={appBusiness.name}
+                isOwner={isOwner}
+                manageHref={dashboardHref('posts')}
               />
-            </Suspense>
+            </div>
+            <div className="order-4 empty:hidden lg:order-none">
+              <MenuPanel
+                menu={appBusiness.menu}
+                intro={appBusiness.menuIntro}
+                categorySlug={category?.id}
+                isOwner={isOwner}
+                manageHref={dashboardHref('offerings')}
+              />
+            </div>
+            <div className="order-5 empty:hidden lg:order-none">
+              <SpecialsPanel
+                weeklySpecials={appBusiness.weeklySpecials}
+                intro={appBusiness.specialsIntro}
+                categorySlug={category?.id}
+                isOwner={isOwner}
+                manageHref={dashboardHref('specials')}
+              />
+            </div>
+            <div className="order-8 lg:order-none">
+              <Suspense fallback={<ReviewsSkeleton />}>
+                <ReviewsSection
+                  businessId={dbPayload.business.id}
+                  avgRating={dbPayload.business.avg_rating}
+                  reviewCount={dbPayload.business.review_count}
+                />
+              </Suspense>
+            </div>
+          </div>
 
-            <AmenitiesPanel amenities={amenities} isOwner={isOwner} manageHref={dashboardHref('filters')} />
-
-            {/* Static panels load immediately */}
-            <ContactPanel business={appBusiness} isOwner={isOwner} manageHref={dashboardHref('details')} />
-            <HoursPanel business={appBusiness} isOwner={isOwner} manageHref={dashboardHref('hours')} />
+          <div className="contents lg:flex lg:flex-col lg:gap-6">
+            <div className="order-6 lg:order-none">
+              <Suspense fallback={<UserPanelsSkeleton />}>
+                <UserSpecificPanels
+                  businessId={dbPayload.business.id}
+                  businessName={appBusiness.name}
+                />
+              </Suspense>
+            </div>
+            <div className="order-7 empty:hidden lg:order-none">
+              <AmenitiesPanel amenities={amenities} isOwner={isOwner} manageHref={dashboardHref('filters')} />
+            </div>
+            <div className="order-1 lg:order-none">
+              <ContactPanel business={appBusiness} isOwner={isOwner} manageHref={dashboardHref('details')} />
+            </div>
+            <div className="order-2 lg:order-none">
+              <HoursPanel business={appBusiness} isOwner={isOwner} manageHref={dashboardHref('hours')} />
+            </div>
           </div>
         </div>
       </div>
@@ -286,39 +303,51 @@ export default async function BusinessPage({ params }: { params: Promise<{ id: s
     .slice(0, 3)
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 md:py-8">
-      <nav className="mb-4 flex items-center gap-1 text-sm text-muted-foreground" aria-label="Breadcrumb">
-        <Link href="/" className="transition-colors hover:text-foreground">
+    <div className="mx-auto max-w-[88rem] overflow-x-hidden px-4 py-6 md:py-8">
+      <nav className="mb-4 flex min-w-0 items-center gap-1 text-sm text-muted-foreground" aria-label="Breadcrumb">
+        <Link href="/" className="shrink-0 transition-colors hover:text-foreground">
           Home
         </Link>
-        <ChevronRight className="size-4" aria-hidden="true" />
+        <ChevronRight className="size-4 shrink-0" aria-hidden="true" />
         <Link
           href={`/search?category=${business.categoryId}`}
-          className="transition-colors hover:text-foreground"
+          className="min-w-0 shrink truncate transition-colors hover:text-foreground"
         >
           {category?.name}
         </Link>
-        <ChevronRight className="size-4" aria-hidden="true" />
-        <span className="text-foreground">{business.name}</span>
+        <ChevronRight className="size-4 shrink-0" aria-hidden="true" />
+        <span className="min-w-0 flex-1 truncate text-foreground">{business.name}</span>
       </nav>
 
       <ProfileHeader business={business} category={category} />
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-3">
-        <div className="flex flex-col gap-6 lg:col-span-2">
+      <div className="mt-6 flex flex-col gap-6 lg:grid lg:grid-cols-3">
+        <div className="contents lg:col-span-2 lg:flex lg:flex-col lg:gap-6">
           {business.ownerPosts?.length ? (
-            <OwnerUpdatesPanel posts={business.ownerPosts} businessName={business.name} />
+            <div className="order-3 lg:order-none">
+              <OwnerUpdatesPanel posts={business.ownerPosts} businessName={business.name} />
+            </div>
           ) : null}
-          <MenuPanel menu={business.menu} />
-          <SpecialsPanel weeklySpecials={business.weeklySpecials} />
-          <p className="rounded-xl border border-dashed border-border p-4 text-sm text-muted-foreground">
-            Reviews, notes, and messaging for demo listings are not persisted. Create a real listing from the
-            business dashboard to use the database-backed features.
-          </p>
+          <div className="order-4 lg:order-none">
+            <MenuPanel menu={business.menu} />
+          </div>
+          <div className="order-5 lg:order-none">
+            <SpecialsPanel weeklySpecials={business.weeklySpecials} />
+          </div>
+          <div className="order-8 lg:order-none">
+            <p className="rounded-xl border border-dashed border-border p-4 text-sm text-muted-foreground">
+              Reviews, notes, and messaging for demo listings are not persisted. Create a real listing from the
+              business dashboard to use the database-backed features.
+            </p>
+          </div>
         </div>
-        <div className="flex flex-col gap-6">
-          <ContactPanel business={business} />
-          <HoursPanel business={business} />
+        <div className="contents lg:flex lg:flex-col lg:gap-6">
+          <div className="order-1 lg:order-none">
+            <ContactPanel business={business} />
+          </div>
+          <div className="order-2 lg:order-none">
+            <HoursPanel business={business} />
+          </div>
         </div>
       </div>
 

@@ -175,12 +175,12 @@ export function ReviewsPanel({
                   <span className="text-xs text-muted-foreground">{r.date}</span>
                 </div>
                 <StarRating value={r.rating} size={14} className="my-1" />
-                <p className="text-sm leading-relaxed text-muted-foreground">{r.text}</p>
+                <p className="break-words text-sm leading-relaxed text-muted-foreground">{r.text}</p>
 
                 {r.ownerReply ? (
                   <div className="mt-3 rounded-xl border border-border bg-secondary/40 px-3 py-2">
                     <p className="text-xs font-medium text-card-foreground">Owner reply</p>
-                    <p className="mt-1 text-sm text-muted-foreground">{r.ownerReply}</p>
+                    <p className="mt-1 break-words text-sm text-muted-foreground">{r.ownerReply}</p>
                   </div>
                 ) : isOwner ? (
                   <div className="mt-3 flex flex-col gap-2">

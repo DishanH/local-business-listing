@@ -85,8 +85,8 @@ export function OwnerUpdatesPanel({
                   <Badge className="ml-auto bg-primary/10 text-primary hover:bg-primary/10">{post.badge}</Badge>
                 ) : null}
               </div>
-              <h3 className="mt-1 font-medium text-card-foreground">{post.title}</h3>
-              <p className="mt-0.5 text-sm leading-relaxed text-muted-foreground">{post.body}</p>
+              <h3 className="mt-1 break-words font-medium text-card-foreground">{post.title}</h3>
+              <p className="mt-0.5 break-words text-sm leading-relaxed text-muted-foreground">{post.body}</p>
             </li>
           )
         })}

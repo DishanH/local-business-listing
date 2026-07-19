@@ -37,7 +37,7 @@ export function SiteHeader() {
           hidden && '-translate-y-full',
         )}
       >
-        <div className="mx-auto flex h-14 max-w-7xl items-center gap-2 px-4 sm:h-16 sm:px-6">
+        <div className="mx-auto flex h-14 max-w-[88rem] items-center gap-2 px-4 sm:h-16 sm:px-6">
           <Logo />
 
           <div className="ml-auto flex items-center gap-0.5 sm:gap-1">

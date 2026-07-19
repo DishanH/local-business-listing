@@ -1,44 +1,13 @@
 import { Suspense } from 'react'
 import { Hero } from '@/components/home/hero'
-import { CategoryGrid } from '@/components/home/category-grid'
 import { CitySection } from '@/components/home/city-section'
 import { NearestSection } from '@/components/home/nearest-section'
 import { FeaturedSection } from '@/components/home/featured-section'
 import { ListBusinessCta } from '@/components/home/list-business-cta'
 import { getMixedBusinessesForApp } from '@/lib/supabase/queries/businesses'
-import { getAppCategories } from '@/lib/supabase/queries/taxonomy'
 
 // ISR: Revalidate homepage every 15 minutes
 export const revalidate = 900
-
-// Server component that fetches and renders CategoryGrid
-async function CategoryGridServer() {
-  const [businesses, categories] = await Promise.all([
-    getMixedBusinessesForApp(200),
-    getAppCategories()
-  ])
-  return <CategoryGrid businesses={businesses} categories={categories} />
-}
-
-// Loading skeleton for CategoryGrid
-function CategoryGridSkeleton() {
-  return (
-    <section className="mx-auto max-w-[88rem] px-4 py-10 sm:px-6">
-      <div className="flex items-end justify-between gap-4">
-        <div className="h-7 w-48 animate-pulse rounded-lg bg-muted" />
-        <div className="h-5 w-20 animate-pulse rounded bg-muted" />
-      </div>
-      <div className="mt-4 flex gap-2.5 overflow-hidden">
-        {Array.from({ length: 10 }).map((_, i) => (
-          <div
-            key={i}
-            className="flex h-12 w-36 shrink-0 animate-pulse items-center gap-2.5 rounded-full bg-muted"
-          />
-        ))}
-      </div>
-    </section>
-  )
-}
 
 // Server component that fetches and renders CitySection
 async function CitySectionServer() {
@@ -89,28 +58,18 @@ function FeaturedSectionSkeleton() {
 export default async function HomePage() {
   return (
     <>
-      {/* Hero loads immediately - no data fetching */}
       <Hero />
-      
-      {/* CategoryGrid streams in with Suspense */}
-      <Suspense fallback={<CategoryGridSkeleton />}>
-        <CategoryGridServer />
-      </Suspense>
-      
-      {/* NearestSection loads immediately - client-side geolocation */}
+
       <NearestSection />
-      
-      {/* FeaturedSection streams in with Suspense */}
+
       <Suspense fallback={<FeaturedSectionSkeleton />}>
         <FeaturedSection />
       </Suspense>
 
-      {/* CitySection streams in with Suspense */}
       <Suspense fallback={<CitySectionSkeleton />}>
         <CitySectionServer />
       </Suspense>
-      
-      {/* CTA loads immediately - static content */}
+
       <ListBusinessCta />
     </>
   )

@@ -25,6 +25,9 @@ const fallbackImages = [
 export async function CitySection({ businesses }: { businesses: Business[] }) {
   const cities = await getAppCities()
 
+  // Only worth a dedicated section when there are enough towns to browse.
+  if (cities.length <= 4) return null
+
   return (
     <section className="mx-auto max-w-[88rem] px-4 py-14 sm:px-6">
       <div>

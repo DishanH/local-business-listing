@@ -4,6 +4,7 @@ import { cache } from 'react'
 
 import { businesses as mockBusinesses } from '@/lib/data'
 import { createClient } from '@/lib/supabase/server'
+import { createPublicClient } from '@/lib/supabase/public'
 import type { Database } from '@/lib/supabase/database.types'
 import { mapBusinessListRowToApp } from '@/lib/supabase/map-business'
 import type { Business as AppBusiness } from '@/lib/types'
@@ -127,7 +128,10 @@ export async function getBusinessesForOwner(profileId: string) {
  * listings are still being onboarded.
  */
 async function getPublishedBusinessesForAppUncached(limit = 60): Promise<AppBusiness[]> {
-  const supabase = await createClient()
+  // Cookie-free: this only ever reads `status = 'published'` rows (same for
+  // every visitor), so it must not force the calling route into dynamic
+  // per-request rendering (see lib/supabase/public.ts).
+  const supabase = createPublicClient()
   const { data: rows, error } = await supabase
     .from('businesses')
     .select('*')

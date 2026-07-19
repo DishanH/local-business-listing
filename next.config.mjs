@@ -17,7 +17,11 @@ const nextConfig = {
   },
 
   images: {
-    unoptimized: true,
+    // Re-enabled: this was disabling resizing/WebP-AVIF conversion/responsive
+    // srcset for every image on the site (a major cause of slow page loads,
+    // especially on mobile). Amplify's Next.js SSR hosting supports the
+    // built-in image optimizer, so there's no deployment reason to skip it.
+    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -34,7 +38,13 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'placehold.co',
-      }
+      },
+      {
+        // Supabase Storage-hosted business photos (uploaded by owners).
+        protocol: 'https',
+        hostname: '*.supabase.co',
+        pathname: '/storage/v1/object/**',
+      },
     ],
   }
 };

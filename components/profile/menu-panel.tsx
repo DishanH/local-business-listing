@@ -53,17 +53,17 @@ export function MenuPanel({
       <p className="mb-5 text-sm text-muted-foreground">{intro || defaultMenuIntro(categorySlug)}</p>
 
       <div className="flex flex-col gap-6">
-        {menu!.map((section) => (
-          <div key={section.name}>
+        {menu!.map((section, sectionIndex) => (
+          <div key={`${section.name}-${sectionIndex}`}>
             <h3 className="mb-3 border-b border-border pb-2 font-serif text-base font-semibold text-card-foreground">
               {section.name}
             </h3>
             <ul className="flex flex-col gap-3">
-              {section.items.map((item) => (
-                <li key={item.name} className="flex items-baseline justify-between gap-3">
-                  <div className="min-w-0">
+              {section.items.map((item, itemIndex) => (
+                <li key={`${item.name}-${itemIndex}`} className="flex items-baseline justify-between gap-3">
+                  <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-medium text-card-foreground">{item.name}</span>
+                      <span className="break-words font-medium text-card-foreground">{item.name}</span>
                       {item.tag ? (
                         <Badge variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/10">
                           {item.tag}
@@ -71,7 +71,9 @@ export function MenuPanel({
                       ) : null}
                     </div>
                     {item.description ? (
-                      <p className="text-sm leading-snug text-muted-foreground text-pretty">{item.description}</p>
+                      <p className="break-words text-sm leading-snug text-muted-foreground text-pretty">
+                        {item.description}
+                      </p>
                     ) : null}
                   </div>
                   <span

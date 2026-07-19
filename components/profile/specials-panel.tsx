@@ -52,17 +52,19 @@ export function SpecialsPanel({
       <p className="mb-5 text-sm text-muted-foreground">{intro || defaultSpecialsIntro(categorySlug)}</p>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        {weeklySpecials!.map((s) => (
+        {weeklySpecials!.map((s, i) => (
           <div
-            key={`${s.day}-${s.name}`}
+            key={`${s.day}-${s.name}-${i}`}
             className="flex flex-col rounded-xl border border-border bg-secondary/50 p-3"
           >
             <span className="text-xs font-semibold uppercase tracking-wide text-primary">{s.day}</span>
-            <span className="mt-1 text-sm font-medium leading-tight text-card-foreground text-pretty">
+            <span className="mt-1 break-words text-sm font-medium leading-tight text-card-foreground text-pretty">
               {s.name}
             </span>
             {s.description ? (
-              <span className="mt-1 text-xs leading-snug text-muted-foreground text-pretty">{s.description}</span>
+              <span className="mt-1 break-words text-xs leading-snug text-muted-foreground text-pretty">
+                {s.description}
+              </span>
             ) : null}
             <span className="mt-2 text-sm font-semibold text-card-foreground">{s.price}</span>
           </div>

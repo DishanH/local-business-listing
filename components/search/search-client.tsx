@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { ArrowUpDown, MapPin, Search, X, ChevronDown } from 'lucide-react'
+import { ArrowRight, ArrowUpDown, LayoutGrid, MapPin, Search, X, ChevronDown } from 'lucide-react'
 import { BusinessCard } from '@/components/business-card'
 import { CategoryIcon } from '@/components/category-icon'
 import { useStore } from '@/components/store-provider'
@@ -43,6 +43,7 @@ export function SearchClient() {
   const [openNow, setOpenNow] = useState(false)
   const [priceLevels, setPriceLevels] = useState<string[]>([])
   const [visiblePages, setVisiblePages] = useState(1)
+  const [categoriesOpen, setCategoriesOpen] = useState(false)
 
   const activeCategory = categories.find((c) => c.id === category)
   const activeCity = cities.find((c) => c.id === city)
@@ -265,34 +266,99 @@ export function SearchClient() {
             ))}
           </div>
         ) : (
-          <div className="mt-5">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-              Browse by category
-            </h2>
-            <div className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-              {categories.map((c) => {
-                const count = results.filter((b) => b.categoryId === c.id).length
-                return (
-                  <button
-                    key={c.id}
-                    type="button"
-                    onClick={() => {
-                      setCategory(c.id)
-                      setSubcategory('all')
-                      updateUrl({ category: c.id, sub: 'all' })
-                    }}
-                    className="group flex flex-col items-start gap-2 rounded-2xl border bg-card p-3.5 text-left transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-sm"
-                  >
-                    <span className="flex size-10 items-center justify-center rounded-xl bg-accent text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                      <CategoryIcon name={c.icon} size={20} />
+          <div className="mt-6">
+            <button
+              type="button"
+              onClick={() => setCategoriesOpen((v) => !v)}
+              aria-expanded={categoriesOpen}
+              aria-controls="browse-categories-panel"
+              className="flex w-full items-center gap-3 rounded-2xl border border-border/80 bg-card px-3.5 py-3 text-left transition-colors hover:border-primary/30 sm:px-4"
+            >
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <LayoutGrid size={18} aria-hidden="true" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <span className="block font-serif text-lg leading-tight tracking-tight sm:text-xl">
+                  Browse by category
+                </span>
+                <span className="mt-0.5 block text-sm text-muted-foreground">
+                  {categoriesOpen
+                    ? 'Pick a type of place to narrow results'
+                    : `${categories.length} categories — tap to expand`}
+                </span>
+              </div>
+              {!categoriesOpen ? (
+                <span className="hidden items-center -space-x-1.5 sm:flex" aria-hidden="true">
+                  {categories.slice(0, 5).map((c) => (
+                    <span
+                      key={c.id}
+                      className="flex size-8 items-center justify-center rounded-full border border-border bg-background text-primary shadow-sm"
+                    >
+                      <CategoryIcon name={c.icon} size={14} />
                     </span>
-                    <span className="text-sm font-medium leading-tight">{c.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {count} {count === 1 ? 'place' : 'places'}
+                  ))}
+                  {categories.length > 5 ? (
+                    <span className="flex size-8 items-center justify-center rounded-full border border-border bg-muted text-[10px] font-semibold text-muted-foreground">
+                      +{categories.length - 5}
                     </span>
-                  </button>
-                )
-              })}
+                  ) : null}
+                </span>
+              ) : null}
+              <ChevronDown
+                size={18}
+                className={cn(
+                  'shrink-0 text-muted-foreground transition-transform duration-300',
+                  categoriesOpen && 'rotate-180',
+                )}
+                aria-hidden="true"
+              />
+            </button>
+
+            <div
+              id="browse-categories-panel"
+              className={cn(
+                'grid transition-[grid-template-rows] duration-300 ease-out',
+                categoriesOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
+              )}
+            >
+              <div className="overflow-hidden">
+                <div className="mt-3 grid grid-cols-2 gap-2.5 pt-0.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-4 xl:grid-cols-5">
+                  {categories.map((c) => {
+                    const count = businesses.filter((b) => b.categoryId === c.id).length
+                    return (
+                      <button
+                        key={c.id}
+                        type="button"
+                        onClick={() => {
+                          setCategory(c.id)
+                          setSubcategory('all')
+                          updateUrl({ category: c.id, sub: 'all' })
+                        }}
+                        className="group relative flex items-center gap-3 overflow-hidden rounded-2xl border border-border/80 bg-card p-3 text-left transition-all hover:border-primary/40 hover:shadow-md sm:p-3.5"
+                      >
+                        <span
+                          className="pointer-events-none absolute -right-4 -top-4 size-16 rounded-full bg-primary/[0.06] transition-transform duration-500 group-hover:scale-125"
+                          aria-hidden="true"
+                        />
+                        <span className="relative flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                          <CategoryIcon name={c.icon} size={20} />
+                        </span>
+                        <div className="relative min-w-0 flex-1">
+                          <span className="block truncate text-sm font-semibold leading-tight">{c.name}</span>
+                          <span className="mt-0.5 block text-xs text-muted-foreground">
+                            {count > 0 ? `${count} ${count === 1 ? 'place' : 'places'}` : 'Explore'}
+                          </span>
+                        </div>
+                        <ArrowRight
+                          size={14}
+                          className="relative shrink-0 text-muted-foreground/40 transition-all group-hover:translate-x-0.5 group-hover:text-primary"
+                          aria-hidden="true"
+                        />
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
             </div>
           </div>
         )
