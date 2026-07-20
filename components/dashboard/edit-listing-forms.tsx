@@ -215,6 +215,9 @@ function ImagesSection({
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="image_file">Upload photo</Label>
           <Input id="image_file" name="file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" required />
+          <p className="text-xs text-muted-foreground">
+            Photos are resized and compressed automatically (max ~1600px). Prefer clear, well-lit shots.
+          </p>
         </div>
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="alt_text">Alt text</Label>

@@ -29,16 +29,16 @@ export const cities: City[] = [
 ]
 
 const categoryImage: Record<string, string> = {
-  restaurants: '/businesses/restaurant.png',
-  cafe: '/businesses/cafe.png',
-  bakery: '/businesses/bakery.png',
-  salon: '/businesses/salon.png',
-  bookstore: '/businesses/bookstore.png',
-  gym: '/businesses/gym.png',
-  florist: '/businesses/florist.png',
-  yoga: '/businesses/yoga.png',
-  petstore: '/businesses/petstore.png',
-  autoshop: '/businesses/autoshop.png',
+  restaurants: '/businesses/restaurant.webp',
+  cafe: '/businesses/cafe.webp',
+  bakery: '/businesses/bakery.webp',
+  salon: '/businesses/salon.webp',
+  bookstore: '/businesses/bookstore.webp',
+  gym: '/businesses/gym.webp',
+  florist: '/businesses/florist.webp',
+  yoga: '/businesses/yoga.webp',
+  petstore: '/businesses/petstore.webp',
+  autoshop: '/businesses/autoshop.webp',
 }
 
 // hours helpers (minutes from midnight)

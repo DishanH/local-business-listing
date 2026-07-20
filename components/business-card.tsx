@@ -30,7 +30,7 @@ export function BusinessCard({ business }: { business: Business }) {
           src={business.image || '/placeholder.svg'}
           alt={business.name}
           fill
-          sizes="(max-width: 768px) 100vw, 33vw"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 25vw, 20vw"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
         <div className="absolute right-3 top-3">

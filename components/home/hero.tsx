@@ -11,10 +11,10 @@ import { useStore } from '@/components/store-provider'
 import { cn } from '@/lib/utils'
 
 const heroImages = [
-  { src: '/businesses/cafe.png', label: 'Cafés' },
-  { src: '/businesses/Yoga.png', label: 'Yoga & Wellness' },
-  { src: '/businesses/bookstore.png', label: 'Bookstores' },
-  { src: '/businesses/restaurant.png', label: 'Restaurants' },
+  { src: '/businesses/cafe.webp', label: 'Cafés' },
+  { src: '/businesses/yoga.webp', label: 'Yoga & Wellness' },
+  { src: '/businesses/bookstore.webp', label: 'Bookstores' },
+  { src: '/businesses/restaurant.webp', label: 'Restaurants' },
 ]
 
 const quickChips = ['restaurants', 'cafe', 'bakery', 'yoga', 'salon']
@@ -63,7 +63,7 @@ export function Hero() {
 
   return (
     <section className="relative overflow-hidden border-b bg-gradient-to-b from-accent/40 to-background">
-      <div className="mx-auto grid max-w-[88rem] items-center gap-10 px-4 py-14 sm:px-6 lg:grid-cols-2 lg:py-20">
+      <div className="mx-auto grid max-w-[88rem] items-center gap-10 px-4 py-10 sm:px-6 lg:grid-cols-2 lg:py-14">
         <div>
           <span className="inline-flex items-center gap-1.5 rounded-full border bg-background px-3 py-1 text-xs font-medium text-muted-foreground">
             <MapPin size={13} className="text-primary" /> Supporting local, one visit at a time

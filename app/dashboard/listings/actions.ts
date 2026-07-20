@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache'
 
 import { createClient } from '@/lib/supabase/server'
 import type { PostType } from '@/lib/supabase/database.types'
+import { optimizeBusinessImage } from '@/lib/image-optimize'
 
 function slugify(input: string) {
   return input
@@ -198,13 +199,18 @@ export async function uploadBusinessImage(businessId: string, formData: FormData
   const file = formData.get('file')
   if (!(file instanceof File) || file.size === 0) throw new Error('Image file is required')
 
-  const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'
-  const safeExt = ['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext) ? ext : 'jpg'
-  const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${safeExt}`
+  // Hard cap on raw upload size (before compression) to avoid OOM on huge phone photos.
+  const MAX_UPLOAD_BYTES = 12 * 1024 * 1024
+  if (file.size > MAX_UPLOAD_BYTES) {
+    throw new Error('Image must be 12 MB or smaller')
+  }
+
+  const { buffer, contentType, ext } = await optimizeBusinessImage(file)
+  const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
   const path = `${businessId}/${filename}`
 
-  const { error: uploadError } = await supabase.storage.from('business-images').upload(path, file, {
-    contentType: file.type || `image/${safeExt}`,
+  const { error: uploadError } = await supabase.storage.from('business-images').upload(path, buffer, {
+    contentType,
     upsert: false,
   })
   if (uploadError) throw new Error(uploadError.message)

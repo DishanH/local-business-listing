@@ -19,7 +19,7 @@ export function FeaturedSection() {
   const hasMore = shown.length < featured.length
 
   return (
-    <section className="mx-auto max-w-[88rem] px-4 py-14 sm:px-6">
+    <section className="mx-auto max-w-[88rem] px-4 py-8 sm:px-6 sm:py-10">
       <div className="flex items-end justify-between gap-4">
         <div>
           <h2 className="font-serif text-2xl tracking-tight sm:text-3xl">Featured this week</h2>
@@ -33,7 +33,7 @@ export function FeaturedSection() {
         </Link>
       </div>
 
-      <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
         {shown.map((b) => (
           <BusinessCard key={b.id} business={b} />
         ))}

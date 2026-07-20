@@ -23,7 +23,7 @@ export function NearestSection() {
 
   return (
     <section className="border-y bg-secondary/30">
-      <div className="mx-auto max-w-[88rem] px-4 py-14 sm:px-6">
+      <div className="mx-auto max-w-[88rem] px-4 py-8 sm:px-6 sm:py-10">
         <div className="flex items-end justify-between gap-4">
           <div>
             <span className="inline-flex items-center gap-1.5 text-sm font-medium text-primary">
@@ -42,7 +42,7 @@ export function NearestSection() {
           </Link>
         </div>
 
-        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
           {shown.map((b) => (
             <BusinessCard key={b.id} business={b} />
           ))}
