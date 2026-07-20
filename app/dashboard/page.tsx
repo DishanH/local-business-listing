@@ -21,9 +21,12 @@ async function getOverviewData() {
   const businessIds = owned.map((row) => row.business?.id).filter((id): id is string => Boolean(id))
 
   let unread = 0
-  if (businessIds.length > 0) {
-    const { data } = await supabase.from('conversations').select('business_unread_count').in('business_id', businessIds)
-    unread = (data ?? []).reduce((sum, row) => sum + row.business_unread_count, 0)
+  // Chunk `.in()` filters — a long ID list overflows HTTP header limits.
+  const CHUNK = 80
+  for (let i = 0; i < businessIds.length; i += CHUNK) {
+    const chunk = businessIds.slice(i, i + CHUNK)
+    const { data } = await supabase.from('conversations').select('business_unread_count').in('business_id', chunk)
+    unread += (data ?? []).reduce((sum, row) => sum + row.business_unread_count, 0)
   }
 
   return { owned, unread }

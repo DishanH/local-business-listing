@@ -190,7 +190,15 @@ export function Hero() {
                   i % 2 === 0 ? 'aspect-[4/5]' : 'mt-8 aspect-[4/5]'
                 }`}
               >
-                <Image src={img.src || '/placeholder.svg'} alt={img.label} fill sizes="25vw" className="object-cover" />
+                <Image
+                  src={img.src || '/placeholder.svg'}
+                  alt={img.label}
+                  fill
+                  sizes="25vw"
+                  // First tile is the LCP image on desktop; eager-load it.
+                  priority={i === 0}
+                  className="object-cover"
+                />
                 <span className="absolute bottom-3 left-3 rounded-full bg-background/85 px-3 py-1 text-xs font-medium backdrop-blur-sm">
                   {img.label}
                 </span>

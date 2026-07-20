@@ -15,13 +15,36 @@ async function getConversations() {
   const businessIds = owned.map((row) => row.business.id)
   if (businessIds.length === 0) return []
 
-  const { data: conversations } = await supabase
-    .from('conversations')
-    .select('*')
-    .in('business_id', businessIds)
-    .order('last_message_at', { ascending: false, nullsFirst: false })
+  // Chunk `.in()` — large ownership sets overflow PostgREST URL/header limits.
+  const CHUNK = 80
+  const conversations: {
+    id: string
+    business_id: string
+    customer_id: string
+    last_message_at: string | null
+    business_unread_count: number
+    customer_unread_count: number
+    created_at: string
+  }[] = []
 
-  if (!conversations?.length) return []
+  for (let i = 0; i < businessIds.length; i += CHUNK) {
+    const chunk = businessIds.slice(i, i + CHUNK)
+    const { data, error } = await supabase
+      .from('conversations')
+      .select('*')
+      .in('business_id', chunk)
+      .order('last_message_at', { ascending: false, nullsFirst: false })
+    if (error) throw new Error(error.message)
+    if (data?.length) conversations.push(...data)
+  }
+
+  conversations.sort((a, b) => {
+    const at = a.last_message_at ? Date.parse(a.last_message_at) : 0
+    const bt = b.last_message_at ? Date.parse(b.last_message_at) : 0
+    return bt - at
+  })
+
+  if (!conversations.length) return []
 
   const customerIds = [...new Set(conversations.map((c) => c.customer_id))]
   let customers: {

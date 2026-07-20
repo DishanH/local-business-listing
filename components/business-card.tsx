@@ -12,7 +12,7 @@ import { distanceMiles, formatDistance, priceLabel } from '@/lib/format'
 import type { Business } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
-export function BusinessCard({ business }: { business: Business }) {
+export function BusinessCard({ business, priority = false }: { business: Business; priority?: boolean }) {
   const { getRating, origin, categories, cities } = useStore()
   const rating = business.rating ?? getRating(business.id)
   const category = categories.find((c) => c.id === business.categoryId)
@@ -30,6 +30,7 @@ export function BusinessCard({ business }: { business: Business }) {
           src={business.image || '/placeholder.svg'}
           alt={business.name}
           fill
+          priority={priority}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 25vw, 20vw"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />

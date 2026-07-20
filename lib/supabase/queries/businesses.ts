@@ -101,25 +101,24 @@ export async function getBusinessBySlug(slug: string) {
 /** All businesses (any status) owned/managed by the given profile — for the owner dashboard. */
 export async function getBusinessesForOwner(profileId: string) {
   const supabase = await createClient()
-  const { data: ownerRows, error: ownerError } = await supabase
+
+  // Join instead of `.in('id', [...])` — owners with hundreds of seeded
+  // listings blow past PostgREST's ~16KB URL limit and return Bad Request.
+  const { data, error } = await supabase
     .from('business_owners')
-    .select('business_id, role')
+    .select('role, business:businesses(*)')
     .eq('profile_id', profileId)
-  if (ownerError) throw ownerError
-  if (!ownerRows?.length) return []
+    .order('created_at', { ascending: false })
+    .limit(2000)
 
-  const businessIds = ownerRows.map((row) => row.business_id)
-  const { data: businessRows, error: businessError } = await supabase
-    .from('businesses')
-    .select('*')
-    .in('id', businessIds)
-  if (businessError) throw businessError
+  if (error) throw new Error(error.message)
 
-  const roleByBusinessId = new Map(ownerRows.map((row) => [row.business_id, row.role]))
-  return (businessRows ?? []).map((business) => ({
-    role: roleByBusinessId.get(business.id) ?? 'owner',
-    business,
-  }))
+  return (data ?? [])
+    .filter((row): row is typeof row & { business: NonNullable<typeof row.business> } => Boolean(row.business))
+    .map((row) => ({
+      role: row.role ?? 'owner',
+      business: row.business,
+    }))
 }
 
 /**

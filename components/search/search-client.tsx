@@ -450,8 +450,8 @@ export function SearchClient() {
       {results.length > 0 ? (
         <>
           <div className="mt-3 grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
-            {visibleResults.map((b) => (
-              <BusinessCard key={b.id} business={b} />
+            {visibleResults.map((b, i) => (
+              <BusinessCard key={b.id} business={b} priority={i === 0} />
             ))}
           </div>
 
