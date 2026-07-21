@@ -63,19 +63,19 @@ export function Hero() {
 
   return (
     <section className="relative overflow-hidden border-b bg-gradient-to-b from-accent/40 to-background">
-      <div className="mx-auto grid max-w-[88rem] items-center gap-10 px-4 py-10 sm:px-6 lg:grid-cols-2 lg:py-14">
-        <div>
+      <div className="mx-auto grid max-w-[88rem] items-center gap-4 px-4 pt-4 pb-6 sm:px-6 lg:grid-cols-2 lg:gap-10 lg:py-14">
+        <div className="text-center lg:text-left">
           <span className="inline-flex items-center gap-1.5 rounded-full border bg-background px-3 py-1 text-xs font-medium text-muted-foreground">
             <MapPin size={13} className="text-primary" /> Supporting local, one visit at a time
           </span>
-          <h1 className="mt-5 font-serif text-4xl leading-[1.05] tracking-tight text-balance sm:text-5xl lg:text-6xl">
+          <h1 className="mt-3 font-serif text-3xl leading-[1.05] tracking-tight text-balance sm:text-4xl lg:mt-5 lg:text-5xl xl:text-6xl">
             Discover the best businesses in your neighborhood
           </h1>
-          <p className="mt-4 max-w-md text-lg text-muted-foreground text-pretty">
+          <p className="mx-auto mt-2.5 max-w-md text-base text-muted-foreground text-pretty lg:mx-0 lg:mt-4 lg:text-lg">
             Find local gems, read honest reviews, save your favorites, and message shops directly — all in one place.
           </p>
 
-          <div className="relative mt-7 max-w-lg">
+          <div className="relative mx-auto mt-5 max-w-lg lg:mx-0 lg:mt-7">
             <form
               onSubmit={(e) => {
                 e.preventDefault()
@@ -154,8 +154,8 @@ export function Hero() {
             )}
           </div>
 
-          <div className="mt-5 flex flex-wrap items-center gap-2">
-            <span className="text-sm text-muted-foreground">Popular:</span>
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-2 lg:mt-5 lg:justify-start">
+            <span className="w-full text-sm text-muted-foreground lg:w-auto">Popular:</span>
             {quickChips.map((id) => {
               const cat = categories.find((c) => c.id === id)
               if (!cat) return null
@@ -172,13 +172,15 @@ export function Hero() {
             })}
           </div>
 
-          <Link
-            href="/become-owner"
-            className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-          >
-            <Store size={15} />
-            Own a business? List it free <ArrowRight size={13} />
-          </Link>
+          <div className="mt-4 hidden justify-center lg:mt-6 lg:flex lg:justify-start">
+            <Link
+              href="/become-owner"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+            >
+              <Store size={15} />
+              Own a business? List it free <ArrowRight size={13} />
+            </Link>
+          </div>
         </div>
 
         <div className="relative hidden lg:block">

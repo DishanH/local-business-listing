@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/components/theme-provider'
 import { StoreProvider } from '@/components/store-provider'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
+import { MobileNav } from '@/components/mobile-nav'
 import { HideOnPortal } from '@/components/hide-on-portal'
 import { Toaster } from '@/components/ui/sonner'
 import { getAppCategories, getAppCities } from '@/lib/supabase/queries/taxonomy'
@@ -71,9 +72,10 @@ export default async function RootLayout({
           <StoreProvider initialCategories={categories} initialCities={cities} initialBusinesses={businesses}>
             <div className="flex min-h-dvh flex-col">
               <SiteHeader />
-              <main className="flex-1">{children}</main>
+              <main className="flex-1 pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:pb-0">{children}</main>
               <HideOnPortal>
                 <SiteFooter />
+                <MobileNav />
               </HideOnPortal>
             </div>
             <Toaster />

@@ -152,11 +152,9 @@ function CityPickerPanel({ onClose }: { onClose: () => void }) {
 
 interface LocationMenuProps {
   className?: string
-  /** Icon-only on small screens, label on md+ */
-  responsive?: boolean
 }
 
-export function LocationMenu({ className, responsive = true }: LocationMenuProps) {
+export function LocationMenu({ className }: LocationMenuProps) {
   const { origin, cities } = useStore()
   const [open, setOpen] = useState(false)
   const label = originAreaLabel(origin.lat, origin.lng, cities)
@@ -165,15 +163,14 @@ export function LocationMenu({ className, responsive = true }: LocationMenuProps
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
         className={cn(
-          'inline-flex items-center gap-1.5 rounded-full bg-secondary/60 text-sm font-medium transition-colors hover:bg-secondary',
-          responsive ? 'size-9 justify-center p-0 md:h-auto md:w-auto md:max-w-[11rem] md:px-3 md:py-2' : 'max-w-[11rem] px-3 py-2',
+          'inline-flex max-w-[9.5rem] items-center gap-1.5 rounded-full bg-secondary/60 px-2.5 py-1.5 text-xs font-medium transition-colors hover:bg-secondary sm:max-w-[11rem] sm:px-3 sm:py-2 sm:text-sm',
           className,
         )}
         aria-label={`Location: ${label}. Change location`}
       >
-        <MapPin size={16} className="shrink-0 text-primary" />
-        <span className={cn('truncate', responsive && 'hidden md:inline')}>{label}</span>
-        <ChevronDown size={14} className={cn('shrink-0 text-muted-foreground', responsive && 'hidden md:inline')} />
+        <MapPin size={15} className="shrink-0 text-primary sm:size-4" />
+        <span className="min-w-0 truncate">{label}</span>
+        <ChevronDown size={13} className="shrink-0 text-muted-foreground sm:size-3.5" />
       </PopoverTrigger>
       <PopoverContent side="bottom" align="end" className="p-0">
         <CityPickerPanel onClose={() => setOpen(false)} />

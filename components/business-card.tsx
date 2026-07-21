@@ -85,3 +85,76 @@ export function BusinessCard({
     </Link>
   )
 }
+
+/** Compact row for mobile list layouts (nearest, search, etc.). */
+export function BusinessListRow({
+  business,
+  priority = false,
+  returnTo,
+}: {
+  business: Business
+  priority?: boolean
+  returnTo?: string
+}) {
+  const { getRating, origin, categories, cities } = useStore()
+  const rating = business.rating ?? getRating(business.id)
+  const category = categories.find((c) => c.id === business.categoryId)
+  const cityName = cities.find((c) => c.id === business.city)?.name ?? ''
+  const dist = formatDistance(distanceMiles(origin, business))
+  const status = useOpenStatus(business)
+
+  const href = returnTo
+    ? `/business/${business.id}?from=${encodeURIComponent(returnTo)}`
+    : `/business/${business.id}`
+
+  return (
+    <Link
+      href={href}
+      className="flex items-stretch gap-3 py-3.5 transition-colors active:bg-muted/40"
+    >
+      <div className="relative size-[4.5rem] shrink-0 overflow-hidden rounded-xl bg-muted">
+        <Image
+          src={business.image || '/placeholder.svg'}
+          alt={business.name}
+          fill
+          priority={priority}
+          sizes="72px"
+          className="object-cover"
+        />
+      </div>
+
+      <div className="flex min-w-0 flex-1 flex-col justify-center gap-1">
+        <div className="flex items-start justify-between gap-2">
+          <h3 className="truncate font-semibold leading-tight">{business.name}</h3>
+          <span className="shrink-0 text-xs text-muted-foreground">{priceLabel(business.priceLevel)}</span>
+        </div>
+
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <StarRating value={rating.avg} size={12} />
+          <span className="font-medium text-foreground">{rating.avg ? rating.avg.toFixed(1) : 'New'}</span>
+          {rating.count > 0 && <span>({rating.count})</span>}
+          {category && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span className="truncate">{category.name}</span>
+            </>
+          )}
+        </div>
+
+        <div className="flex items-center justify-between gap-2 text-xs">
+          <span className="inline-flex min-w-0 items-center gap-1 truncate text-muted-foreground">
+            <MapPin size={12} className="shrink-0" />
+            <span className="truncate">
+              {cityName} · {dist}
+            </span>
+          </span>
+          {status ? (
+            <span className={cn('shrink-0 font-medium', status.open ? 'text-primary' : 'text-muted-foreground')}>
+              {status.open ? 'Open' : 'Closed'}
+            </span>
+          ) : null}
+        </div>
+      </div>
+    </Link>
+  )
+}
