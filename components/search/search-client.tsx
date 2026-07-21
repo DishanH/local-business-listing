@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { ArrowRight, ArrowUpDown, LayoutGrid, MapPin, Search, X, ChevronDown } from 'lucide-react'
+import { ArrowRight, ArrowUpDown, LayoutGrid, Search, X, ChevronDown } from 'lucide-react'
 import { BusinessCard } from '@/components/business-card'
 import { CategoryIcon } from '@/components/category-icon'
 import { useStore } from '@/components/store-provider'
@@ -30,18 +30,63 @@ const sortLabels: Record<Sort, string> = {
   name: 'Name (A–Z)',
 }
 
+function parseSort(value: string | null): Sort {
+  if (value === 'nearest' || value === 'rating' || value === 'name') return value
+  return 'relevance'
+}
+
+type UrlFilters = {
+  q: string
+  category: string
+  sub: string
+  city: string
+  sort: Sort
+  open: boolean
+  price: string[]
+}
+
+function readFilters(params: URLSearchParams): UrlFilters {
+  return {
+    q: params.get('q') ?? '',
+    category: params.get('category') ?? 'all',
+    sub: params.get('sub') ?? 'all',
+    city: params.get('city') ?? 'all',
+    sort: parseSort(params.get('sort')),
+    open: params.get('open') === '1',
+    price: params.get('price')?.split(',').filter(Boolean) ?? [],
+  }
+}
+
+function writeFilters(sp: URLSearchParams, filters: UrlFilters) {
+  sp.delete('q')
+  sp.delete('category')
+  sp.delete('sub')
+  sp.delete('city')
+  sp.delete('sort')
+  sp.delete('open')
+  sp.delete('price')
+
+  if (filters.q.trim()) sp.set('q', filters.q.trim())
+  if (filters.category !== 'all') sp.set('category', filters.category)
+  if (filters.sub !== 'all') sp.set('sub', filters.sub)
+  if (filters.city !== 'all') sp.set('city', filters.city)
+  if (filters.sort !== 'relevance') sp.set('sort', filters.sort)
+  if (filters.open) sp.set('open', '1')
+  if (filters.price.length > 0) sp.set('price', filters.price.join(','))
+}
+
 export function SearchClient() {
   const router = useRouter()
   const params = useSearchParams()
+  const paramString = params.toString()
   const { getRating, origin, categories, businesses, cities } = useStore()
 
-  const [query, setQuery] = useState(params.get('q') ?? '')
-  const [category, setCategory] = useState(params.get('category') ?? 'all')
-  const [subcategory, setSubcategory] = useState(params.get('sub') ?? 'all')
-  const [city, setCity] = useState(params.get('city') ?? 'all')
-  const [sort, setSort] = useState<Sort>((params.get('sort') as Sort) ?? 'relevance')
-  const [openNow, setOpenNow] = useState(false)
-  const [priceLevels, setPriceLevels] = useState<string[]>([])
+  // URL is the single source of truth so browser back/forward restores filters.
+  const { q: query, category, sub: subcategory, city, sort, open: openNow, price: priceLevels } = useMemo(
+    () => readFilters(params),
+    [params],
+  )
+
   const [visiblePages, setVisiblePages] = useState(1)
   const [categoriesOpen, setCategoriesOpen] = useState(false)
 
@@ -49,6 +94,17 @@ export function SearchClient() {
   const activeCity = cities.find((c) => c.id === city)
   const subcategories = category !== 'all' ? getSubcategories(category) : []
   const activeSub = subcategories.find((s) => s.id === subcategory)
+
+  const updateUrl = useCallback(
+    (next: Partial<UrlFilters>) => {
+      const sp = new URLSearchParams(paramString)
+      const merged = { ...readFilters(sp), ...next }
+      writeFilters(sp, merged)
+      const qs = sp.toString()
+      router.replace(qs ? `/search?${qs}` : '/search', { scroll: false })
+    },
+    [router, paramString],
+  )
 
   const results = useMemo(() => {
     let list = fuzzySearch(businesses, query, categories).map((r) => ({
@@ -77,50 +133,28 @@ export function SearchClient() {
       sorted.sort((a, b) => b.score - a.score)
     }
     return sorted.map((r) => r.business)
-  }, [businesses, query, category, subcategory, activeSub, city, openNow, priceLevels, sort, origin, getRating])
+  }, [businesses, query, category, subcategory, activeSub, city, openNow, priceLevels, sort, origin, getRating, categories])
 
   useEffect(() => {
     setVisiblePages(1)
-  }, [query, category, subcategory, city, openNow, priceLevels, sort])
+  }, [paramString])
 
   const visibleResults = results.slice(0, visiblePages * PAGE_SIZE)
   const hasMore = visibleResults.length < results.length
-
-  // Build the URL from the *full* current state (plus any overrides) so that
-  // changing one filter never accidentally drops another (e.g. picking a
-  // category must keep the selected city). Overrides use the passed value
-  // directly since the corresponding setState hasn't flushed yet.
-  const updateUrl = useCallback(
-    (next: Partial<{ q: string; category: string; sub: string; city: string; sort: string }>) => {
-      const merged = { q: query, category, sub: subcategory, city, sort, ...next }
-      const sp = new URLSearchParams()
-      if (merged.q.trim()) sp.set('q', merged.q.trim())
-      if (merged.category && merged.category !== 'all') sp.set('category', merged.category)
-      if (merged.sub && merged.sub !== 'all') sp.set('sub', merged.sub)
-      if (merged.city && merged.city !== 'all') sp.set('city', merged.city)
-      if (merged.sort && merged.sort !== 'relevance') sp.set('sort', merged.sort)
-      const qs = sp.toString()
-      router.replace(qs ? `/search?${qs}` : '/search', { scroll: false })
-    },
-    [router, query, category, subcategory, city, sort],
-  )
+  const returnTo = paramString ? `/search?${paramString}` : '/search'
 
   const togglePrice = (value: string) => {
-    setPriceLevels((prev) => (prev.includes(value) ? prev.filter((p) => p !== value) : [...prev, value]))
+    const next = priceLevels.includes(value)
+      ? priceLevels.filter((p) => p !== value)
+      : [...priceLevels, value]
+    updateUrl({ price: next })
   }
 
   const clearFilters = () => {
-    setPriceLevels([])
-    setOpenNow(false)
+    updateUrl({ open: false, price: [] })
   }
 
   const clearAll = () => {
-    setCategory('all')
-    setSubcategory('all')
-    setCity('all')
-    clearFilters()
-    setSort('relevance')
-    setQuery('')
     router.replace('/search', { scroll: false })
   }
 
@@ -139,12 +173,8 @@ export function SearchClient() {
           </div>
           <button
             type="button"
-            onClick={() => {
-              setCategory('all')
-              setSubcategory('all')
-              updateUrl({ category: 'all', sub: 'all' })
-            }}
-            className="shrink-0 text-sm font-medium text-muted-foreground hover:text-primary"
+            onClick={() => updateUrl({ category: 'all', sub: 'all' })}
+            className="shrink-0 rounded-full border border-border px-3 py-1 text-xs font-medium text-foreground/60 transition-colors hover:border-primary/50 hover:text-primary"
           >
             Change
           </button>
@@ -162,10 +192,7 @@ export function SearchClient() {
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input
             value={query}
-            onChange={(e) => {
-              setQuery(e.target.value)
-              updateUrl({ q: e.target.value })
-            }}
+            onChange={(e) => updateUrl({ q: e.target.value })}
             placeholder="Search in results..."
             aria-label="Search businesses"
             className="h-9 w-full rounded-full border-none bg-transparent pl-9 pr-8 text-sm outline-none"
@@ -174,10 +201,7 @@ export function SearchClient() {
             <button
               type="button"
               aria-label="Clear search"
-              onClick={() => {
-                setQuery('')
-                updateUrl({ q: '' })
-              }}
+              onClick={() => updateUrl({ q: '' })}
               className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
             >
               <X size={15} />
@@ -188,37 +212,10 @@ export function SearchClient() {
         <span className="h-6 w-px shrink-0 bg-border" aria-hidden="true" />
 
         <Select
-          value={city}
-          onValueChange={(v) => {
-            if (!v) return
-            setCity(v)
-            updateUrl({ city: v })
-          }}
-        >
-          <SelectTrigger className="h-9 shrink-0 gap-1.5 rounded-full border-none bg-transparent px-2.5 text-sm shadow-none sm:px-3">
-            <MapPin size={14} className="text-muted-foreground" />
-            <span className="max-w-[7rem] truncate">
-              <SelectValue placeholder="All cities" />
-            </span>
-          </SelectTrigger>
-          <SelectContent align="end">
-            <SelectItem value="all">All cities</SelectItem>
-            {cities.map((c) => (
-              <SelectItem key={c.id} value={c.id}>
-                {c.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <span className="h-6 w-px shrink-0 bg-border" aria-hidden="true" />
-
-        <Select
           value={sort}
           onValueChange={(v) => {
             if (!v) return
-            setSort(v as Sort)
-            updateUrl({ sort: v })
+            updateUrl({ sort: v as Sort })
           }}
         >
           <SelectTrigger className="h-9 shrink-0 gap-1.5 rounded-full border-none bg-transparent px-2.5 text-sm shadow-none sm:px-3">
@@ -240,7 +237,7 @@ export function SearchClient() {
           priceLevels={priceLevels}
           onTogglePrice={togglePrice}
           openNow={openNow}
-          onToggleOpenNow={() => setOpenNow((v) => !v)}
+          onToggleOpenNow={() => updateUrl({ open: !openNow })}
           onClear={clearFilters}
         />
       </div>
@@ -253,11 +250,7 @@ export function SearchClient() {
               <button
                 key={c.id}
                 type="button"
-                onClick={() => {
-                  setCategory(c.id)
-                  setSubcategory('all')
-                  updateUrl({ category: c.id, sub: 'all' })
-                }}
+                onClick={() => updateUrl({ category: c.id, sub: 'all' })}
                 className="inline-flex shrink-0 items-center gap-1.5 rounded-full border bg-card px-2.5 py-1 text-xs font-medium transition-colors hover:border-primary sm:px-3 sm:py-1.5 sm:text-sm"
               >
                 <CategoryIcon name={c.icon} size={13} />
@@ -329,11 +322,7 @@ export function SearchClient() {
                       <button
                         key={c.id}
                         type="button"
-                        onClick={() => {
-                          setCategory(c.id)
-                          setSubcategory('all')
-                          updateUrl({ category: c.id, sub: 'all' })
-                        }}
+                        onClick={() => updateUrl({ category: c.id, sub: 'all' })}
                         className="group relative flex items-center gap-3 overflow-hidden rounded-2xl border border-border/80 bg-card p-3 text-left transition-all hover:border-primary/40 hover:shadow-md sm:p-3.5"
                       >
                         <span
@@ -366,10 +355,7 @@ export function SearchClient() {
         <div className="mt-3 flex gap-1.5 overflow-x-auto pb-1">
           <button
             type="button"
-            onClick={() => {
-              setSubcategory('all')
-              updateUrl({ sub: 'all' })
-            }}
+            onClick={() => updateUrl({ sub: 'all' })}
             className={cn(
               'inline-flex shrink-0 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors sm:px-3 sm:py-1.5 sm:text-sm',
               subcategory === 'all' ? 'border-primary bg-accent text-primary' : 'bg-card hover:border-primary',
@@ -381,10 +367,7 @@ export function SearchClient() {
             <button
               key={sub.id}
               type="button"
-              onClick={() => {
-                setSubcategory(sub.id)
-                updateUrl({ sub: sub.id })
-              }}
+              onClick={() => updateUrl({ sub: sub.id })}
               className={cn(
                 'inline-flex shrink-0 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors sm:px-3 sm:py-1.5 sm:text-sm',
                 subcategory === sub.id ? 'border-primary bg-accent text-primary' : 'bg-card hover:border-primary',
@@ -403,7 +386,7 @@ export function SearchClient() {
           {openNow && (
             <span className="inline-flex items-center gap-1 rounded-full border border-primary bg-accent px-2.5 py-1 text-xs font-medium text-primary">
               Open now
-              <button type="button" aria-label="Remove open now filter" onClick={() => setOpenNow(false)}>
+              <button type="button" aria-label="Remove open now filter" onClick={() => updateUrl({ open: false })}>
                 <X size={12} />
               </button>
             </span>
@@ -451,7 +434,7 @@ export function SearchClient() {
         <>
           <div className="mt-3 grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
             {visibleResults.map((b, i) => (
-              <BusinessCard key={b.id} business={b} priority={i === 0} />
+              <BusinessCard key={b.id} business={b} priority={i === 0} returnTo={returnTo} />
             ))}
           </div>
 

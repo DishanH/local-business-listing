@@ -23,6 +23,11 @@ import { Badge } from '@/components/ui/badge'
 // ISR: Revalidate business pages every 5 minutes
 export const revalidate = 300
 
+function searchBackHref(from: string | undefined, categoryId?: string) {
+  if (from?.startsWith('/search')) return from
+  return categoryId ? `/search?category=${categoryId}` : '/search'
+}
+
 export function generateStaticParams() {
   return businesses.map((b) => ({ id: b.id }))
 }
@@ -179,8 +184,15 @@ function UserPanelsSkeleton() {
   )
 }
 
-export default async function BusinessPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function BusinessPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>
+  searchParams: Promise<{ from?: string }>
+}) {
   const { id } = await params
+  const { from } = await searchParams
 
   // Prefer live Supabase listings (admin links use slug). Fall back to mock data.
   const dbPayload = await getBusinessBySlug(id).catch(() => null)
@@ -199,7 +211,7 @@ export default async function BusinessPage({ params }: { params: Promise<{ id: s
           </Link>
           <ChevronRight className="size-4 shrink-0" aria-hidden="true" />
           <Link
-            href={`/search?category=${category?.id ?? ''}`}
+            href={searchBackHref(from, category?.id)}
             className="min-w-0 shrink truncate transition-colors hover:text-foreground"
           >
             {category?.name}
@@ -310,7 +322,7 @@ export default async function BusinessPage({ params }: { params: Promise<{ id: s
         </Link>
         <ChevronRight className="size-4 shrink-0" aria-hidden="true" />
         <Link
-          href={`/search?category=${business.categoryId}`}
+          href={searchBackHref(from, business.categoryId)}
           className="min-w-0 shrink truncate transition-colors hover:text-foreground"
         >
           {category?.name}

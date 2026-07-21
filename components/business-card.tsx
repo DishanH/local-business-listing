@@ -12,7 +12,16 @@ import { distanceMiles, formatDistance, priceLabel } from '@/lib/format'
 import type { Business } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
-export function BusinessCard({ business, priority = false }: { business: Business; priority?: boolean }) {
+export function BusinessCard({
+  business,
+  priority = false,
+  returnTo,
+}: {
+  business: Business
+  priority?: boolean
+  /** Full search URL to restore filters when returning from a listing. */
+  returnTo?: string
+}) {
   const { getRating, origin, categories, cities } = useStore()
   const rating = business.rating ?? getRating(business.id)
   const category = categories.find((c) => c.id === business.categoryId)
@@ -20,9 +29,13 @@ export function BusinessCard({ business, priority = false }: { business: Busines
   const dist = formatDistance(distanceMiles(origin, business))
   const status = useOpenStatus(business)
 
+  const href = returnTo
+    ? `/business/${business.id}?from=${encodeURIComponent(returnTo)}`
+    : `/business/${business.id}`
+
   return (
     <Link
-      href={`/business/${business.id}`}
+      href={href}
       className="group flex flex-col overflow-hidden rounded-2xl border bg-card transition-all hover:-translate-y-1 hover:shadow-lg"
     >
       <div className="relative aspect-[4/3] overflow-hidden">
