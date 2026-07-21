@@ -21,7 +21,7 @@ async function getOverviewData() {
   const businessIds = owned.map((row) => row.business?.id).filter((id): id is string => Boolean(id))
 
   let unread = 0
-  // Chunk `.in()` filters — a long ID list overflows HTTP header limits.
+  // Chunk `.in()` filters - a long ID list overflows HTTP header limits.
   const CHUNK = 80
   for (let i = 0; i < businessIds.length; i += CHUNK) {
     const chunk = businessIds.slice(i, i + CHUNK)

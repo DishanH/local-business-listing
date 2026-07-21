@@ -103,7 +103,7 @@ export const businesses: Business[] = [
     categoryId: 'cafe',
     tagline: 'Small-batch roasts & warm pastries',
     description:
-      'Specialty coffee roasted in-house every morning. Pull up a chair, grab a flat white, and stay a while — free wifi and plenty of plugs.',
+      'Specialty coffee roasted in-house every morning. Pull up a chair, grab a flat white, and stay a while - free wifi and plenty of plugs.',
     image: categoryImage.cafe,
     city: 'riverton',
     address: '9 Sunrise Lane, Riverton',
@@ -243,7 +243,7 @@ export const businesses: Business[] = [
     categoryId: 'yoga',
     tagline: 'Vinyasa, restorative & meditation',
     description:
-      'A calm, sunlit studio offering classes for every body and every level. Drop in or join a membership — mats provided.',
+      'A calm, sunlit studio offering classes for every body and every level. Drop in or join a membership - mats provided.',
     image: categoryImage.yoga,
     city: 'brookside',
     address: '140 Serenity Ave, Brookside',
@@ -383,7 +383,7 @@ export const businesses: Business[] = [
     categoryId: 'petstore',
     tagline: 'Gear for dogs who love the outdoors',
     description:
-      'Specialty pet outfitter for active dogs — durable harnesses, cooling gear, and trail treats. Dogs always welcome inside.',
+      'Specialty pet outfitter for active dogs - durable harnesses, cooling gear, and trail treats. Dogs always welcome inside.',
     image: categoryImage.petstore,
     city: 'brookside',
     address: '3 Summit Way, Brookside',
@@ -523,7 +523,7 @@ export const businesses: Business[] = [
     categoryId: 'bookstore',
     tagline: 'Travel guides, atlases & armchair adventures',
     description:
-      'A cozy shop devoted to travel writing, vintage maps, and language guides for your next trip — or your next daydream.',
+      'A cozy shop devoted to travel writing, vintage maps, and language guides for your next trip - or your next daydream.',
     image: categoryImage.bookstore,
     city: 'riverton',
     address: '14 Compass Lane, Riverton',
@@ -563,7 +563,7 @@ export const businesses: Business[] = [
     categoryId: 'gym',
     tagline: 'Powerlifting & strongman coaching',
     description:
-      'A no-frills strength gym built for lifters — full power racks, calibrated plates, and coaches who know their way around a barbell.',
+      'A no-frills strength gym built for lifters - full power racks, calibrated plates, and coaches who know their way around a barbell.',
     image: categoryImage.gym,
     city: 'brookside',
     address: '203 Anchor Road, Brookside',
@@ -643,7 +643,7 @@ export const businesses: Business[] = [
     categoryId: 'yoga',
     tagline: 'Beginner-friendly hatha & breathwork',
     description:
-      'A welcoming loft studio built for beginners — slow, guided hatha classes and breathwork sessions with no experience required.',
+      'A welcoming loft studio built for beginners - slow, guided hatha classes and breathwork sessions with no experience required.',
     image: categoryImage.yoga,
     city: 'riverton',
     address: '15 Skylight Ave, Riverton',
@@ -735,7 +735,7 @@ const ownerPostsById: Record<string, OwnerPost[]> = {
       date: '2025-05-20',
       type: 'event',
       title: 'Farm dinner on the patio',
-      body: 'Join us June 21 for a family-style dinner celebrating our partner farms. Limited seats — reserve by phone.',
+      body: 'Join us June 21 for a family-style dinner celebrating our partner farms. Limited seats - reserve by phone.',
     },
     {
       id: 'cf-p3',
@@ -785,7 +785,7 @@ const ownerPostsById: Record<string, OwnerPost[]> = {
       date: '2025-06-06',
       type: 'event',
       title: 'June book club: local voices',
-      body: "We're reading a debut novel from a Brookside author. Join us the last Thursday at 7pm — all welcome.",
+      body: "We're reading a debut novel from a Brookside author. Join us the last Thursday at 7pm - all welcome.",
     },
     {
       id: 'cv-p2',
@@ -793,7 +793,7 @@ const ownerPostsById: Record<string, OwnerPost[]> = {
       type: 'offer',
       badge: 'Buy 2 get 1',
       title: 'Summer reading stack',
-      body: 'Mix and match any staff-pick paperbacks — buy two, get the third free through July.',
+      body: 'Mix and match any staff-pick paperbacks - buy two, get the third free through July.',
     },
   ],
   'ironworks-fitness': [
@@ -841,7 +841,7 @@ const ownerPostsById: Record<string, OwnerPost[]> = {
       date: '2025-06-04',
       type: 'event',
       title: 'Bottomless weekend brunch',
-      body: 'Saturdays and Sundays 9am–1pm — add bottomless mimosas or cold brew for $16.',
+      body: 'Saturdays and Sundays 9am–1pm - add bottomless mimosas or cold brew for $16.',
     },
   ],
 }

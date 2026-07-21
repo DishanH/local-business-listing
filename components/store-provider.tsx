@@ -30,7 +30,7 @@ export interface AppUser {
 }
 
 interface StoreValue {
-  // auth (backed by Supabase Auth — see components/auth/sign-in-dialog.tsx)
+  // auth (backed by Supabase Auth - see components/auth/sign-in-dialog.tsx)
   user: AppUser | null
   authLoading: boolean
   signOut: () => Promise<void>

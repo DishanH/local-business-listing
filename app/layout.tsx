@@ -28,7 +28,7 @@ const fraunces = Fraunces({
 })
 
 export const metadata: Metadata = {
-  title: 'Localry — Discover great local businesses',
+  title: 'Localry - Discover great local businesses',
   description:
     'Find, favorite, and connect with the best local businesses near you. Browse by category, city, or distance with smart search.',
   generator: 'v0.app',

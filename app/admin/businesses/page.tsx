@@ -67,7 +67,7 @@ async function getBusinesses(status: string | undefined, pageParam: string | und
   return {
     businesses: (data ?? []).map((biz) => ({
       ...biz,
-      categoryName: categoryNameById.get(biz.category_id) ?? '—',
+      categoryName: categoryNameById.get(biz.category_id) ?? '-',
     })),
     page,
     totalPages,
@@ -134,7 +134,7 @@ export default async function AdminBusinessesPage({
                   <td className="px-4 py-2.5 text-muted-foreground">
                     {biz.avg_rating > 0
                       ? `${biz.avg_rating.toFixed(1)} (${biz.review_count})`
-                      : '—'}
+                      : '-'}
                   </td>
                   <td className="px-4 py-2.5">
                     <div className="flex justify-end gap-1.5">

@@ -75,7 +75,7 @@ export interface Business {
   rating?: { avg: number; count: number }
   /** True for businesses that come from Supabase rather than the bundled mock data. */
   isLive?: boolean
-  /** Supabase `businesses.id` UUID — present only for live listings. */
+  /** Supabase `businesses.id` UUID - present only for live listings. */
   dbId?: string
 }
 

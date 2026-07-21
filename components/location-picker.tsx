@@ -13,7 +13,7 @@ function normalize(s: string) {
   return s.toLowerCase().trim()
 }
 
-function CityPickerPanel({ onClose }: { onClose: () => void }) {
+export function CityPickerPanel({ onClose }: { onClose: () => void }) {
   const { origin, setOrigin, cities } = useStore()
   const [query, setQuery] = useState('')
   const [activeIndex, setActiveIndex] = useState(0)

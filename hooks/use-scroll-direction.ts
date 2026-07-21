@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 /**
  * Tracks whether the page has scrolled down far enough (and in the "down"
  * direction) that UI like a sticky header should hide itself to reclaim
- * screen space. Scrolling back up — even slightly — reveals it again.
+ * screen space. Scrolling back up - even slightly - reveals it again.
  */
 export function useHideOnScrollDown(hideThreshold = 8, hideAfter = 72) {
   const [hidden, setHidden] = useState(false)

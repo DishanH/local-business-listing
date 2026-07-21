@@ -15,7 +15,7 @@ import {
 import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
 
-/** Serializable icon keys — resolved to Lucide components on the client. */
+/** Serializable icon keys - resolved to Lucide components on the client. */
 export type PortalNavIcon =
   | 'layout-dashboard'
   | 'store'

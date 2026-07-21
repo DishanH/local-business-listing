@@ -22,7 +22,7 @@ export default async function NewListingPage() {
             <span className="font-semibold">New listing</span>
           </div>
           <p className="mt-0.5 text-sm text-muted-foreground">
-            Start with the basics — hours, photos, and menu come next.
+            Start with the basics - hours, photos, and menu come next.
           </p>
         </div>
       </div>

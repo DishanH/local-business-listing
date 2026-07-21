@@ -236,7 +236,7 @@ export default async function BusinessPage({
         />
 
         {/*
-          Desktop (lg+): classic 2-col — main (posts/menu/specials/reviews) + sidebar
+          Desktop (lg+): classic 2-col - main (posts/menu/specials/reviews) + sidebar
           (notes/messages/amenities/contact/hours).
           Mobile: same panels, CSS order pulls contact/hours to the top and reviews
           to the bottom via `contents` so children participate in the parent flex.

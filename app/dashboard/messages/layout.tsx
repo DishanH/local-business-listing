@@ -15,7 +15,7 @@ async function getConversations() {
   const businessIds = owned.map((row) => row.business.id)
   if (businessIds.length === 0) return []
 
-  // Chunk `.in()` — large ownership sets overflow PostgREST URL/header limits.
+  // Chunk `.in()` - large ownership sets overflow PostgREST URL/header limits.
   const CHUNK = 80
   const conversations: {
     id: string

@@ -55,7 +55,7 @@ export function PortalLoginForm() {
     }
 
     // If email confirmation is disabled in Supabase Auth settings, signUp
-    // already returns a live session — sign the user in immediately instead
+    // already returns a live session - sign the user in immediately instead
     // of asking them to check their inbox.
     if (data.session) {
       router.push(next)

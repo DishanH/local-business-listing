@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 
 /**
- * Sticky header + flush scrollable body — the same structural pattern used by
+ * Sticky header + flush scrollable body - the same structural pattern used by
  * `dashboard/listings/[id]` so every admin section feels consistent with the
  * listing editor rather than a plain padded page.
  */

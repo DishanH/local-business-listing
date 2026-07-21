@@ -11,7 +11,7 @@ export function ListBusinessCta() {
         </span>
         <h2 className="mt-4 font-serif text-xl tracking-tight">Own a local business?</h2>
         <p className="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-muted-foreground">
-          List for free — get discovered by customers nearby.
+          List for free - get discovered by customers nearby.
         </p>
         <Link
           href="/become-owner"
@@ -22,7 +22,7 @@ export function ListBusinessCta() {
         </Link>
       </div>
 
-      {/* Desktop — original banner */}
+      {/* Desktop - original banner */}
       <div className="relative hidden overflow-hidden rounded-3xl bg-primary px-6 py-8 text-primary-foreground sm:px-12 sm:py-10 lg:block">
         <div
           className="pointer-events-none absolute -right-16 -top-16 size-64 rounded-full bg-primary-foreground/10"
@@ -39,7 +39,7 @@ export function ListBusinessCta() {
             </span>
             <h2 className="mt-4 font-serif text-2xl tracking-tight sm:text-3xl">Own a local business?</h2>
             <p className="mt-2 text-primary-foreground/85 text-pretty">
-              List it on Localry for free — manage hours, photos, and messages, and get discovered by customers
+              List it on Localry for free - manage hours, photos, and messages, and get discovered by customers
               nearby.
             </p>
           </div>

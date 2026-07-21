@@ -124,7 +124,7 @@ export default async function ConversationThreadPage({ params }: { params: Promi
         </div>
       )}
 
-      {/* Messages — always keep a usable height */}
+      {/* Messages - always keep a usable height */}
       <div className="min-h-[12rem] flex-1 overflow-y-auto p-4">
         <div className="flex flex-col gap-2">
           {messages.length === 0 ? (

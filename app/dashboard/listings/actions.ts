@@ -104,7 +104,7 @@ export async function updateListing(businessId: string, formData: FormData) {
       .eq('slug', normalized)
       .neq('id', businessId)
       .maybeSingle()
-    if (existing) throw new Error('That URL is already taken — try a different one')
+    if (existing) throw new Error('That URL is already taken - try a different one')
     slug = normalized
   }
 

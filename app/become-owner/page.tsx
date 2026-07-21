@@ -34,10 +34,10 @@ export default async function BecomeOwnerPage() {
         <CardContent className="flex flex-col gap-4 text-center">
           <p className="text-sm text-muted-foreground">
             Create a listing, manage hours and menus, reply to customer messages, and respond to
-            reviews — all from your business dashboard.
+            reviews - all from your business dashboard.
           </p>
           <ul className="space-y-2 text-left text-sm text-muted-foreground">
-            <li>• Free draft listings — publish when you&apos;re ready</li>
+            <li>• Free draft listings - publish when you&apos;re ready</li>
             <li>• Photos, offerings, hours, and amenities</li>
             <li>• Direct messages from customers</li>
           </ul>
@@ -47,7 +47,7 @@ export default async function BecomeOwnerPage() {
             </Button>
           </form>
           <Link href="/" className="text-sm text-muted-foreground hover:text-foreground">
-            Not now — back to browsing
+            Not now - back to browsing
           </Link>
         </CardContent>
       </Card>

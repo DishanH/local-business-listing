@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils'
 
 interface FavoriteButtonProps {
   businessId: string
-  /** Supabase UUID when known — skips a slug lookup on save. */
+  /** Supabase UUID when known - skips a slug lookup on save. */
   dbId?: string | null
   className?: string
   size?: number
@@ -56,7 +56,7 @@ export function FavoriteButton({
           } catch (err) {
             const message = err instanceof Error ? err.message : 'Could not update favorite'
             if (message === 'DEMO_LISTING') {
-              setError('Demo listings cannot be saved — try a real listing from the dashboard.')
+              setError('Demo listings cannot be saved - try a real listing from the dashboard.')
             } else {
               setError(message)
             }

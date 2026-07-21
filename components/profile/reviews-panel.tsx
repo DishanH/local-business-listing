@@ -121,7 +121,7 @@ export function ReviewsPanel({
 
       {isOwner ? (
         <p className="mb-6 text-sm text-muted-foreground">
-          Customers leave reviews here. You can reply to them below — you cannot review your own listing.
+          Customers leave reviews here. You can reply to them below - you cannot review your own listing.
         </p>
       ) : user ? (
         alreadyReviewed ? (

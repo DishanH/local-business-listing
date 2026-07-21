@@ -72,7 +72,7 @@ export function Hero() {
             Discover the best businesses in your neighborhood
           </h1>
           <p className="mx-auto mt-2.5 max-w-md text-base text-muted-foreground text-pretty lg:mx-0 lg:mt-4 lg:text-lg">
-            Find local gems, read honest reviews, save your favorites, and message shops directly — all in one place.
+            Find local gems, read honest reviews, save your favorites, and message shops directly - all in one place.
           </p>
 
           <div className="relative mx-auto mt-5 max-w-lg lg:mx-0 lg:mt-7">
@@ -102,11 +102,12 @@ export function Hero() {
                 aria-controls="hero-search-suggestions"
                 aria-activedescendant={activeIndex >= 0 ? `hero-suggestion-${activeIndex}` : undefined}
                 autoComplete="off"
-                className="h-14 w-full rounded-2xl border bg-card pl-12 pr-28 text-base shadow-sm outline-none transition-colors focus:border-ring"
+                enterKeyHint="search"
+                className="h-14 w-full rounded-2xl border bg-card pl-12 pr-4 text-base shadow-sm outline-none transition-colors focus:border-ring lg:pr-28"
               />
               <button
                 type="submit"
-                className="absolute right-2 top-1/2 inline-flex -translate-y-1/2 items-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
+                className="absolute right-2 top-1/2 hidden -translate-y-1/2 items-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 lg:inline-flex"
               >
                 Search <ArrowRight size={15} />
               </button>

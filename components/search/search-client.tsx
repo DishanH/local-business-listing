@@ -277,7 +277,7 @@ export function SearchClient() {
                 <span className="mt-0.5 block text-sm text-muted-foreground">
                   {categoriesOpen
                     ? 'Pick a type of place to narrow results'
-                    : `${categories.length} categories — tap to expand`}
+                    : `${categories.length} categories - tap to expand`}
                 </span>
               </div>
               {!categoriesOpen ? (

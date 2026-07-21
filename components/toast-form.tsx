@@ -20,7 +20,7 @@ function isRedirectError(error: unknown): boolean {
  * Drop-in replacement for `<form action={...}>` that shows a toast on
  * success/failure. Works even when rendered from a Server Component, since
  * bound server actions (unlike arbitrary closures) are valid to pass down as
- * props — the toast side effect itself runs here, on the client.
+ * props - the toast side effect itself runs here, on the client.
  */
 export function ToastForm({
   action,
@@ -58,7 +58,7 @@ export async function runWithToast(action: () => Promise<void> | void, successMe
 
 /**
  * Drop-in for a bare `<button formAction={...}>` (e.g. a "Delete" button that
- * shares a form with a "Save" submit) — those can't run through `ToastForm`
+ * shares a form with a "Save" submit) - those can't run through `ToastForm`
  * since `formAction` overrides the form's action just for that one button.
  */
 export function ToastButton({

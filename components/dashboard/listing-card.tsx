@@ -18,7 +18,7 @@ const statusVariant: Record<Business['status'], 'default' | 'outline' | 'seconda
 
 function summary(business: Business) {
   const text = (business.tagline || business.description || '').trim()
-  return text || 'No description yet — add one in business details.'
+  return text || 'No description yet - add one in business details.'
 }
 
 export function ListingCard({ business, role }: { business: Business; role?: string }) {
@@ -62,7 +62,7 @@ export function ListingCard({ business, role }: { business: Business; role?: str
         <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1">
             <Star size={12} className="fill-current text-amber-500" />
-            {business.avg_rating > 0 ? business.avg_rating.toFixed(1) : '—'}
+            {business.avg_rating > 0 ? business.avg_rating.toFixed(1) : '-'}
             {business.review_count > 0 && <span>({business.review_count})</span>}
           </span>
           {role && <span className="capitalize">{role}</span>}
@@ -87,7 +87,7 @@ export function ListingCard({ business, role }: { business: Business; role?: str
   )
 }
 
-/** Compact row for overview — title + description focused, equal height. */
+/** Compact row for overview - title + description focused, equal height. */
 export function ListingRow({ business, role }: { business: Business; role?: string }) {
   return (
     <div className="group flex items-stretch gap-3 border-b px-3 py-3 transition-colors last:border-b-0 hover:bg-muted/40 sm:px-4">
